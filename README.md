@@ -1,2 +1,1 @@
-# harambe
-4 Gewinnt Agent 
+# harambe [![Build Status](https://travis-ci.org/PeterUlb/harambe.svg?branch=master)](https://travis-ci.org/PeterUlb/harambe)
