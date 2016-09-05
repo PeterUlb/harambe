@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns:fx="http://www.javafx.com/fxml"
+          stylesheets="/css/main.css">
+   <Button fx:id="button1" text="ButtonTest" styleClass="button"/>
+</GridPane>

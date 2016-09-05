@@ -19,7 +19,7 @@ public class App extends Application {
 
 
     public void start(Stage stage) throws Exception {
-        Pane root = (Pane) FXMLLoader.load(getClass().getClassLoader().getResource("scenes/sample.fxml"));
+        Pane root = (Pane) FXMLLoader.load(getClass().getClassLoader().getResource("scenes/main.fxml"));
         Scene scene = new Scene(root, 1280, 800);
         stage.setTitle("test");
         stage.setScene(scene);
