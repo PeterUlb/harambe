@@ -20,10 +20,11 @@ public class App extends Application {
 
     public void start(Stage stage) throws Exception {
         Pane root = (Pane) FXMLLoader.load(getClass().getClassLoader().getResource("scenes/main.fxml"));
-        Scene scene = new Scene(root, 1280, 800);
+        Scene scene = new Scene(root, 1920, 1080);
         stage.setTitle("test");
         stage.setScene(scene);
         stage.show();
+        stage.setFullScreen(true);
     }
 
 }

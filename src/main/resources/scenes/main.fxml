@@ -6,7 +6,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane xmlns:fx="http://www.javafx.com/fxml"
-          stylesheets="/css/main.css">
-   <Button fx:id="button1" text="ButtonTest" styleClass="button"/>
-</GridPane>
+<StackPane prefHeight="1080.0" prefWidth="1920.0" styleClass="bg" xmlns="http://javafx.com/javafx/8" stylesheets="/css/main.css">
+
+</StackPane>
