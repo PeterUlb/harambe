@@ -1,0 +1,33 @@
+.button{
+    /*doesnt work :(
+    transition: -fx-background-color, 0.5s; */
+}
+
+.button:hover{
+    -fx-background-color: black;
+}
+
+.bg{
+    -fx-background-image: url("/img/bg.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.fg {
+    -fx-background-image: url("/img/fg.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.p1 {
+    -fx-background-repeat: stretch;
+}
+
+.p2 {
+    -fx-background-repeat: stretch;
+}
+
+
+
