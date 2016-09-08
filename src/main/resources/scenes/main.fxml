@@ -12,6 +12,9 @@
        <ImageView fx:id="p1ImgView" styleClass="p1" translateY="170.0" translateX="-785.0" />
        <ImageView fx:id="p2ImgView" styleClass="p1" translateY="170.0" translateX="785.0" />
 
+       <ImageView fx:id="g1" translateY="415.0" translateX="-450.0" />
+       <ImageView fx:id="g2" translateY="415.0" translateX="-300.0" />
+
        <Pane styleClass="fg" />
    </children>
 

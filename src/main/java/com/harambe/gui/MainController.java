@@ -16,6 +16,10 @@ public class MainController implements Initializable {
     private ImageView p1ImgView;
     @FXML
     private ImageView p2ImgView;
+    @FXML
+    private ImageView g1;
+    @FXML
+    private ImageView g2;
 
 
     @Override // is called when FXMLLoader loads main.fxml
@@ -26,10 +30,20 @@ public class MainController implements Initializable {
 
         initPlayers(p1, p2);
 
+        //set chip test
+        Chip c1 = new Chip(p1.getChip());
+        Image chipImg1 = new Image(c1.getImg());
+        g1.setImage(chipImg1);
+
+        //set chip test
+        Chip c2 = new Chip(p2.getChip());
+        Image chipImg2 = new Image(c2.getImg());
+        g2.setImage(chipImg2);
+
 
     }
 
-    public void initPlayers(Player p1, Player p2) {
+    private void initPlayers(Player p1, Player p2) {
         //load image in ImageViewContainer for player 1
         Image p1Img = new Image(p1.getImgLocation());
         p1ImgView.setImage(p1Img);
@@ -37,7 +51,7 @@ public class MainController implements Initializable {
         //load image in ImageViewContainer for player 2
         Image p2Img = new Image(p2.getImgLocation());
         p2ImgView.setImage(p2Img);
-        //mirror Image
+        //mirror Image for player 2
         p2ImgView.setScaleX(-1);
     }
 }

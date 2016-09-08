@@ -1,12 +1,3 @@
-.button{
-    /*doesnt work :(
-    transition: -fx-background-color, 0.5s; */
-}
-
-.button:hover{
-    -fx-background-color: black;
-}
-
 .bg{
     -fx-background-image: url("/img/bg.png");
     -fx-background-repeat: stretch;
