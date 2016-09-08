@@ -62,6 +62,10 @@ public class Board {
      * @return 2d char array with char[Board.ROWS][Board.COLUMNS]
      */
     public char[][] getGrid() {
+        return this.grid;
+    }
+
+    public char[][] getDeepCopyGrid() {
         char[][] grid = new char[ROWS][COLUMNS];
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLUMNS; col++) {
@@ -105,7 +109,7 @@ public class Board {
      */
     public void remove(int col) throws IllegalArgumentException {
         int row = firstAvailableRow[col];
-        if (row >= ROWS) {
+        if (row >= ROWS - 1) {
             throw new IllegalArgumentException("Column " + col + " is already empty");
         }
         firstAvailableRow[col]++;

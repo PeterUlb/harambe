@@ -59,7 +59,7 @@ public class MiniMax {
     private int minimax(Board board, int depth, boolean isMaximizingPlayer) {
         // TODO: evt. die ersten male immer in die Mitte
         if (depth == 0 || board.isTerminalState()) {
-            return evalValue(board);
+            return evalValue(board, depth);
         }
 
         if (isMaximizingPlayer) {
@@ -107,11 +107,12 @@ public class MiniMax {
      * @param board 2d char array with char[Board.ROWS][Board.COLUMNS]
      * @return value of the checked board for max player (higher = better)
      */
-    private int evalValue(Board board) {
+    private int evalValue(Board board, int depth) {
         if (board.checkWin(Board.PLAYER1)) {
-            return Integer.MAX_VALUE;
+            // again hours of debugging... an early win is preferable over late wins
+            return 10000 * depth;
         } else if (board.checkWin(Board.PLAYER2)) {
-            return Integer.MIN_VALUE;
+            return -10000 * depth;
         } else {
             char[][] grid = board.getGrid();
 
