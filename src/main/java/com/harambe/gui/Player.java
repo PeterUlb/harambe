@@ -34,6 +34,7 @@ public class Player {
         switch(character) {
             case "harambe":     this.chip = "banana";break;
             case "poacher_1":   this.chip = "mango";break;
+            case "poacher_2":   this.chip = "mango";break;
         }
     }
 

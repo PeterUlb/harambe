@@ -12,13 +12,23 @@
     -fx-background-position: center center;
 }
 
-.p1 {
+.player {
     -fx-background-repeat: stretch;
 }
 
-.p2 {
-    -fx-background-repeat: stretch;
+.playerName{
+    -fx-font-size: 36px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
 }
 
+.column {
+    -fx-pref-width: 150px;
+    -fx-pref-height: 1000px;
+    -fx-cursor: hand;
+    -fx-opacity: 0;
+}
 
 
