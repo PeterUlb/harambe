@@ -37,13 +37,11 @@ public class MiniMax {
     /**
      * @param board 2d char array with char[Board.ROWS][Board.COLUMNS]
      * @return best column to put the next play in (starting at 0 being leftmost column)
+     * -1 indicates a finished game state
      */
     public int getBestMove(Board board) {
         savedMove = -1;
         minimax(board, globalDepth, true);
-        if (savedMove == -1) {
-            throw new RuntimeException("Woops. Couldn't find a single row to put a coin into :/");
-        }
         return savedMove;
     }
 
