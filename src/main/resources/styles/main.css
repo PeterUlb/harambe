@@ -1,5 +1,14 @@
-.bg{
+.field{
     -fx-background-image: url("/img/bg.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+
+
+.bg {
+    -fx-background-image: url("/img/coast_1.jpg");
     -fx-background-repeat: stretch;
     -fx-background-size: 1920 1080;
     -fx-background-position: center center;
@@ -17,7 +26,7 @@
 }
 
 .playerName{
-    -fx-font-size: 36px;
+    -fx-font-size: 40px;
     -fx-font-family: impact;
     -fx-fill: #fefefe;
     -fx-stroke: black;

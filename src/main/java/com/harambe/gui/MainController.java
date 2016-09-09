@@ -1,14 +1,12 @@
 package com.harambe.gui;
 
 import com.harambe.game.Board;
-import com.sun.java_cup.internal.runtime.Symbol;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.net.URL;
@@ -89,7 +87,7 @@ public class MainController implements Initializable {
         Chip c1 = new Chip(p1.getChip());
         Image p1Chip = new Image(c1.getImg());
         p1ChipView.setImage(p1Chip);
-        p1ChipView.setFitWidth(58);
+        p1ChipView.setFitWidth(64);
         p1ChipView.setPreserveRatio(true);
         p1ChipView.setSmooth(true);
         p1ChipView.setCache(true);
