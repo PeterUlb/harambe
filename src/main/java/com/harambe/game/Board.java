@@ -204,6 +204,20 @@ public class Board {
         return false;
     }
 
+    //responds with free columnSpace
+    public int[] getFirstAvailableRow() {
+        return firstAvailableRow;
+    }
+
+    public Boolean isFull(int column) {
+        if (getFirstAvailableRow()[column]<0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 
 }
 
