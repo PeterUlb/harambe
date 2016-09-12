@@ -10,7 +10,6 @@ import java.util.Arrays;
  * Created by Peter on 08.09.2016.
  */
 public class BoardTest extends TestCase {
-
     Board board;
 
     public void setUp() throws Exception {
@@ -240,6 +239,116 @@ public class BoardTest extends TestCase {
         board.put(3, Board.PLAYER2);
         assertTrue("Correct [|] not detected", board.checkWin(Board.PLAYER2));
         assertFalse("False [|] detected", board.checkWin(Board.PLAYER1));
+    }
+
+
+    public void testGetWinForUI() throws Exception {
+        board = new Board();
+        int[][] winPosition;
+        // [-] win condition check
+        board.put(0, Board.PLAYER1);
+        board.put(1, Board.PLAYER1);
+        board.put(2, Board.PLAYER1);
+        board.put(3, Board.PLAYER1);
+        winPosition = board.getWinForUI(Board.PLAYER1);
+        assertEquals(5, winPosition[0][0]);
+        assertEquals(0, winPosition[0][1]);
+
+        assertEquals(5, winPosition[1][0]);
+        assertEquals(1, winPosition[1][1]);
+
+        assertEquals(5, winPosition[2][0]);
+        assertEquals(2, winPosition[2][1]);
+
+        assertEquals(5, winPosition[3][0]);
+        assertEquals(3, winPosition[3][1]);
+
+        winPosition = board.getWinForUI(Board.PLAYER2);
+        assertNull(winPosition);
+
+
+        // [|] win condition check
+        board.reset();
+        board.put(3, Board.PLAYER1);
+        board.put(3, Board.PLAYER1);
+        board.put(3, Board.PLAYER1);
+        board.put(3, Board.PLAYER1);
+        winPosition = board.getWinForUI(Board.PLAYER1);
+        assertEquals(2, winPosition[0][0]);
+        assertEquals(3, winPosition[0][1]);
+
+        assertEquals(3, winPosition[1][0]);
+        assertEquals(3, winPosition[1][1]);
+
+        assertEquals(4, winPosition[2][0]);
+        assertEquals(3, winPosition[2][1]);
+
+        assertEquals(5, winPosition[3][0]);
+        assertEquals(3, winPosition[3][1]);
+
+        winPosition = board.getWinForUI(Board.PLAYER2);
+        assertNull(winPosition);
+
+
+
+        // [/] win condition check
+        board.reset();
+        board.put(0, Board.PLAYER1);
+        board.put(1, Board.PLAYER1);
+        board.put(1, Board.PLAYER1);
+        board.put(2, Board.PLAYER1);
+        board.put(2, Board.PLAYER1);
+        board.put(2, Board.PLAYER1);
+        board.put(3, Board.PLAYER2);
+        board.put(3, Board.PLAYER1);
+        board.put(3, Board.PLAYER2);
+        board.put(3, Board.PLAYER1);
+        winPosition = board.getWinForUI(Board.PLAYER1);
+        assertEquals(2, winPosition[0][0]);
+        assertEquals(3, winPosition[0][1]);
+
+        assertEquals(3, winPosition[1][0]);
+        assertEquals(2, winPosition[1][1]);
+
+        assertEquals(4, winPosition[2][0]);
+        assertEquals(1, winPosition[2][1]);
+
+        assertEquals(5, winPosition[3][0]);
+        assertEquals(0, winPosition[3][1]);
+
+        winPosition = board.getWinForUI(Board.PLAYER2);
+        assertNull(winPosition);
+
+
+
+        // [\] win condition check
+        board.reset();
+        board.put(6, Board.PLAYER2);
+        board.put(5, Board.PLAYER2);
+        board.put(5, Board.PLAYER2);
+        board.put(4, Board.PLAYER2);
+        board.put(4, Board.PLAYER2);
+        board.put(4, Board.PLAYER2);
+        board.put(3, Board.PLAYER1);
+        board.put(3, Board.PLAYER2);
+        board.put(3, Board.PLAYER1);
+        board.put(3, Board.PLAYER2);
+        winPosition = board.getWinForUI(Board.PLAYER2);
+        assertEquals(2, winPosition[0][0]);
+        assertEquals(3, winPosition[0][1]);
+
+        assertEquals(3, winPosition[1][0]);
+        assertEquals(4, winPosition[1][1]);
+
+        assertEquals(4, winPosition[2][0]);
+        assertEquals(5, winPosition[2][1]);
+
+        assertEquals(5, winPosition[3][0]);
+        assertEquals(6, winPosition[3][1]);
+
+        winPosition = board.getWinForUI(Board.PLAYER1);
+        assertNull(winPosition);
+        
     }
 
 }

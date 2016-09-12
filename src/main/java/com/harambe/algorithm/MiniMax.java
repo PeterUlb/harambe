@@ -37,13 +37,11 @@ public class MiniMax {
     /**
      * @param board 2d char array with char[Board.ROWS][Board.COLUMNS]
      * @return best column to put the next play in (starting at 0 being leftmost column)
+     * -1 indicates a finished game state
      */
     public int getBestMove(Board board) {
         savedMove = -1;
-        minimax(board, globalDepth, true);
-        if (savedMove == -1) {
-            throw new RuntimeException("Woops. Couldn't find a single row to put a coin into :/");
-        }
+        alphabeta(board, globalDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
         return savedMove;
     }
 
@@ -51,12 +49,20 @@ public class MiniMax {
     /**
      * Do NOT call directly, use getBestMove
      *
+     * In MiniMax the minplayer (our enemy) tries to minimize our "advantage" / win chance
+     * the maxplayer (our AI) tries to maximize our win chances
+     *
+     * alpha beta cuts of the trees that aren't being chosen from the enemy / us anyways, explained here:
+     * http://www.emunix.emich.edu/~evett/AI/AlphaBeta_movie/sld009.htm
+     *
      * @param board              2d char array with char[Board.ROWS][Board.COLUMNS]
      * @param depth              how many node-levels will be search (decreases performance), initial call = globalDepth
+     * @param alpha              initial call: -infinity; value that max-player (we) will receive as a minimum
+     * @param beta               initial call: +infinity; value that min-player (enemy) will receive at max
      * @param isMaximizingPlayer MiniMax player type (initial call = true)
      * @return
      */
-    private int minimax(Board board, int depth, boolean isMaximizingPlayer) {
+    private int alphabeta(Board board, int depth, int alpha, int beta, boolean isMaximizingPlayer) {
         // TODO: evt. die ersten male immer in die Mitte
         if (depth == 0 || board.isTerminalState()) {
             return evalValue(board, depth);
@@ -67,7 +73,7 @@ public class MiniMax {
             ArrayList<Integer> moves = board.getPossibleMoves();
             for (int move : moves) {
                 board.put(move, Board.PLAYER1);
-                int val = minimax(board, depth - 1, false);
+                int val = alphabeta(board, depth - 1, alpha, beta, false);
 //                if(depth == globalDepth) {
 //                    System.out.println("Max: " + val);
 //                    System.out.println("-------------------------------");
@@ -79,6 +85,11 @@ public class MiniMax {
                     savedMove = move;
                 }
                 bestValue = Math.max(bestValue, val);
+                alpha = Math.max(alpha, bestValue);
+                if (beta <= alpha) {
+                    // no need to search that node, since min wouldn't choose that one
+                    break;
+                }
             }
 
             return bestValue;
@@ -88,12 +99,16 @@ public class MiniMax {
             ArrayList<Integer> moves = board.getPossibleMoves();
             for (int move : moves) {
                 board.put(move, Board.PLAYER2);
-                int val = minimax(board, depth - 1, true);
+                int val = alphabeta(board, depth - 1, alpha, beta, true);
 //                if(depth == (globalDepth - 1)) {
 //                    System.out.println("Min: " + val);
 //                }
                 board.remove(move);
                 bestValue = Math.min(bestValue, val);
+                beta = Math.min(beta, bestValue);
+                if (beta <= alpha) {
+                    break;
+                }
             }
 
             return bestValue;
