@@ -10,13 +10,16 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.ResourceBundle;
 
 public class App extends Application {
 
+    //public static Stage stage;
     public static Pane root;
 
+
     public static void main(String[] args) {
-        launch(args);
+            launch(args);
     }
 
 

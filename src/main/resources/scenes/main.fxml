@@ -10,11 +10,18 @@
 <StackPane styleClass="field" stylesheets="/styles/main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.MainController">
    <children>
 
-       <ImageView fx:id="p1ImgView" styleClass="player" translateX="-785.0" translateY="170.0" />
-       <ImageView fx:id="p2ImgView" styleClass="player" translateX="785.0" translateY="170.0" />
+        <ImageView fx:id="p1ImgView" styleClass="player" translateX="-785.0" translateY="170.0" />
+        <ImageView fx:id="p2ImgView" styleClass="player" translateX="785.0" translateY="170.0" />
+
+        <Text fx:id="player1Name" styleClass="playerName" translateX="-790.0" translateY="425.0" />
+        <Text fx:id="player2Name" styleClass="playerName" translateX="790.0" translateY="425.0" />
+
+        <ImageView fx:id="p1ChipView" translateX="-890.0" translateY="425.0" />
+        <ImageView fx:id="p2ChipView" translateX="680.0" translateY="425.0" />
 
 
-       <Pane styleClass="fg" />
+
+        <Pane styleClass="fg" />
 
         <Button fx:id="b0" onAction="#dropChip" styleClass="column" text="Column 1" translateX="-450.0" />
         <Button fx:id="b1" onAction="#dropChip" styleClass="column" text="Column 2" translateX="-300.0" />
@@ -24,11 +31,7 @@
         <Button fx:id="b5" onAction="#dropChip" styleClass="column" text="Column 6" translateX="300.0" />
         <Button fx:id="b6" onAction="#dropChip" styleClass="column" text="Column 7" translateX="450.0" />
 
-        <Text fx:id="player1Name" styleClass="playerName" translateX="-790.0" translateY="425.0" />
-        <Text fx:id="player2Name" styleClass="playerName" translateX="790.0" translateY="425.0" />
 
-       <ImageView fx:id="p1ChipView" translateX="-890.0" translateY="425.0" />
-       <ImageView fx:id="p2ChipView" translateX="680.0" translateY="425.0" />
 
    </children>
 

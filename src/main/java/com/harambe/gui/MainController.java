@@ -7,9 +7,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import static com.harambe.App.root;
@@ -38,25 +40,24 @@ public class MainController implements Initializable {
     private Player p1;
     private Player p2;
     private Player activePlayer;
-    private char activeSymbol;
+    private ArrayList<ImageView> chipArray;
 
 
     @Override // is called when FXMLLoader loads main.fxml
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
         board = new Board();
+        chipArray = new ArrayList<ImageView>();
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
 
 
-        p1 = new Player(false, "Player1", "harambe");
-        p2 = new Player(false, "Player2", "poacher_1");
+        p1 = new Player(false, "Player1", "harambe", 'X');
+        p2 = new Player(false, "Player2", "poacher_2", 'O');
         if (Math.round(Math.random())==1) {
             activePlayer = p1;
-            activeSymbol = 'X';
         } else {
             activePlayer = p2;
-            activeSymbol = 'O';
         }
 
         System.out.println(activePlayer.getName() + " begins");
@@ -119,6 +120,9 @@ public class MainController implements Initializable {
         Image chipImg = new Image(chip.getImg());
         ImageView imgView = new ImageView(chipImg);
 
+        chipArray.add(imgView);
+
+
 
         //move chip to clickLocation
         switch (freeSpace[column]) {
@@ -145,7 +149,7 @@ public class MainController implements Initializable {
 
         //drop chip in board array and disable row if full
         try {
-            board.put(column, activeSymbol);
+            board.put(column, activePlayer.getSymbol());
         }
         catch (Exception e) {
             System.out.println("column Full");
@@ -162,6 +166,11 @@ public class MainController implements Initializable {
         root.getChildren().add(imgView);
         imgView.toBack();
 
+        if (board.checkWin(p1.getSymbol()) || board.checkWin(p2.getSymbol())) {
+            System.out.println("Ende");
+            endTurn();
+        }
+
         //end round
         switchPlayer();
     }
@@ -170,12 +179,31 @@ public class MainController implements Initializable {
     private void switchPlayer() {
         if (activePlayer==p1) {
             activePlayer = p2;
-            activeSymbol = 'O';
         }
         else {
             activePlayer = p1;
-            activeSymbol = 'X';
         }
 
     }
+
+
+    private void endTurn() {
+        //root.getChildren().clear();
+        try {
+            //root.getChildren().removeAll();
+            board.reset();
+            for (ImageView chip: chipArray) {
+                root.getChildren().remove(chip);
+            }
+            chipArray = new ArrayList<ImageView>();
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
 }

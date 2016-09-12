@@ -1,16 +1,18 @@
 package com.harambe.gui;
 
 public class Player {
-    private Boolean ki;
+    private Boolean ai;
     private String name;
     private String character;
     private String chip;
     private String imgLocation;
+    private char symbol;
 
-    public Player(Boolean ki, String name, String character) {
-        this.ki = ki;
+    public Player(Boolean ai, String name, String character, char symbol) {
+        this.ai = ai;
         this.name = name;
         this.character = character;
+        this.symbol = symbol;
 
         this.setImg(character);
         this.setChip(character);
@@ -53,7 +55,11 @@ public class Player {
     }
 
     public boolean getKi() {
-        return this.ki;
+        return this.ai;
+    }
+
+    public char getSymbol() {
+        return this.symbol;
     }
 
 }
