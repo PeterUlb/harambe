@@ -21,12 +21,16 @@
     -fx-background-position: center center;
 }
 
-.player {
-    -fx-background-repeat: stretch;
+.player{
+    -fx-font-size: 40px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
 }
 
-.playerName{
-    -fx-font-size: 40px;
+.score{
+    -fx-font-size: 55px;
     -fx-font-family: impact;
     -fx-fill: #fefefe;
     -fx-stroke: black;

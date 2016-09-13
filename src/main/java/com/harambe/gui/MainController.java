@@ -8,6 +8,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 
 import java.net.URL;
@@ -32,6 +34,10 @@ public class MainController implements Initializable {
     private ImageView p1ChipView;
     @FXML
     private ImageView p2ChipView;
+    @FXML
+    private Text player1Score;
+    @FXML
+    private Text player2Score;
 
 
     //other variables
@@ -40,6 +46,7 @@ public class MainController implements Initializable {
     private Player p1;
     private Player p2;
     private Player activePlayer;
+    private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
     private ArrayList<Button> buttonArray;
     private ArrayList<ImageView> winCircleArray;
@@ -65,6 +72,9 @@ public class MainController implements Initializable {
         } else {
             activePlayer = p2;
         }
+
+        winCircleImg = new Image("/img/winCircle.png");
+
 
         System.out.println(activePlayer.getName() + " begins");
 
@@ -110,10 +120,15 @@ public class MainController implements Initializable {
 
     //onClickEvent
     @FXML
-    private void dropChip(ActionEvent event)
-    {
+    private void dropChip(ActionEvent event) {
         Button btn = (Button) event.getSource();
         buttonArray.add(btn);
+
+
+        final URL resource = getClass().getResource(activePlayer.getDropSound());
+        final Media drop = new Media(resource.toString());
+        MediaPlayer player = new MediaPlayer(drop);
+        player.play();
 
         //get column
         int column = Integer.parseInt(btn.getId().substring(1));
@@ -179,18 +194,26 @@ public class MainController implements Initializable {
     }
 
 
-
     private void checkForWin() {
 
         if ((winLocation = board.getWinForUI(activePlayer.getSymbol())) != null) {
             System.out.println(p1.getName() + " wins");
+
+            //increment score and change score
+            activePlayer.incrementScore();
+            if (activePlayer==p1) {
+                player1Score.setText(String.valueOf(activePlayer.getScore()));
+            }
+            else {
+                player2Score.setText(String.valueOf(activePlayer.getScore()));
+            }
+
 
             //setting variables for win position
             int x0 = -450;
             int step = 150;
             int y0 = -340;
 
-            Image winCircleImg = new Image("/img/winCircle.png");
 
             int rowPos = 0;
             int columnPos = 0;
@@ -221,6 +244,7 @@ public class MainController implements Initializable {
 
     }
 
+
     private void switchPlayer() {
         if (activePlayer==p1) {
             activePlayer = p2;
@@ -234,6 +258,7 @@ public class MainController implements Initializable {
     private void endTurn() {
 
         //acknowledge player of his victory
+        //TODO: Change this to something that looks better
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);

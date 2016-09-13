@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,8 +35,9 @@ public class App extends Application {
         // music player
         final URL resource = getClass().getResource("/audio/mainTheme.mp3");
         final Media media = new Media(resource.toString());
-        final MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
+        final MediaPlayer player = new MediaPlayer(media);
+        player.setOnEndOfMedia(() -> player.seek(Duration.ZERO));
+        player.play();
 
 
         root.getChildren();
