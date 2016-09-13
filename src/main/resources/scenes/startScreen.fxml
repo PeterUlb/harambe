@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="182.0" layoutY="38.0" text="Harambes Connect 4" AnchorPane.topAnchor="40.0">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <RadioButton layoutX="136.0" layoutY="101.0" mnemonicParsing="false" text="Lokal" />
+      <RadioButton layoutX="135.0" layoutY="140.0" mnemonicParsing="false" text="Online File Directory" />
+      <RadioButton layoutX="135.0" layoutY="205.0" mnemonicParsing="false" text="Online Websocket" />
+      <TextField layoutX="316.0" layoutY="234.0" />
+      <TextField layoutX="316.0" layoutY="275.0" />
+      <Label layoutX="160.0" layoutY="238.0" text="Adress" />
+      <Label layoutX="160.0" layoutY="279.0" text="Key" />
+      <TextField layoutX="316.0" layoutY="166.0" />
+      <Label layoutX="160.0" layoutY="170.0" text="File Directory" />
+      <Button layoutX="274.0" layoutY="338.0" mnemonicParsing="false" text="Play!" />
+   </children>
+</AnchorPane>
