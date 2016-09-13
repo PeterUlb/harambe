@@ -13,11 +13,7 @@
         <ImageView fx:id="p1ImgView" styleClass="player" translateX="-785.0" translateY="170.0" />
         <ImageView fx:id="p2ImgView" styleClass="player" translateX="785.0" translateY="170.0" />
 
-        <Text fx:id="player1Name" styleClass="playerName" translateX="-790.0" translateY="425.0" />
-        <Text fx:id="player2Name" styleClass="playerName" translateX="790.0" translateY="425.0" />
 
-        <ImageView fx:id="p1ChipView" translateX="-890.0" translateY="425.0" />
-        <ImageView fx:id="p2ChipView" translateX="680.0" translateY="425.0" />
 
 
 
@@ -30,6 +26,15 @@
         <Button fx:id="b4" onAction="#dropChip" styleClass="column" text="Column 5" translateX="150.0" />
         <Button fx:id="b5" onAction="#dropChip" styleClass="column" text="Column 6" translateX="300.0" />
         <Button fx:id="b6" onAction="#dropChip" styleClass="column" text="Column 7" translateX="450.0" />
+
+
+
+
+       <Text fx:id="player1Name" styleClass="playerName" translateX="-790.0" translateY="425.0" />
+       <Text fx:id="player2Name" styleClass="playerName" translateX="790.0" translateY="425.0" />
+
+       <ImageView fx:id="p1ChipView" translateX="-890.0" translateY="425.0" />
+       <ImageView fx:id="p2ChipView" translateX="680.0" translateY="425.0" />
 
 
 

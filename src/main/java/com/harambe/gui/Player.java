@@ -18,6 +18,11 @@ public class Player {
         this.setChip(character);
     }
 
+    //overload constructor to make variable name optional
+    public Player(Boolean ai, String character, char symbol) {
+        this(ai, character, character, symbol);
+    }
+
 
 
     //methods for playerImg

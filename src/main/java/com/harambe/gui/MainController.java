@@ -4,10 +4,10 @@ import com.harambe.game.Board;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.net.URL;
@@ -41,19 +41,25 @@ public class MainController implements Initializable {
     private Player p2;
     private Player activePlayer;
     private ArrayList<ImageView> chipArray;
+    private ArrayList<Button> buttonArray;
+    private ArrayList<ImageView> winCircleArray;
+    private int[][] winLocation;
+
 
 
     @Override // is called when FXMLLoader loads main.fxml
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
         board = new Board();
-        chipArray = new ArrayList<ImageView>();
+        chipArray = new ArrayList<>();
+        buttonArray = new ArrayList<>();
+        winLocation = null;
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
 
 
-        p1 = new Player(false, "Player1", "harambe", 'X');
-        p2 = new Player(false, "Player2", "poacher_2", 'O');
+        p1 = new Player(false, "Player1", "harambe", Board.PLAYER1);
+        p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
         if (Math.round(Math.random())==1) {
             activePlayer = p1;
         } else {
@@ -64,9 +70,8 @@ public class MainController implements Initializable {
 
         initPlayers(p1, p2);
 
-
-
     }
+
 
     private void initPlayers(Player p1, Player p2) {
         //load image in ImageViewContainer for player 1
@@ -97,7 +102,7 @@ public class MainController implements Initializable {
         Chip c2 = new Chip(p2.getChip());
         Image p2Chip = new Image(c2.getImg());
         p2ChipView.setImage(p2Chip);
-        p2ChipView.setFitWidth(58);
+        p2ChipView.setFitWidth(64);
         p2ChipView.setPreserveRatio(true);
         p2ChipView.setSmooth(true);
         p2ChipView.setCache(true);
@@ -108,6 +113,7 @@ public class MainController implements Initializable {
     private void dropChip(ActionEvent event)
     {
         Button btn = (Button) event.getSource();
+        buttonArray.add(btn);
 
         //get column
         int column = Integer.parseInt(btn.getId().substring(1));
@@ -120,8 +126,8 @@ public class MainController implements Initializable {
         Image chipImg = new Image(chip.getImg());
         ImageView imgView = new ImageView(chipImg);
 
+        //store chip img
         chipArray.add(imgView);
-
 
 
         //move chip to clickLocation
@@ -152,7 +158,7 @@ public class MainController implements Initializable {
             board.put(column, activePlayer.getSymbol());
         }
         catch (Exception e) {
-            System.out.println("column Full");
+            System.out.println("column full");
             btn.setVisible(false);
         }
 
@@ -166,15 +172,54 @@ public class MainController implements Initializable {
         root.getChildren().add(imgView);
         imgView.toBack();
 
-        if (board.checkWin(p1.getSymbol()) || board.checkWin(p2.getSymbol())) {
-            System.out.println("Ende");
-            endTurn();
-        }
+        checkForWin();
 
         //end round
         switchPlayer();
     }
 
+
+
+    private void checkForWin() {
+
+        if ((winLocation = board.getWinForUI(activePlayer.getSymbol())) != null) {
+            System.out.println(p1.getName() + " wins");
+
+            //setting variables for win position
+            int x0 = -450;
+            int step = 150;
+            int y0 = -340;
+
+            Image winCircleImg = new Image("/img/winCircle.png");
+
+            int rowPos = 0;
+            int columnPos = 0;
+            winCircleArray = new ArrayList<>();
+
+            for ( int zeile = 0; zeile < winLocation.length; zeile++ )
+            {
+
+                for ( int spalte=0, i=0; spalte < winLocation[zeile].length; i=-i+1, spalte++ ) {
+                    if (i==0) {
+                        rowPos = (y0+(winLocation[zeile][spalte]*step));
+                    }
+                    else {
+                        columnPos = (x0+(winLocation[zeile][spalte]*step));
+                    }
+                }
+                ImageView winCircle = new ImageView(winCircleImg);
+                winCircle.setTranslateY(rowPos);
+                winCircle.setTranslateX(columnPos);
+
+                winCircleArray.add(winCircle);
+                root.getChildren().add(winCircle);
+
+            }
+            endTurn();
+
+        }
+
+    }
 
     private void switchPlayer() {
         if (activePlayer==p1) {
@@ -183,19 +228,36 @@ public class MainController implements Initializable {
         else {
             activePlayer = p1;
         }
-
     }
 
 
     private void endTurn() {
-        //root.getChildren().clear();
+
+        //acknowledge player of his victory
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText("Player " + activePlayer.getName() + " wins the turn");
+
+        alert.showAndWait();
+
         try {
-            //root.getChildren().removeAll();
+            //reinitialize the board
             board.reset();
             for (ImageView chip: chipArray) {
                 root.getChildren().remove(chip);
             }
-            chipArray = new ArrayList<ImageView>();
+            chipArray = new ArrayList<>();
+
+            for (ImageView winCircle: winCircleArray) {
+                root.getChildren().remove(winCircle);
+            }
+
+            for (Button column: buttonArray) {
+                column.setVisible(true);
+            }
+
+
 
         }
         catch (Exception e) {
