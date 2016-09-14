@@ -1,6 +1,8 @@
 package com.harambe.gui;
 
 import com.harambe.game.Board;
+import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -8,9 +10,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,6 +42,11 @@ public class MainController implements Initializable {
     private Text player1Score;
     @FXML
     private Text player2Score;
+    @FXML
+    private StackPane field;
+    @FXML
+    private StackPane bg;
+
 
 
     //other variables
@@ -58,6 +67,9 @@ public class MainController implements Initializable {
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
         board = new Board();
+        Stage stage = new Stage("coast_2");
+        bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
+
         chipArray = new ArrayList<>();
         buttonArray = new ArrayList<>();
         winLocation = null;
@@ -122,8 +134,6 @@ public class MainController implements Initializable {
     @FXML
     private void dropChip(ActionEvent event) {
         Button btn = (Button) event.getSource();
-        buttonArray.add(btn);
-
 
         final URL resource = getClass().getResource(activePlayer.getDropSound());
         final Media drop = new Media(resource.toString());
@@ -144,29 +154,36 @@ public class MainController implements Initializable {
         //store chip img
         chipArray.add(imgView);
 
+        //chip drop transition/ animation
+        TranslateTransition trans = new TranslateTransition();
+        trans.setNode(imgView);
+        trans.setDuration(new Duration(100));
 
         //move chip to clickLocation
+        double startPos = -410f;
+        imgView.setTranslateY(startPos);
         switch (freeSpace[column]) {
             case 5:
-                imgView.setTranslateY(410);
+                trans.setByY(410f-startPos);
                 break;
             case 4:
-                imgView.setTranslateY(260);
+                trans.setByY(260f-startPos);
                 break;
             case 3:
-                imgView.setTranslateY(110);
+                trans.setByY(110f-startPos);
                 break;
             case 2:
-                imgView.setTranslateY(-40);
+                trans.setByY(-40f-startPos);
                 break;
             case 1:
-                imgView.setTranslateY(-190);
+                trans.setByY(-190f-startPos);
                 break;
             case 0:
-                imgView.setTranslateY(-340);
+                trans.setByY(-340f-startPos);
                 break;
             }
         imgView.setTranslateX(x);
+        trans.play();
 
         //drop chip in board array and disable row if full
         try {
@@ -174,18 +191,25 @@ public class MainController implements Initializable {
         }
         catch (Exception e) {
             System.out.println("column full");
+            //add button from full line to buttonarray
+            buttonArray.add(btn);
             btn.setVisible(false);
         }
 
 
         //check for fullBoard
         if (board.isFull(column)) {
+            //add button from full line to buttonarray
+            buttonArray.add(btn);
             btn.setVisible(false);
         }
 
         //paint chip and move the layer to background
-        root.getChildren().add(imgView);
+        field.getChildren().add(imgView);
         imgView.toBack();
+
+
+
 
         checkForWin();
 
@@ -270,7 +294,7 @@ public class MainController implements Initializable {
             //reinitialize the board
             board.reset();
             for (ImageView chip: chipArray) {
-                root.getChildren().remove(chip);
+                field.getChildren().remove(chip);
             }
             chipArray = new ArrayList<>();
 

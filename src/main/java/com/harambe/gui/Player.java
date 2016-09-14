@@ -3,7 +3,7 @@ package com.harambe.gui;
 import javafx.scene.text.Text;
 
 public class Player {
-    private Boolean ai;
+    private boolean ai;
     private String name;
     private String character;
     private String chip;
@@ -18,7 +18,7 @@ public class Player {
     private char symbol;
 
 
-    public Player(Boolean ai, String name, String character, char symbol) {
+    public Player(boolean ai, String name, String character, char symbol) {
         this.ai = ai;
         this.name = name;
         this.character = character;
@@ -31,7 +31,7 @@ public class Player {
     }
 
     //overload constructor to make variable name optional
-    public Player(Boolean ai, String character, char symbol) {
+    public Player(boolean ai, String character, char symbol) {
         this(ai, character, character, symbol);
     }
 
@@ -53,7 +53,7 @@ public class Player {
         switch(character) {
             case "harambe":     this.chip = "banana";break;
             case "poacher_1":   this.chip = "mango";break;
-            case "poacher_2":   this.chip = "hitmarker";break;
+            case "poacher_2":   this.chip = "bullet_hole";break;
         }
     }
 

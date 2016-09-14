@@ -5,13 +5,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class App extends Application {
 
@@ -30,14 +25,6 @@ public class App extends Application {
         //Load FXML & set name
         root = FXMLLoader.load(getClass().getClassLoader().getResource("scenes/main.fxml"));
         stage.setTitle("Harambe Wins!");
-
-
-        // music player
-        final URL resource = getClass().getResource("/audio/mainTheme.mp3");
-        final Media media = new Media(resource.toString());
-        final MediaPlayer player = new MediaPlayer(media);
-        player.setOnEndOfMedia(() -> player.seek(Duration.ZERO));
-        player.play();
 
 
         root.getChildren();
