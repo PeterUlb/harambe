@@ -33,7 +33,15 @@
 }
 
 .score{
-    -fx-font-size: 55px;
+    -fx-font-size: 60px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.time{
+    -fx-font-size: 20px;
     -fx-font-family: impact;
     -fx-fill: #fefefe;
     -fx-stroke: black;

@@ -154,6 +154,40 @@ public class MainController implements Initializable {
         //store chip img
         chipArray.add(imgView);
 
+        moveChip(imgView, column, x);
+
+        //drop chip in board array and disable row if full
+        try {
+            board.put(column, activePlayer.getSymbol());
+        }
+        catch (Exception e) {
+            System.out.println("column full");
+            //add button from full line to buttonarray
+            buttonArray.add(btn);
+            btn.setVisible(false);
+        }
+
+
+        //check for fullBoard
+        if (board.isFull(column)) {
+            //add button from full line to buttonarray
+            buttonArray.add(btn);
+            btn.setVisible(false);
+        }
+
+        //paint chip and move the layer to background
+        field.getChildren().add(imgView);
+        imgView.toBack();
+
+
+        checkForWin();
+
+        //end round
+        switchPlayer();
+    }
+
+
+    private void moveChip(ImageView imgView, int column, double columnPos) {
         //chip drop transition/ animation
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(imgView);
@@ -181,40 +215,9 @@ public class MainController implements Initializable {
             case 0:
                 trans.setByY(-340f-startPos);
                 break;
-            }
-        imgView.setTranslateX(x);
+        }
+        imgView.setTranslateX(columnPos);
         trans.play();
-
-        //drop chip in board array and disable row if full
-        try {
-            board.put(column, activePlayer.getSymbol());
-        }
-        catch (Exception e) {
-            System.out.println("column full");
-            //add button from full line to buttonarray
-            buttonArray.add(btn);
-            btn.setVisible(false);
-        }
-
-
-        //check for fullBoard
-        if (board.isFull(column)) {
-            //add button from full line to buttonarray
-            buttonArray.add(btn);
-            btn.setVisible(false);
-        }
-
-        //paint chip and move the layer to background
-        field.getChildren().add(imgView);
-        imgView.toBack();
-
-
-
-
-        checkForWin();
-
-        //end round
-        switchPlayer();
     }
 
 

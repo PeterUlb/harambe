@@ -34,6 +34,8 @@
            <Text fx:id="player1Score" styleClass="score" text="0" translateX="-200.0" translateY="-490.0" />
            <Text fx:id="player2Score" styleClass="score" text="0" translateX="200.0" translateY="-490.0" />
 
+           <Text fx:id="time" styleClass="time" text="00:00" translateY="-517.5" />
+
            <ImageView fx:id="p1ChipView" translateX="-890.0" translateY="425.0" />
            <ImageView fx:id="p2ChipView" translateX="680.0" translateY="425.0" />
        </StackPane>
