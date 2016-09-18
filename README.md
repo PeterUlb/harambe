@@ -11,15 +11,15 @@ All documents regarding documentation are stored in the folder
 
 ### Java Documentation
 
-[Read the JavaDoc here](https://htmlpreview.github.io/?https://github.com/PeterUlb/harambe/tree/feature/documentation/documentation/JavaDoc_v01/index.html).
+[Read the JavaDoc here](https://htmlpreview.github.io/?https://github.com/PeterUlb/harambe/blob/feature/documentation/documentation/JavaDoc_v01/index.html).
 
 ### Gantt-Chart
 
-![GitHub Logo](https://raw.githubusercontent.com/PeterUlb/harambe/develop/documentation/Projektplan-Ganttchart.png)
+![Gantt Chart](https://raw.githubusercontent.com/PeterUlb/harambe/develop/documentation/Projektplan-Ganttchart.png)
 
-### Class Diagramm
+### Class Diagram
 
-![GitHub Logo](https://raw.githubusercontent.com/PeterUlb/harambe/develop/documentation/ClassDiagram.png)
+![Class Diagram](https://raw.githubusercontent.com/PeterUlb/harambe/develop/documentation/ClassDiagram.png)
 
 
 ### Others
