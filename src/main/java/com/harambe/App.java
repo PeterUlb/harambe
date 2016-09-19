@@ -39,6 +39,7 @@ public class App extends Application {
         stage.setScene(new Scene(root, 1920, 1080));
         stage.show();
 
+
         //stage.setFullScreen(true);
     }
 
