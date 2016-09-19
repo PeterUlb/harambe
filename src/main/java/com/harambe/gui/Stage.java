@@ -6,6 +6,9 @@ import javafx.util.Duration;
 
 import java.net.URL;
 
+/**
+ * Stage class of the UI. Features the background image and theme of the stage.
+ */
 public class Stage {
     private String imgLocation;
     private URL themeLocation;
@@ -19,6 +22,10 @@ public class Stage {
         this.imgLocation = "/img/"+stageName+".jpg";
     }
 
+    /**
+     * plays the theme(mp3) of the selected stage
+     * @param stageName
+     */
     private void playTheme(String stageName){
         // music player
         switch (stageName) {

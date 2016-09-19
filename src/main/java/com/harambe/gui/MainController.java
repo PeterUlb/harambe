@@ -1,7 +1,6 @@
 package com.harambe.gui;
 
 import com.harambe.game.Board;
-import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,7 +21,9 @@ import java.util.ResourceBundle;
 
 import static com.harambe.App.root;
 
-
+/**
+ * Controller of the main game. Contains mostly the chip dropping and logic behind the visual representation of the board.
+ */
 public class MainController implements Initializable {
 
     //fxml views
@@ -62,8 +63,11 @@ public class MainController implements Initializable {
     private int[][] winLocation;
 
 
-
-    @Override // is called when FXMLLoader loads main.fxml
+    /**
+     * initialization method. Is being called when FXMLLoader loads main.fxml.
+     * @param fxmlFileLocation location of the fxml file.
+     */
+    @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
         board = new Board();
@@ -130,7 +134,11 @@ public class MainController implements Initializable {
         p2ChipView.setCache(true);
     }
 
-    //onClickEvent
+    /**
+     * onClick event for the buttons laying over the different columns.
+     * contains most of the UI-logic.
+     * @param event onclickEvent of the button to get the different column Positions to drop the chips.
+     */
     @FXML
     private void dropChip(ActionEvent event) {
         Button btn = (Button) event.getSource();
@@ -186,7 +194,12 @@ public class MainController implements Initializable {
         switchPlayer();
     }
 
-
+    /**
+     * moves chip image to the board with an animation/ transition.
+     * @param imgView image of the chip
+     * @param column selected column to drop the chip
+     * @param columnPos x position of the column
+     */
     private void moveChip(ImageView imgView, int column, double columnPos) {
         //chip drop transition/ animation
         TranslateTransition trans = new TranslateTransition();
@@ -220,7 +233,9 @@ public class MainController implements Initializable {
         trans.play();
     }
 
-
+    /**
+     * checks for a potential winner. Ends the game and shows how he/she won.
+     */
     private void checkForWin() {
 
         if ((winLocation = board.getWinForUI(activePlayer.getSymbol())) != null) {
@@ -265,13 +280,15 @@ public class MainController implements Initializable {
                 root.getChildren().add(winCircle);
 
             }
-            endTurn();
+            endSet();
 
         }
 
     }
 
-
+    /**
+     * sets the current player (player 1/ player 2) as active player
+     */
     private void switchPlayer() {
         if (activePlayer==p1) {
             activePlayer = p2;
@@ -281,8 +298,10 @@ public class MainController implements Initializable {
         }
     }
 
-
-    private void endTurn() {
+    /**
+     * is called when a set is over. reinitializes the board and the viusual representation of it.
+     */
+    private void endSet() {
 
         //acknowledge player of his victory
         //TODO: Change this to something that looks better

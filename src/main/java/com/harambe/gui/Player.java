@@ -1,7 +1,9 @@
 package com.harambe.gui;
 
-import javafx.scene.text.Text;
 
+/**
+ * Player class of the UI. Features the name, the character and all the parameters concerning those items.
+ */
 public class Player {
     private boolean ai;
     private String name;
@@ -17,7 +19,13 @@ public class Player {
 
     private char symbol;
 
-
+    /**
+     * constructor for the player
+     * @param ai boolean value for human or artificial intelligence player
+     * @param name player name
+     * @param character character the player chose to play with (e.g. Harambe)
+     * @param symbol internal representation of the player chip
+     */
     public Player(boolean ai, String name, String character, char symbol) {
         this.ai = ai;
         this.name = name;
@@ -30,7 +38,12 @@ public class Player {
         this.setSounds(character);
     }
 
-    //overload constructor to make variable name optional
+    /**
+     * overloads constructor to make variable name optional
+     * @param ai boolean value for human or artificial intelligence player
+     * @param character character the player chose to play with (e.g. Harambe)
+     * @param symbol internal representation of the player chip
+     */
     public Player(boolean ai, String character, char symbol) {
         this(ai, character, character, symbol);
     }
@@ -47,8 +60,10 @@ public class Player {
     }
 
 
-
-    //methods for chipImg
+    /**
+     * sets chip depending on character
+     * @param character character the player chose to play with (e.g. Harambe)
+     */
     private void setChip(String character) {
         switch(character) {
             case "harambe":     this.chip = "banana";break;
@@ -79,8 +94,11 @@ public class Player {
         return this.symbol;
     }
 
-
-    public void setSounds(String character) {
+    /**
+     * sets the 3 sounds for the chosen character
+     * @param character character the player chose to play with (e.g. Harambe)
+     */
+    private void setSounds(String character) {
         this.dropSoundLocation = "/audio/"+character+"_drop.mp3";
         this.winSoundLocation = "/audio/"+character+"_win.mp3";
         this.selectSoundLocation = "/audio/"+character+"_select.mp3";
