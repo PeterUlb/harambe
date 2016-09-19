@@ -2,6 +2,12 @@ package com.harambe.gui;
 
 import com.harambe.game.Board;
 import javafx.animation.TranslateTransition;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,11 +20,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.apache.commons.lang3.time.StopWatch;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import static com.harambe.App.root;
 
@@ -48,6 +54,8 @@ public class MainController implements Initializable {
     private StackPane field;
     @FXML
     private StackPane bg;
+    @FXML
+    private Text time;
 
 
 
@@ -62,7 +70,6 @@ public class MainController implements Initializable {
     private ArrayList<Button> buttonArray;
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
-    private StopWatch stopWatch;
 
 
     /**
@@ -75,6 +82,9 @@ public class MainController implements Initializable {
         board = new Board();
         Stage stage = new Stage("coast_2");
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
+
+
+        timerStart();
 
         chipArray = new ArrayList<>();
         buttonArray = new ArrayList<>();
@@ -98,6 +108,29 @@ public class MainController implements Initializable {
 
         initPlayers(p1, p2);
 
+    }
+
+    /**
+     * starts the timer of the game
+     */
+    private void timerStart() {
+        Thread thread = new Thread(() -> {
+            StringProperty yolo = new SimpleStringProperty();
+            time.textProperty().bind(yolo);
+            try {
+                long start = System.nanoTime();
+                while(true) {
+                    yolo.set(String.format("%02d:%02d",
+                            TimeUnit.NANOSECONDS.toMinutes(System.nanoTime()-start),
+                            TimeUnit.NANOSECONDS.toSeconds(System.nanoTime()-start) - TimeUnit.MINUTES.toSeconds(TimeUnit.NANOSECONDS.toMinutes( System.nanoTime()-start))));
+                    Thread.sleep(1000);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
 
