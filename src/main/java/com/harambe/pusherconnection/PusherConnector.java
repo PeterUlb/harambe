@@ -1,4 +1,4 @@
-package com.harambe.pusherinterface;
+package com.harambe.pusherconnection;
 
 import com.pusher.client.AuthorizationFailureException;
 import com.pusher.client.Authorizer;
@@ -7,19 +7,18 @@ import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.PrivateChannel;
 import com.pusher.client.channel.PrivateChannelEventListener;
-import com.pusher.client.channel.SubscriptionEventListener;
-
-import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Jann on 12.09.2016.
  */
-public class PusherInterface {
+public class PusherConnector {
 
     public static void main(String[] args) {
         PusherOptions options = new PusherOptions();
         options.setAuthorizer(new Authorizer() {
+            /*
+            TODO: Uses only predefined keys at the moment.
+             */
             @Override
             public String authorize(String channel, String socketId) throws AuthorizationFailureException {
                 com.pusher.rest.Pusher pusher = new com.pusher.rest.Pusher("249870", "082f8d2ee2e06acd7c98", "fc29424e4ab1e692a42b");
