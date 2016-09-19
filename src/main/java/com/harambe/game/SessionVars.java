@@ -7,21 +7,21 @@ import java.util.UUID;
  */
 public class SessionVars {
     public static UUID currentGameUUID = null;
+    public static String ourPlayer = null;
     public static String opponentPlayerName = null;
-    public static int setNumber = -1; // set currently #1, #2 or #3?
-    public static Boolean weStartSet = null; // did we start last set
-    public static Boolean weWonSet = null; // player who won the last set
+    public static int setNumber = -1; // current set: #0, #1 or #2?
+    public static Boolean weStartSet = null; // did we start the set
+    public static Boolean weWonSet = null; // player who won the set
     public static int turnNumber = 0;
-    public static int points = 0;
 
-    public static void initializeNewGame(String opponentPlayerName) {
+    public static void initializeNewGame(String ourPlayer, String opponentPlayerName) {
         SessionVars.currentGameUUID = UUID.randomUUID();
+        SessionVars.ourPlayer = ourPlayer;
         SessionVars.opponentPlayerName = opponentPlayerName;
         SessionVars.setNumber = -1;
         SessionVars.turnNumber = 0;
         SessionVars.weStartSet = null;
         SessionVars.weWonSet = null;
-        SessionVars.points = 0;
 
     }
 

@@ -46,4 +46,11 @@ public class App extends Application {
         //stage.setFullScreen(true);
     }
 
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        System.out.println("Application stopped");
+        db.shutdown();
+    }
+
 }

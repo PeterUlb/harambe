@@ -1,6 +1,7 @@
 package com.harambe.gui;
 
 import com.harambe.App;
+import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
+import static com.harambe.App.db;
 import static com.harambe.App.root;
 
 /**
@@ -108,10 +110,10 @@ public class MainController implements Initializable {
         freeSpace = board.getFirstAvailableRow();
 
 
-        p1 = new Player(false, "Player1", "harambe", Board.PLAYER1);
+        p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
         p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
 
-        SessionVars.initializeNewGame(p2.getName());
+        SessionVars.initializeNewGame(p1.getName(), p2.getName());
 
         if (Math.round(Math.random())==1) {
             activePlayer = p1;
@@ -325,7 +327,6 @@ public class MainController implements Initializable {
             SetModel setModel;
             if (activePlayer==p1) {
                 player1Score.setText(String.valueOf(activePlayer.getScore()));
-                SessionVars.points++;
                 setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
             }
             else {
@@ -370,7 +371,7 @@ public class MainController implements Initializable {
 
             }
             //endGame or endSet
-            if (activePlayer.getScore()==3) {
+            if (activePlayer.getScore() >= 2) {
                 endGame();
             } else {
                 endSet();
@@ -437,6 +438,15 @@ public class MainController implements Initializable {
      */
     private void endGame() {
         //acknowledge player of his victory
+        boolean weWon = false;
+        if (activePlayer == p1)
+            weWon = true;
+        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayer, SessionVars.opponentPlayerName, p1.getScore(), p2.getScore(), weWon);
+        try {
+            gameModel.persistInDatabase(db);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         //TODO: Change this to something that looks better
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information Dialog");

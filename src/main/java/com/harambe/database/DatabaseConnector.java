@@ -26,8 +26,11 @@ public class DatabaseConnector {
             update(
                     "CREATE TABLE IF NOT EXISTS " + GAMETABLE + " ( " +
                             "game_uuid VARCHAR(36), " +
+                            "our_player VARCHAR(256)," +
                             "opponent_player VARCHAR(256)," +
-                            "points INTEGER," +
+                            "our_points INTEGER," +
+                            "opponent_points INTEGER," +
+                            "we_won BOOLEAN," +
                             "time TIMESTAMP, " +
                             "PRIMARY KEY (game_uuid)" +
                             ")"
