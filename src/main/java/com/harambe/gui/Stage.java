@@ -43,5 +43,17 @@ public class Stage {
         return this.imgLocation;
     }
 
+    /**
+     * sets randomized asset image
+     */
+    public String getRandomAssetImg() {
+        int rndm = (int) Math.round(Math.random() * 2);
+        switch (rndm) {
+            case 0: return "img/tukan.png";
+            case 1: return "img/monkey.png";
+            case 2: return "img/monkey_2.png";
+        }
+        return "";
+    }
 
 }

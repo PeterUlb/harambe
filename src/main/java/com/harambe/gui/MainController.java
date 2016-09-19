@@ -6,6 +6,7 @@ import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -57,6 +58,10 @@ public class MainController implements Initializable {
     private StackPane bg;
     @FXML
     private Text time;
+    @FXML
+    private ImageView asset1;
+    @FXML
+    private ImageView asset2;
 
 
 
@@ -81,8 +86,17 @@ public class MainController implements Initializable {
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
         board = new Board();
+
         Stage stage = new Stage("coast_2");
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
+
+        //init extra images
+        Image asset1Img = new Image(stage.getRandomAssetImg());
+        asset1.setImage(asset1Img);
+        asset1.setScaleX(-1);
+
+        Image asset2Img = new Image(stage.getRandomAssetImg());
+        asset2.setImage(asset2Img);
 
 
         timerStart();
@@ -141,7 +155,11 @@ public class MainController implements Initializable {
         thread.start();
     }
 
-
+    /**
+     * initializes player information (e.g. names, images, chips, etc)
+     * @param p1
+     * @param p2
+     */
     private void initPlayers(Player p1, Player p2) {
         //load image in ImageViewContainer for player 1
         Image p1Img = new Image(p1.getImgLocation());
@@ -294,7 +312,8 @@ public class MainController implements Initializable {
     }
 
     /**
-     * checks for a potential winner. Ends the game and shows how he/she won.
+     * checks for a potential winner. Ends the set and shows how he/she won.
+     * Decides to end the set or the game.
      */
     private void checkForWin() {
 
@@ -350,7 +369,12 @@ public class MainController implements Initializable {
                 root.getChildren().add(winCircle);
 
             }
-            endSet();
+            //endGame or endSet
+            if (activePlayer.getScore()==3) {
+                endGame();
+            } else {
+                endSet();
+            }
 
         }
 
@@ -369,7 +393,7 @@ public class MainController implements Initializable {
     }
 
     /**
-     * is called when a set is over. reinitializes the board and the viusual representation of it.
+     * is called when a set is over. Reinitializes the board and the visual representation of it.
      */
     private void endSet() {
 
@@ -378,7 +402,7 @@ public class MainController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
-        alert.setContentText("Player " + activePlayer.getName() + " wins the turn");
+        alert.setContentText("Player " + activePlayer.getName() + " wins the set");
 
         alert.showAndWait();
 
@@ -408,5 +432,19 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * is called when a game is over. Closes the scene.
+     */
+    private void endGame() {
+        //acknowledge player of his victory
+        //TODO: Change this to something that looks better
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText("Player " + activePlayer.getName() + " wins the game");
 
+        alert.showAndWait();
+
+        Platform.exit();
+    }
 }

@@ -16,6 +16,8 @@
        <ImageView fx:id="p1ImgView" styleClass="playerImg" translateX="-785.0" translateY="170.0" />
        <ImageView fx:id="p2ImgView" styleClass="playerImg" translateX="785.0" translateY="170.0" />
 
+       <ImageView fx:id="asset1" translateX="-640" translateY="-250" />
+       <ImageView fx:id="asset2" translateX="640" translateY="-250" />
 
        <StackPane fx:id="fg" styleClass="fg" >
 
