@@ -37,8 +37,8 @@ public class PusherInterface {
 
 
         try {
-
-            channel.bind("private-channel", new PrivateChannelEventListener() {
+            //Logic for MoveToAgent Event from Server
+            channel.bind("MoveToAgent", new PrivateChannelEventListener() {
                 @Override
                 public void onSubscriptionSucceeded(String s) {
                     System.out.println(s);
@@ -54,6 +54,8 @@ public class PusherInterface {
                 @Override
                 public void onEvent(String channelName, String eventName, final String data) {
                     System.out.println(data);
+                    //insert move logic here
+                    channel.trigger("client-event", "{\"move\": \"" + "1" + "\"}");
                 }
             });
         }catch (Exception e){
@@ -64,13 +66,13 @@ public class PusherInterface {
 
         System.out.println("Test");
 
-        //wait for finished subscription
-        while(!channel.isSubscribed()){}
+        while(!channel.isSubscribed()){
+            //wait for finished subscription
+        }
 
-        int i = 0;
-        while(i < 4){
-            channel.trigger("client-event", "{\"move\": \"" + "move" + "\"}");
-            i++;
+
+        while(channel.isSubscribed()){
+            //busy waiting for channel events
         };
 
 
