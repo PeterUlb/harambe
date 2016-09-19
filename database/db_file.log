@@ -1,0 +1,6 @@
+/*C3*/SET SCHEMA PUBLIC
+CREATE TABLE IF NOT EXISTS game ( game_uuid VARCHAR(36), opponent_player VARCHAR(256),points INTEGER,time TIMESTAMP, PRIMARY KEY (game_uuid))
+CREATE TABLE IF NOT EXISTS game_set ( game_uuid VARCHAR(36), set_number INTEGER,we_started BOOLEAN,we_won BOOLEAN,PRIMARY KEY (game_uuid, set_number))
+CREATE TABLE IF NOT EXISTS turn ( game_uuid VARCHAR(36), set_number INTEGER,turn_number INTEGER,is_opponent BOOLEAN,column INTEGER,PRIMARY KEY (game_uuid, set_number, turn_number))
+INSERT INTO GAME VALUES('fe71bc92-b1cc-4fbd-8c0a-0d19884af78b','B',7,'2016-09-19 15:21:52.799000')
+COMMIT

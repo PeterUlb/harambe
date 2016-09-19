@@ -6,14 +6,58 @@ import java.sql.*;
  * Created by Peter on 16.09.2016.
  */
 public class DatabaseConnector {
+    public static final String GAMETABLE = "game";
+    public static final String SETTABLE = "game_set";
+    public static final String TURNTABLE = "turn";
+
     Connection conn;
 
-    public DatabaseConnector() throws Exception {
+    public DatabaseConnector() throws SQLException, ClassNotFoundException {
         Class.forName("org.hsqldb.jdbcDriver");
         conn = DriverManager.getConnection("jdbc:hsqldb:"
                         + "database/db_file",    // filenames and folder location
                 "root",                     // username
                 "");                      // password
+        initialize();
+    }
+
+    private void initialize() {
+        try {
+            update(
+                    "CREATE TABLE IF NOT EXISTS " + GAMETABLE + " ( " +
+                            "game_uuid VARCHAR(36), " +
+                            "opponent_player VARCHAR(256)," +
+                            "points INTEGER," +
+                            "time TIMESTAMP, " +
+                            "PRIMARY KEY (game_uuid)" +
+                            ")"
+            );
+
+            update(
+                    "CREATE TABLE IF NOT EXISTS " + SETTABLE + " ( " +
+                            "game_uuid VARCHAR(36), " +
+                            "set_number INTEGER," +
+                            "we_started BOOLEAN," +
+                            "we_won BOOLEAN," +
+                            "PRIMARY KEY (game_uuid, set_number)" +
+                            ")"
+            );
+
+            update(
+                    "CREATE TABLE IF NOT EXISTS " + TURNTABLE + " ( " +
+                            "game_uuid VARCHAR(36), " +
+                            "set_number INTEGER," +
+                            "turn_number INTEGER," +
+                            "is_opponent BOOLEAN," +
+                            "column INTEGER," +
+                            "PRIMARY KEY (game_uuid, set_number, turn_number)" +
+                            ")"
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
     }
 
     /**
