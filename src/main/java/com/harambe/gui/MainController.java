@@ -14,6 +14,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class MainController implements Initializable {
     private ArrayList<Button> buttonArray;
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
+    private StopWatch stopWatch;
 
 
     /**
