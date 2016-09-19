@@ -1,6 +1,10 @@
 package com.harambe.gui;
 
+import com.harambe.App;
+import com.harambe.database.model.SetModel;
+import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
+import com.harambe.game.SessionVars;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -18,6 +22,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -91,11 +96,18 @@ public class MainController implements Initializable {
 
         p1 = new Player(false, "Player1", "harambe", Board.PLAYER1);
         p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+
+        SessionVars.initializeNewGame(p2.getName());
+
         if (Math.round(Math.random())==1) {
             activePlayer = p1;
+            SessionVars.initializeNewSet(true);
+
         } else {
             activePlayer = p2;
+            SessionVars.initializeNewSet(false);
         }
+
 
         winCircleImg = new Image("/img/winCircle.png");
 
@@ -218,11 +230,28 @@ public class MainController implements Initializable {
         field.getChildren().add(imgView);
         imgView.toBack();
 
+        persistDrop(column);
 
         checkForWin();
 
         //end round
         switchPlayer();
+    }
+
+    private void persistDrop(int column) {
+        TurnModel turnModel = null;
+        if (activePlayer== p1) {
+            turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, false, column);
+        } else {
+            turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, true, column);
+        }
+
+        try {
+            turnModel.persistInDatabase(App.db);
+            SessionVars.turnNumber++;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -274,11 +303,21 @@ public class MainController implements Initializable {
 
             //increment score and change score
             activePlayer.incrementScore();
+            SetModel setModel;
             if (activePlayer==p1) {
                 player1Score.setText(String.valueOf(activePlayer.getScore()));
+                SessionVars.points++;
+                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
             }
             else {
                 player2Score.setText(String.valueOf(activePlayer.getScore()));
+                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+            }
+
+            try {
+                setModel.persistInDatabase(App.db);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
 
 
@@ -359,7 +398,7 @@ public class MainController implements Initializable {
                 column.setVisible(true);
             }
 
-
+            SessionVars.initializeNewSet(!SessionVars.weStartSet);
 
         }
         catch (Exception e) {
