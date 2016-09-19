@@ -92,6 +92,18 @@ public class GameModel implements Persistable {
         return ourPoints;
     }
 
+    public String getOurPlayer() {
+        return ourPlayer;
+    }
+
+    public int getOpponentPoints() {
+        return opponentPoints;
+    }
+
+    public boolean isWeWon() {
+        return weWon;
+    }
+
     public Timestamp getTimestamp() {
         return timestamp;
     }
