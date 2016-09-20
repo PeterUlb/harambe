@@ -12,9 +12,25 @@ import java.util.ArrayList;
 public class MiniMax {
     private int savedMove = -1;
     private int globalDepth = 7;
+    private char optimizingPlayer = Board.UNMARKED;
+    private char opponentPlayer = Board.UNMARKED;
 
-    MiniMax(int depth) {
+    /**
+     *
+     * @param depth how many iterations of the minimax algorithm will be performed
+     * @param optimizingPlayer the symbol of the player (usually the AI), defined in Board class
+     */
+    MiniMax(int depth, char optimizingPlayer) {
         this.setGlobalDepth(depth);
+        this.optimizingPlayer = optimizingPlayer;
+
+        if(optimizingPlayer == Board.PLAYER1) {
+            opponentPlayer = Board.PLAYER2;
+        } else if (optimizingPlayer == Board.PLAYER2) {
+            opponentPlayer = Board.PLAYER1;
+        } else {
+            throw new IllegalArgumentException("Invalid Player");
+        }
     }
 
     public int getGlobalDepth() {
@@ -72,7 +88,7 @@ public class MiniMax {
             int bestValue = Integer.MIN_VALUE;
             ArrayList<Integer> moves = board.getPossibleMoves();
             for (int move : moves) {
-                board.put(move, Board.PLAYER1);
+                board.put(move, optimizingPlayer);
                 int val = alphabeta(board, depth - 1, alpha, beta, false);
 //                if(depth == globalDepth) {
 //                    System.out.println("Max: " + val);
@@ -98,7 +114,7 @@ public class MiniMax {
             int bestValue = Integer.MAX_VALUE;
             ArrayList<Integer> moves = board.getPossibleMoves();
             for (int move : moves) {
-                board.put(move, Board.PLAYER2);
+                board.put(move, opponentPlayer);
                 int val = alphabeta(board, depth - 1, alpha, beta, true);
 //                if(depth == (globalDepth - 1)) {
 //                    System.out.println("Min: " + val);
@@ -123,11 +139,11 @@ public class MiniMax {
      * @return value of the checked board for max player (higher = better)
      */
     private int evalValue(Board board, int depth) {
-        if (board.checkWin(Board.PLAYER1)) {
+        if (board.checkWin(optimizingPlayer)) {
             // again hours of debugging... an early win is preferable over late wins
-            return 10000 * depth;
-        } else if (board.checkWin(Board.PLAYER2)) {
-            return -10000 * depth;
+            return 10000 + (depth * 100);
+        } else if (board.checkWin(opponentPlayer)) {
+            return -10000 + (depth * -100);
         } else {
             char[][] grid = board.getGrid();
 
@@ -135,10 +151,10 @@ public class MiniMax {
             // evaluate the board row for row
             for (int row = 0; row < Board.ROWS; row++)
                 for (int col = 0; col < Board.COLUMNS; col++)
-                    if (grid[row][col] == Board.PLAYER1) {
+                    if (grid[row][col] == optimizingPlayer) {
                         // win possibilities if field set for us
                         rating += winPossibilities[row][col];
-                    } else if (grid[row][col] == Board.PLAYER2) {
+                    } else if (grid[row][col] == opponentPlayer) {
                         // win possibilities if field set for enemy
                         rating -= winPossibilities[row][col];
                     }
