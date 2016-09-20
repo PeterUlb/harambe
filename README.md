@@ -4,26 +4,8 @@ AI for the game 'Connect 4'
 
 ## Documentation
 
-All documents regarding documentation are stored in the folder
-```sh
-/documents
-```
+Please visit our [**Wiki**](https://github.com/PeterUlb/harambe/wiki/1-High-Level-Overview) for important documents.
 
-### Java Documentation
-
-[Read the JavaDoc here](https://htmlpreview.github.io/?https://github.com/PeterUlb/harambe/blob/feature/documentation/documentation/JavaDoc_v01/index.html).
-
-### Gantt-Chart
-
-![Gantt Chart](https://raw.githubusercontent.com/PeterUlb/harambe/develop/documentation/Projektplan-Ganttchart.png)
-
-### Class Diagram
-
-![Class Diagram](https://raw.githubusercontent.com/PeterUlb/harambe/develop/documentation/ClassDiagram.png)
-
-
-### Others
-Other documentation documents are currently located in the documentation folder.
 
 ## General Information
 
