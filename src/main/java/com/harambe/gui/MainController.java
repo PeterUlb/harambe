@@ -1,6 +1,9 @@
 package com.harambe.gui;
 
 import com.harambe.App;
+import com.harambe.algorithm.MiniMax;
+import com.harambe.communication.ServerCommunication;
+import com.harambe.communication.file.FileCommunicator;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
@@ -23,6 +26,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import javax.swing.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -65,7 +69,20 @@ public class MainController implements Initializable {
     @FXML
     private ImageView asset2;
 
-
+    @FXML
+    private Button b0;
+    @FXML
+    private Button b1;
+    @FXML
+    private Button b2;
+    @FXML
+    private Button b3;
+    @FXML
+    private Button b4;
+    @FXML
+    private Button b5;
+    @FXML
+    private Button b6;
 
     //other variables
     private Board board;
@@ -73,11 +90,15 @@ public class MainController implements Initializable {
     private Player p1;
     private Player p2;
     private Player activePlayer;
+    private Player ourPlayer; // reference whether we are p1 or p2
     private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
     private ArrayList<Button> buttonArray;
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
+
+    private boolean setDone = false; // marks a set as done for the server-comm thread
+    private boolean gameDone = false; // marks a game as done for the server-comm thread
 
 
     /**
@@ -110,28 +131,169 @@ public class MainController implements Initializable {
         freeSpace = board.getFirstAvailableRow();
 
 
-        p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
-        p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
-
-        SessionVars.initializeNewGame(p1.getName(), p2.getName());
-
-        if (Math.round(Math.random())==1) {
-            activePlayer = p1;
-            SessionVars.initializeNewSet(true);
-
+        if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
+            // we play "online"
+            if (SessionVars.ourSymbol == 'X') {
+                // we are 'X', so right side on the UI
+                p2 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
+                p1 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+                ourPlayer = p2; // keep track who we are :)
+                if (SessionVars.useFileInterface) {
+                    App.sC = new FileCommunicator("C:\\Users\\Peter\\Desktop\\server", false);
+                } else if (SessionVars.usePusherInterface) {
+                    // TODO when done instanciate here
+//                App.sC = new PusherCommunicator();
+                }
+                SessionVars.initializeNewGame(p2.getName(), p1.getName());
+                activePlayer = p1; // here we have no clue who starts the game, later we only know if we start, so set it to the opponent as default
+            } else {
+                // we are 'O', so left side on the UI
+                p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
+                p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+                ourPlayer = p1; // keep track who we are :)
+                if (SessionVars.useFileInterface) {
+                    App.sC = new FileCommunicator("C:\\Users\\Peter\\Desktop\\server", true);
+                } else if (SessionVars.usePusherInterface) {
+                    // TODO when done instanciate here
+//                App.sC = new PusherCommunicator();
+                }
+                SessionVars.initializeNewGame(p1.getName(), p2.getName());
+                activePlayer = p2; // here we have no clue who starts the game, later we only know if we start, so set it to the opponent as default
+            }
         } else {
-            activePlayer = p2;
-            SessionVars.initializeNewSet(false);
+            // we play offline
+            p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
+            p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+            SessionVars.initializeNewGame(p1.getName(), p2.getName());
+            if (Math.round(Math.random())==1) {
+                activePlayer = p1;
+                SessionVars.initializeNewSet(true);
+
+            } else {
+                activePlayer = p2;
+                SessionVars.initializeNewSet(false);
+            }
+            ourPlayer = p1;
         }
 
 
         winCircleImg = new Image("/img/winCircle.png");
 
 
-        System.out.println(activePlayer.getName() + " begins");
-
         initPlayers(p1, p2);
 
+        if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
+            // disable user input
+            b0.setDisable(true);b1.setDisable(true);b2.setDisable(true);b3.setDisable(true);b4.setDisable(true);b5.setDisable(true);b6.setDisable(true);
+            // we do not play offline, so run the server communication thread
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!gameDone) {
+                        try {
+                            playSet(App.sC);
+                            setDone = false;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+
+    }
+
+    /**
+     * Plays the set AI driven
+     * @param sC a way to reach the server
+     * @throws Exception
+     */
+    private void playSet(ServerCommunication sC) throws Exception {
+        boolean flag = false; // marks the first run of the while loop (for setting start player)
+            while(!setDone) {
+                int col = sC.getTurnFromServer();
+                if(col == -1) {
+                    // we start
+                    flag = true;
+                    activePlayer = ourPlayer;
+                    SessionVars.initializeNewSet(true);
+                    Platform.runLater(() -> {
+                        dropForUs(sC);
+                    });
+                    continue;
+                }
+                if(!flag) {
+                    // first while run and we do not start, so the enemy does
+                    SessionVars.initializeNewSet(false);
+                    flag = true;
+                }
+                Platform.runLater(() -> {
+                    dropForEnemy(col);
+                    dropForUs(App.sC);
+                });
+
+        }
+    }
+
+    private void dropForEnemy(int column) {
+        Platform.runLater(() -> {
+            fireButton(column);
+        });
+    }
+
+    private void dropForUs(ServerCommunication sC) {
+        int column = new MiniMax(10, ourPlayer.getSymbol()).getBestMove(board);
+        Platform.runLater(() -> {
+            try {
+                sC.passTurnToServer(column);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            fireButton(column);
+        });
+    }
+
+    private void fireButton(int column) {
+        switch (column) {
+            case 0:
+                b0.setDisable(false);
+                b0.fire();
+                b0.setDisable(true);
+                break;
+            case 1:
+                b1.setDisable(false);
+                b1.fire();
+                b1.setDisable(true);
+                break;
+            case 2:
+                b2.setDisable(false);
+                b2.fire();
+                b2.setDisable(true);
+                break;
+            case 3:
+                b3.setDisable(false);
+                b3.fire();
+                b3.setDisable(true);
+                break;
+            case 4:
+                b4.setDisable(false);
+                b4.fire();
+                b4.setDisable(true);
+                break;
+            case 5:
+                b5.setDisable(false);
+                b5.fire();
+                b5.setDisable(true);
+                break;
+            case 6:
+                b6.setDisable(false);
+                b6.fire();
+                b6.setDisable(true);
+                break;
+        }
     }
 
     /**
@@ -260,7 +422,7 @@ public class MainController implements Initializable {
 
     private void persistDrop(int column) {
         TurnModel turnModel = null;
-        if (activePlayer== p1) {
+        if (activePlayer == ourPlayer) {
             turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, false, column);
         } else {
             turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, true, column);
@@ -320,17 +482,21 @@ public class MainController implements Initializable {
     private void checkForWin() {
 
         if ((winLocation = board.getWinForUI(activePlayer.getSymbol())) != null) {
-            System.out.println(p1.getName() + " wins");
+            System.out.println(activePlayer.getName() + " wins");
 
             //increment score and change score
             activePlayer.incrementScore();
             SetModel setModel;
-            if (activePlayer==p1) {
+            if (activePlayer == p1) {
                 player1Score.setText(String.valueOf(activePlayer.getScore()));
-                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
             }
             else {
                 player2Score.setText(String.valueOf(activePlayer.getScore()));
+            }
+
+            if (activePlayer == ourPlayer) {
+                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
+            } else {
                 setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
             }
 
@@ -397,6 +563,7 @@ public class MainController implements Initializable {
      * is called when a set is over. Reinitializes the board and the visual representation of it.
      */
     private void endSet() {
+        setDone = true;
 
         //acknowledge player of his victory
         //TODO: Change this to something that looks better
@@ -437,11 +604,12 @@ public class MainController implements Initializable {
      * is called when a game is over. Closes the scene.
      */
     private void endGame() {
+        gameDone = true;
         //acknowledge player of his victory
         boolean weWon = false;
-        if (activePlayer == p1)
+        if (activePlayer == ourPlayer)
             weWon = true;
-        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayer, SessionVars.opponentPlayerName, p1.getScore(), p2.getScore(), weWon);
+        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, p1.getScore(), p2.getScore(), weWon);
         try {
             gameModel.persistInDatabase(db);
         } catch (SQLException e) {

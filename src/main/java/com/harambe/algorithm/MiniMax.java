@@ -20,7 +20,7 @@ public class MiniMax {
      * @param depth how many iterations of the minimax algorithm will be performed
      * @param optimizingPlayer the symbol of the player (usually the AI), defined in Board class
      */
-    MiniMax(int depth, char optimizingPlayer) {
+    public MiniMax(int depth, char optimizingPlayer) {
         this.setGlobalDepth(depth);
         this.optimizingPlayer = optimizingPlayer;
 

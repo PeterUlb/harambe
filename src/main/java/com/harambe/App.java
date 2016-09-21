@@ -1,13 +1,17 @@
 package com.harambe;
 
 
+import com.harambe.communication.ServerCommunication;
 import com.harambe.database.DatabaseConnector;
+import com.harambe.game.SessionVars;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.sql.SQLException;
 
 
@@ -16,17 +20,33 @@ public class App extends Application {
     //public static Stage stage;
     public static Pane root;
     public static DatabaseConnector db;
+    public static ServerCommunication sC;
 
     public static void main(String[] args) {
+        // TODO replace this with proper user interface (radio buttons etc)
+        String input = JOptionPane.showInputDialog("[F]ile, [P]usher or [O]ffline?");
+        if(input.equalsIgnoreCase("F")) {
+            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").toUpperCase().charAt(0);
+            SessionVars.useFileInterface = true;
+        } else if (input.equalsIgnoreCase("P")) {
+            JOptionPane.showMessageDialog(null, "Not implemented!", "ERROR", 1);
+//            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").charAt(0);
+            SessionVars.usePusherInterface = true;
+            System.exit(-1);
+        } else if (input.equalsIgnoreCase("O")) {
+            // do not set any flag
+        } else {
+            JOptionPane.showMessageDialog(null, "F P or O only.....", "ERROR", 1);
+            System.exit(-1);
+        }
+
         try {
             db = new DatabaseConnector();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             System.exit(-1);
         }
+
         launch(args);
     }
 

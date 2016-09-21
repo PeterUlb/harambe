@@ -12,6 +12,7 @@ import java.net.URL;
 public class Stage {
     private String imgLocation;
     private URL themeLocation;
+    static MediaPlayer player; // prevent evil GC
 
     public Stage(String stageName) {
         setImg(stageName);
@@ -34,7 +35,7 @@ public class Stage {
         }
 
         final Media media = new Media(themeLocation.toString());
-        final MediaPlayer player = new MediaPlayer(media);
+        player = new MediaPlayer(media);
         player.setOnEndOfMedia(() -> player.seek(Duration.ZERO));
         player.play();
     }

@@ -118,7 +118,7 @@ public class Player {
 
     public void incrementScore() {
         this.score++;
-        System.out.println(String.valueOf(this.score));
+//        System.out.println(String.valueOf(this.score));
     }
 
     public int getScore() {
