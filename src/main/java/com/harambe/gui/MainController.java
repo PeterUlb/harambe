@@ -148,8 +148,8 @@ public class MainController implements Initializable {
                 activePlayer = p1; // here we have no clue who starts the game, later we only know if we start, so set it to the opponent as default
             } else {
                 // we are 'O', so left side on the UI
-                p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
-                p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+                p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER2);
+                p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER1);
                 ourPlayer = p1; // keep track who we are :)
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator("C:\\Users\\Peter\\Desktop\\server", true);
@@ -245,7 +245,7 @@ public class MainController implements Initializable {
     }
 
     private void dropForUs(ServerCommunication sC) {
-        int column = new MiniMax(10, ourPlayer.getSymbol()).getBestMove(board);
+        int column = new MiniMax(10, SessionVars.ourSymbol).getBestMove(board);
         Platform.runLater(() -> {
             try {
                 sC.passTurnToServer(column);
