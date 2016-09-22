@@ -180,7 +180,7 @@ public class MainController implements Initializable {
         }
 
 
-        winCircleImg = new Image("/img/winCircle.png");
+        winCircleImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/wincircle.png")));
 
 
         initPlayers(p1, p2);
@@ -344,11 +344,11 @@ public class MainController implements Initializable {
      */
     private void initPlayers(Player p1, Player p2) {
         //load image in ImageViewContainer for player 1
-        Image p1Img = new Image(p1.getImgLocation());
+        Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
         p1ImgView.setImage(p1Img);
 
         //load image in ImageViewContainer for player 2
-        Image p2Img = new Image(p2.getImgLocation());
+        Image p2Img = new Image(getClass().getClassLoader().getResourceAsStream((p2.getImgLocation())));
         p2ImgView.setImage(p2Img);
         //mirror Image for player 2
         p2ImgView.setScaleX(-1);
@@ -360,7 +360,7 @@ public class MainController implements Initializable {
 
         //init Player1 Chips
         Chip c1 = new Chip(p1.getChip());
-        Image p1Chip = new Image(c1.getImg());
+        Image p1Chip = new Image(getClass().getClassLoader().getResourceAsStream((c1.getImg())));
         p1ChipView.setImage(p1Chip);
         p1ChipView.setFitWidth(64);
         p1ChipView.setPreserveRatio(true);
@@ -369,7 +369,7 @@ public class MainController implements Initializable {
 
         //init Player2 Chips
         Chip c2 = new Chip(p2.getChip());
-        Image p2Chip = new Image(c2.getImg());
+        Image p2Chip = new Image(getClass().getClassLoader().getResourceAsStream((c2.getImg())));
         p2ChipView.setImage(p2Chip);
         p2ChipView.setFitWidth(64);
         p2ChipView.setPreserveRatio(true);
@@ -399,7 +399,7 @@ public class MainController implements Initializable {
 
         //spawn chip
         Chip chip = new Chip(activePlayer.getChip());
-        Image chipImg = new Image(chip.getImg());
+        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream((chip.getImg())));
         ImageView imgView = new ImageView(chipImg);
 
         //store chip img

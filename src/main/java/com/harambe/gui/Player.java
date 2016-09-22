@@ -52,7 +52,7 @@ public class Player {
 
     //methods for playerImg
     private void setImg(String character) {
-        this.imgLocation = "/img/"+character+".png";
+        this.imgLocation = "img/"+character+".png";
     }
 
     public String  getImgLocation() {
