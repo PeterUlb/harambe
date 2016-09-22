@@ -28,6 +28,11 @@ public class App extends Application {
         if(input.equalsIgnoreCase("F")) {
             SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").toUpperCase().charAt(0);
             SessionVars.useFileInterface = true;
+//            SessionVars.fileInterfacePath = "C:\\Users\\USERNAME\\Desktop\\server";
+            if(SessionVars.fileInterfacePath == null) {
+                JOptionPane.showMessageDialog(null, "Set SessionVars.fileInterfaccePath!!", "ERROR", 1);
+                System.exit(-1);
+            }
         } else if (input.equalsIgnoreCase("P")) {
             JOptionPane.showMessageDialog(null, "Not implemented!", "ERROR", 1);
 //            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").charAt(0);

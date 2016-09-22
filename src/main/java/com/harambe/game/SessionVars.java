@@ -9,6 +9,7 @@ public class SessionVars {
     public static boolean useFileInterface = false;
     public static boolean usePusherInterface = false;
     public static char ourSymbol = '?';  // can be 'X' or 'O', non-offline games only
+    public static String fileInterfacePath = null;
     // -------------------
     public static UUID currentGameUUID = null;
     public static String ourPlayerName = null;

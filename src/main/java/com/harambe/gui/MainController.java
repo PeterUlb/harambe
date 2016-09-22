@@ -139,7 +139,7 @@ public class MainController implements Initializable {
                 p1 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
                 ourPlayer = p2; // keep track who we are :)
                 if (SessionVars.useFileInterface) {
-                    App.sC = new FileCommunicator("C:\\Users\\Peter\\Desktop\\server", false);
+                    App.sC = new FileCommunicator(SessionVars.fileInterfacePath, false);
                 } else if (SessionVars.usePusherInterface) {
                     // TODO when done instanciate here
 //                App.sC = new PusherCommunicator();
@@ -152,7 +152,7 @@ public class MainController implements Initializable {
                 p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER1);
                 ourPlayer = p1; // keep track who we are :)
                 if (SessionVars.useFileInterface) {
-                    App.sC = new FileCommunicator("C:\\Users\\Peter\\Desktop\\server", true);
+                    App.sC = new FileCommunicator(SessionVars.fileInterfacePath, true);
                 } else if (SessionVars.usePusherInterface) {
                     // TODO when done instanciate here
 //                App.sC = new PusherCommunicator();
@@ -239,21 +239,21 @@ public class MainController implements Initializable {
     }
 
     private void dropForEnemy(int column) {
-        Platform.runLater(() -> {
+        if(!setDone) {
             fireButton(column);
-        });
+        }
     }
 
     private void dropForUs(ServerCommunication sC) {
-        int column = new MiniMax(10, SessionVars.ourSymbol).getBestMove(board);
-        Platform.runLater(() -> {
+        if(!setDone) {
+            int column = new MiniMax(10, SessionVars.ourSymbol).getBestMove(board);
             try {
                 sC.passTurnToServer(column);
             } catch (Exception e) {
-                e.printStackTrace();
+               e.printStackTrace();
             }
             fireButton(column);
-        });
+        }
     }
 
     private void fireButton(int column) {
@@ -487,7 +487,7 @@ public class MainController implements Initializable {
             //increment score and change score
             activePlayer.incrementScore();
             SetModel setModel;
-            if (activePlayer == p1) {
+            if (activePlayer == ourPlayer) {
                 player1Score.setText(String.valueOf(activePlayer.getScore()));
             }
             else {
