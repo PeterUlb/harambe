@@ -30,6 +30,8 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import static com.harambe.App.db;
@@ -136,28 +138,30 @@ public class MainController implements Initializable {
                 // we are 'X', so right side on the UI
                 p2 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
                 p1 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+                player2Name.setStyle("-fx-fill: green");
+                player1Name.setStyle("-fx-fill: red");
                 ourPlayer = p2; // keep track who we are :)
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, false);
                 } else if (SessionVars.usePusherInterface) {
-                    // TODO when done instanciate here
+                    // TODO when done instantiate here
 //                App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p2.getName(), p1.getName());
-                activePlayer = p1; // here we have no clue who starts the game, later we only know if we start, so set it to the opponent as default
             } else {
                 // we are 'O', so left side on the UI
                 p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER2);
                 p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER1);
+                player1Name.setStyle("-fx-fill: green");
+                player2Name.setStyle("-fx-fill: red");
                 ourPlayer = p1; // keep track who we are :)
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, true);
                 } else if (SessionVars.usePusherInterface) {
-                    // TODO when done instanciate here
+                    // TODO when done instantiate here
 //                App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p1.getName(), p2.getName());
-                activePlayer = p2; // here we have no clue who starts the game, later we only know if we start, so set it to the opponent as default
             }
         } else {
             // we play offline
@@ -212,6 +216,11 @@ public class MainController implements Initializable {
      */
     private void playSet(ServerCommunication sC) throws Exception {
         boolean flag = false; // marks the first run of the while loop (for setting start player)
+        if (ourPlayer == p1) { // assume that the enemy starts as default, until proven otherwise below
+            activePlayer = p2;
+        } else {
+            activePlayer = p1;
+        }
             while(!setDone) {
                 int col = sC.getTurnFromServer();
                 if(col == -2) {
@@ -224,9 +233,12 @@ public class MainController implements Initializable {
                     flag = true;
                     activePlayer = ourPlayer;
                     SessionVars.initializeNewSet(true);
-                    Platform.runLater(() -> {
+                    final FutureTask<Boolean> query = new FutureTask<>(() -> {
                         dropForUs(sC);
+                        return true;
                     });
+                    Platform.runLater(query); // drop logic can only be done in the UI Thread
+                    query.get(); // wait for the logic top happen to avoid random magic
                     continue;
                 }
                 if(!flag) {
@@ -234,11 +246,13 @@ public class MainController implements Initializable {
                     SessionVars.initializeNewSet(false);
                     flag = true;
                 }
-                Platform.runLater(() -> {
+                final FutureTask<Boolean> query = new FutureTask<>(() -> {
                     dropForEnemy(col);
                     dropForUs(App.sC);
+                    return true;
                 });
-
+                Platform.runLater(query); // drop logic can only be done in the UI Thread
+                query.get(); // wait for the logic top happen to avoid random magic
         }
     }
 
@@ -341,8 +355,8 @@ public class MainController implements Initializable {
 
 
         //init Names
-        player1Name.setText(p1.getName());
-        player2Name.setText(p2.getName());
+        player1Name.setText(p1.getName() + " (" + p1.getSymbol() + ")");
+        player2Name.setText(p2.getName() + " (" + p2.getSymbol() + ")");
 
         //init Player1 Chips
         Chip c1 = new Chip(p1.getChip());
@@ -594,7 +608,10 @@ public class MainController implements Initializable {
                 column.setVisible(true);
             }
 
-            SessionVars.initializeNewSet(!SessionVars.weStartSet);
+            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
+                SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
+                // online games do it in the playSet method, since there is decided who starts
+            }
 
         }
         catch (Exception e) {
