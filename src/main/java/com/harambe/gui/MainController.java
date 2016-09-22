@@ -3,7 +3,7 @@ package com.harambe.gui;
 import com.harambe.App;
 import com.harambe.algorithm.MiniMax;
 import com.harambe.communication.ServerCommunication;
-import com.harambe.communication.file.FileCommunicator;
+import com.harambe.communication.communicator.FileCommunicator;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
@@ -26,7 +26,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import javax.swing.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -215,6 +214,11 @@ public class MainController implements Initializable {
         boolean flag = false; // marks the first run of the while loop (for setting start player)
             while(!setDone) {
                 int col = sC.getTurnFromServer();
+                if(col == -2) {
+                    // indicates that set has ended, and not that we have to start (server sends -1 in both cases :/
+                    // so just get the next turn
+                    continue;
+                }
                 if(col == -1) {
                     // we start
                     flag = true;

@@ -1,4 +1,4 @@
-package com.harambe.communication.file;
+package com.harambe.communication.communicator;
 
 import com.harambe.communication.ServerCommunication;
 import org.w3c.dom.Document;
@@ -24,7 +24,7 @@ public class FileCommunicator implements ServerCommunication {
     private long repeatTime = 100; // interval in ms to check for new files
 
     /**
-     *  Class for server communication via file interface
+     *  Class for server communication via communicator interface
      * @param filePath e.g. C:\Users\Username\Desktop\server\
      * @param weArePlayerO determines the filename
      */
@@ -40,7 +40,7 @@ public class FileCommunicator implements ServerCommunication {
     }
 
     /**
-     * Writes the column number to the file
+     * Writes the column number to the communicator
      * @param column [0-6]
      * @throws IOException
      */
@@ -52,8 +52,8 @@ public class FileCommunicator implements ServerCommunication {
     }
 
     /**
-     * Reads the enemy turn from the server file
-     * @return enemy turn or -1 if we start
+     * Reads the enemy turn from the server communicator
+     * @return enemy turn, -2 if set ended or -1 if we start
      * @throws IOException
      * @throws ParserConfigurationException
      * @throws SAXException
@@ -77,8 +77,10 @@ public class FileCommunicator implements ServerCommunication {
         NodeList nL = content.getChildNodes();
 
         inputFile.delete(); // delete so we can check for new files
-
-//        System.out.println("got from server " + nL.item(5).getTextContent());
+        if(nL.item(1).getTextContent().equalsIgnoreCase("false") && Integer.valueOf(nL.item(5).getTextContent()) == -1 ) {
+            return -2; //indicate that set has ended, and not that we have to start (server sends -1 in both cases :/
+        }
+        //        System.out.println("got from server " + nL.item(5).getTextContent());
         return Integer.parseInt(nL.item(5).getTextContent()); // = xml gegnerzug tag
     }
 

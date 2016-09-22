@@ -16,7 +16,7 @@ public interface ServerCommunication {
 
     /**
      * Gets the opponent's turn from the server
-     * @return column [0-6] or -1 if we start!!!
+     * @return column [0-6], -2 if set ended or -1 if we start!!!
      * @throws Exception
      */
     public int getTurnFromServer() throws Exception;

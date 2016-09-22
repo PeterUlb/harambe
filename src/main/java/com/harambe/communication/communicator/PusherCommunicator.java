@@ -1,4 +1,4 @@
-package com.harambe.communication.file;
+package com.harambe.communication.communicator;
 
 import com.harambe.communication.ServerCommunication;
 
