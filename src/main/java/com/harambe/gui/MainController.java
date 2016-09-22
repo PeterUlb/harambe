@@ -487,7 +487,7 @@ public class MainController implements Initializable {
             //increment score and change score
             activePlayer.incrementScore();
             SetModel setModel;
-            if (activePlayer == ourPlayer) {
+            if (activePlayer == p1) {
                 player1Score.setText(String.valueOf(activePlayer.getScore()));
             }
             else {

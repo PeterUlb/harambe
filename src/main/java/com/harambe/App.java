@@ -30,7 +30,7 @@ public class App extends Application {
             SessionVars.useFileInterface = true;
 //            SessionVars.fileInterfacePath = "C:\\Users\\USERNAME\\Desktop\\server";
             if(SessionVars.fileInterfacePath == null) {
-                JOptionPane.showMessageDialog(null, "Set SessionVars.fileInterfaccePath!!", "ERROR", 1);
+                JOptionPane.showMessageDialog(null, "Set SessionVars.fileInterfacePath!!", "ERROR", 1);
                 System.exit(-1);
             }
         } else if (input.equalsIgnoreCase("P")) {
