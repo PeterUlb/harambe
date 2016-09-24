@@ -16,6 +16,7 @@ public interface ServerCommunication {
 
     /**
      * Gets the opponent's turn from the server
+     * This method is also required to increment the player score!!!!!!!!!...
      * @return column [0-6], -2 if set ended or -1 if we start!!!
      * @throws Exception
      */

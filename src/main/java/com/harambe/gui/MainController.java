@@ -16,6 +16,7 @@ import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.CacheHint;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -30,7 +31,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
@@ -88,10 +88,10 @@ public class MainController implements Initializable {
     //other variables
     private Board board;
     private int[] freeSpace;
-    private Player p1;
-    private Player p2;
+    public static Player p1;
+    public static Player p2;
     private Player activePlayer;
-    private Player ourPlayer; // reference whether we are p1 or p2
+    public static Player ourPlayer; // reference whether we are p1 or p2
     private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
     private ArrayList<Button> buttonArray;
@@ -204,7 +204,16 @@ public class MainController implements Initializable {
             });
             thread.setDaemon(true);
             thread.start();
+        } else if (SessionVars.soloVsAI) {
+            if(activePlayer != ourPlayer) {
+                // AI starts, so first turn is AI
+                // TODO maybe use one global minimax object
+                long start = System.nanoTime();
+                fireButton(new MiniMax(10, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
+                System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+            }
         }
+
 
 
     }
@@ -256,25 +265,40 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * used for "Online games"
+     * @param column column where the enemy drops his chip (gotten from server)
+     */
     private void dropForEnemy(int column) {
         if(!setDone) {
-            fireButton(column);
+            fireDisabledButton(column);
         }
     }
 
+    /**
+     * used for "Online games"
+     * @param sC a way to communicate with the server
+     */
     private void dropForUs(ServerCommunication sC) {
         if(!setDone) {
-            int column = new MiniMax(10, SessionVars.ourSymbol).getBestMove(board);
+            // TODO maybe just instantiate once
+            long start = System.nanoTime();
+            int column = new MiniMax(10, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
             try {
                 sC.passTurnToServer(column);
             } catch (Exception e) {
                e.printStackTrace();
             }
-            fireButton(column);
+            System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+            fireDisabledButton(column);
         }
     }
 
-    private void fireButton(int column) {
+    /**
+     * If no input from the user is required (online games ai vs ai), we can 'push' button that way (since we disabled them)
+     * @param column where we want to drop a chip
+     */
+    private void fireDisabledButton(int column) {
         switch (column) {
             case 0:
                 b0.setDisable(false);
@@ -310,6 +334,36 @@ public class MainController implements Initializable {
                 b6.setDisable(false);
                 b6.fire();
                 b6.setDisable(true);
+                break;
+        }
+    }
+
+    /**
+     * For offline AI vs Human or Human vs Human games, we have no disabled buttons, so use this
+     * @param column where we want to drop a chip
+     */
+    private void fireButton(int column) {
+        switch (column) {
+            case 0:
+                b0.fire();
+                break;
+            case 1:
+                b1.fire();
+                break;
+            case 2:
+                b2.fire();
+                break;
+            case 3:
+                b3.fire();
+                break;
+            case 4:
+                b4.fire();
+                break;
+            case 5:
+                b5.fire();
+                break;
+            case 6:
+                b6.fire();
                 break;
         }
     }
@@ -436,6 +490,13 @@ public class MainController implements Initializable {
 
         //end round
         switchPlayer();
+
+        if(SessionVars.soloVsAI && activePlayer != ourPlayer) {
+            // user is playing against AI, so his turn is followed by an AI turn
+            long start = System.nanoTime();
+            fireButton(new MiniMax(10, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
+            System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+        }
     }
 
     private void persistDrop(int column) {
@@ -503,14 +564,13 @@ public class MainController implements Initializable {
             System.out.println(activePlayer.getName() + " wins");
 
             //increment score and change score
-            activePlayer.incrementScore();
+            if(!SessionVars.useFileInterface || !SessionVars.usePusherInterface) {
+                // for online games the server decides who wins (e.g. on draws)
+                activePlayer.incrementScore();
+            }
             SetModel setModel;
-            if (activePlayer == p1) {
-                player1Score.setText(String.valueOf(activePlayer.getScore()));
-            }
-            else {
-                player2Score.setText(String.valueOf(activePlayer.getScore()));
-            }
+            player1Score.setText(String.valueOf(p1.getScore()));
+            player2Score.setText(String.valueOf(p2.getScore()));
 
             if (activePlayer == ourPlayer) {
                 setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
@@ -555,12 +615,39 @@ public class MainController implements Initializable {
 
             }
             //endGame or endSet
-            if (activePlayer.getScore() >= 2) {
+            if (p1.getScore() >= 2 || p2.getScore() >= 2) {
                 endGame();
             } else {
-                endSet();
+                endSet(false);
             }
 
+        } else if (board.isTerminalState()) {
+            //should be a draw
+            SetModel setModel;
+            player1Score.setText(String.valueOf(p1.getScore()));
+            player2Score.setText(String.valueOf(p2.getScore()));
+
+            if (SessionVars.weWonSet != null) {
+                // server decided who won
+                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, SessionVars.weWonSet);
+            } else {
+                // a draw isnt a win
+                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+            }
+
+            try {
+                setModel.persistInDatabase(App.db);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            SessionVars.weWonSet = null;
+
+            //endGame or endSet
+            if (p1.getScore() >= 2 || p2.getScore() >= 2) {
+                endGame();
+            } else {
+                endSet(true);
+            }
         }
 
     }
@@ -580,7 +667,7 @@ public class MainController implements Initializable {
     /**
      * is called when a set is over. Reinitializes the board and the visual representation of it.
      */
-    private void endSet() {
+    private void endSet(boolean draw) {
         setDone = true;
 
         //acknowledge player of his victory
@@ -588,7 +675,11 @@ public class MainController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
-        alert.setContentText("Player " + activePlayer.getName() + " wins the set");
+        if(!draw) {
+            alert.setContentText("Player " + activePlayer.getName() + " wins the set");
+        } else {
+            alert.setContentText("A draw");
+        }
 
         alert.showAndWait();
 
@@ -600,8 +691,10 @@ public class MainController implements Initializable {
             }
             chipArray = new ArrayList<>();
 
-            for (ImageView winCircle: winCircleArray) {
-                root.getChildren().remove(winCircle);
+            if(!draw) {
+                for (ImageView winCircle : winCircleArray) {
+                    root.getChildren().remove(winCircle);
+                }
             }
 
             for (Button column: buttonArray) {

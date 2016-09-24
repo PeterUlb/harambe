@@ -6,10 +6,14 @@ import java.util.UUID;
  * Created by Peter on 16.09.2016.
  */
 public class SessionVars {
+    //TODO ALL of them must be UI configurable
     public static boolean useFileInterface = false;
     public static boolean usePusherInterface = false;
+    public static boolean soloVsAI = false;
     public static char ourSymbol = '?';  // can be 'X' or 'O', non-offline games only
     public static String fileInterfacePath = null;
+    public static long timeoutThresholdInMillis = 900; // after this time, a new search with outOfTimeDepth is started
+    public static int outOfTimeDepth = 4; // depth of alternative alphabeta on timeout
     // -------------------
     public static UUID currentGameUUID = null;
     public static String ourPlayerName = null;

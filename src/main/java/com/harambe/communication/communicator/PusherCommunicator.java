@@ -10,7 +10,14 @@ public class PusherCommunicator implements ServerCommunication {
 
     @Override
     public int getTurnFromServer() throws Exception {
-        // TODO
+        /*
+        TODO:
+            - normally: return enemy column number
+            - return '-1' if it is up to us to start the game
+            - return '-2' when the set has ended, in this case:
+                * Find out who won from the server
+                * Call MainController.p?.incrementScore(); ON THE RIGHT PLAYER
+         */
         return 0;
     }
 }

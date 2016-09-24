@@ -1,6 +1,8 @@
 package com.harambe.communication.communicator;
 
 import com.harambe.communication.ServerCommunication;
+import com.harambe.game.SessionVars;
+import com.harambe.gui.MainController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -78,7 +80,24 @@ public class FileCommunicator implements ServerCommunication {
 
         inputFile.delete(); // delete so we can check for new files
         if(nL.item(1).getTextContent().equalsIgnoreCase("false") && Integer.valueOf(nL.item(5).getTextContent()) == -1 ) {
-            return -2; //indicate that set has ended, and not that we have to start (server sends -1 in both cases :/
+            //indicate that set has ended, and not that we have to start (server sends -1 in both cases :/
+            if (nL.item(7).getTextContent().equals("Spieler O")) {
+                // Player O wins
+                if (MainController.p1.getSymbol() == 'O') {
+                    MainController.p1.incrementScore();
+                } else if (MainController.p2.getSymbol() == 'O') {
+                    MainController.p2.incrementScore();
+                }
+                SessionVars.weWonSet = MainController.ourPlayer.getSymbol() == 'O';
+            } else if (nL.item(7).getTextContent().equals("Spieler X")) {
+                if (MainController.p1.getSymbol() == 'X') {
+                    MainController.p1.incrementScore();
+                } else if (MainController.p2.getSymbol() == 'X') {
+                    MainController.p2.incrementScore();
+                }
+                SessionVars.weWonSet = MainController.ourPlayer.getSymbol() == 'X';
+            }
+            return -2;
         }
         //        System.out.println("got from server " + nL.item(5).getTextContent());
         return Integer.parseInt(nL.item(5).getTextContent()); // = xml gegnerzug tag
