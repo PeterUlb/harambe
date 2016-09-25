@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.CacheHint;
@@ -31,7 +32,9 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static com.harambe.App.db;
@@ -73,6 +76,8 @@ public class MainController implements Initializable {
     private ImageView asset1;
     @FXML
     private ImageView asset2;
+    @FXML
+    private ImageView swsd;
 
     @FXML
     private Button b0;
@@ -125,6 +130,27 @@ public class MainController implements Initializable {
 
         Image asset2Img = new Image(stage.getRandomAssetImg());
         asset2.setImage(asset2Img);
+
+        Image swsdImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/swsd.png")));
+
+        swsd.setImage(swsdImg);
+        swsd.setCache(true);
+        swsd.setCacheHint(CacheHint.QUALITY);
+        swsd.setPreserveRatio(true);
+        TranslateTransition trans = new TranslateTransition();
+        trans.setNode(swsd);
+        trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(60)));
+        trans.setByX(4000);
+        trans.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                swsd.setScaleX(swsd.getScaleX() * -1);
+                swsd.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
+                trans.setByX(trans.getByX() * -1);
+                trans.play();
+            }
+        });
+        trans.play();
 
 
         timerStart();
@@ -216,7 +242,7 @@ public class MainController implements Initializable {
                 // AI starts, so first turn is AI
                 // TODO maybe use one global minimax object
                 long start = System.nanoTime();
-                fireButton(new MiniMax(10, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
+                fireButton(new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
                 System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
             }
         }
@@ -249,8 +275,11 @@ public class MainController implements Initializable {
                     flag = true;
                     activePlayer = ourPlayer;
                     SessionVars.initializeNewSet(true);
+                    long start = System.nanoTime();
+                    int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
                     final FutureTask<Boolean> query = new FutureTask<>(() -> {
-                        dropForUs(sC);
+                        dropForUs(sC, column);
+                        System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                         return true;
                     });
                     Platform.runLater(query); // drop logic can only be done in the UI Thread
@@ -264,11 +293,20 @@ public class MainController implements Initializable {
                 }
                 final FutureTask<Boolean> query = new FutureTask<>(() -> {
                     dropForEnemy(col);
-                    dropForUs(App.sC);
                     return true;
                 });
                 Platform.runLater(query); // drop logic can only be done in the UI Thread
                 query.get(); // wait for the logic top happen to avoid random magic
+
+                long start = System.nanoTime();
+                int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                final FutureTask<Boolean> query2 = new FutureTask<>(() -> {
+                    dropForUs(App.sC, column);
+                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                    return true;
+                });
+                Platform.runLater(query2); // drop logic can only be done in the UI Thread
+                query2.get(); // wait for the logic top happen to avoid random magic
         }
     }
 
@@ -286,17 +324,13 @@ public class MainController implements Initializable {
      * used for "Online games"
      * @param sC a way to communicate with the server
      */
-    private void dropForUs(ServerCommunication sC) {
+    private void dropForUs(ServerCommunication sC, int column) {
         if(!setDone) {
-            // TODO maybe just instantiate once
-            long start = System.nanoTime();
-            int column = new MiniMax(10, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
             try {
                 sC.passTurnToServer(column);
             } catch (Exception e) {
                e.printStackTrace();
             }
-            System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
             fireDisabledButton(column);
         }
     }
@@ -500,9 +534,17 @@ public class MainController implements Initializable {
 
         if(SessionVars.soloVsAI && activePlayer != ourPlayer) {
             // user is playing against AI, so his turn is followed by an AI turn
+            b0.setDisable(true);b1.setDisable(true);b2.setDisable(true);b3.setDisable(true);b4.setDisable(true);b5.setDisable(true);b6.setDisable(true);
             long start = System.nanoTime();
-            fireButton(new MiniMax(10, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
-            System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+            Thread thread = new Thread(() -> {
+                int column1 = new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                Platform.runLater(() -> {
+                    fireDisabledButton(column1);
+                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                    b0.setDisable(false);b1.setDisable(false);b2.setDisable(false);b3.setDisable(false);b4.setDisable(false);b5.setDisable(false);b6.setDisable(false);
+                });
+            });
+            thread.start();
         }
     }
 
@@ -732,9 +774,18 @@ public class MainController implements Initializable {
         gameDone = true;
         //acknowledge player of his victory
         boolean weWon = false;
-        if (ourPlayer.getScore() >= 2)
+        if (ourPlayer.getScore() >= 2) {
             weWon = true;
-        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, p1.getScore(), p2.getScore(), weWon);
+        }
+
+        //Todo, might be wise to have a global opponent reference like ourplayer
+        Player opponent;
+        if (ourPlayer == p1) {
+            opponent = p2;
+        } else {
+            opponent = p1;
+        }
+        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponent.getScore(), weWon);
         try {
             gameModel.persistInDatabase(db);
         } catch (SQLException e) {
