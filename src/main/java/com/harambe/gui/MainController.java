@@ -414,12 +414,12 @@ public class MainController implements Initializable {
      */
     private void timerStart() {
         Thread thread = new Thread(() -> {
-            StringProperty yolo = new SimpleStringProperty();
-            time.textProperty().bind(yolo);
+            StringProperty timerString = new SimpleStringProperty();
+            time.textProperty().bind(timerString);
             try {
                 long start = System.nanoTime();
                 while(true) {
-                    yolo.set(String.format("%02d:%02d",
+                    timerString.set(String.format("%02d:%02d",
                             TimeUnit.NANOSECONDS.toMinutes(System.nanoTime()-start),
                             TimeUnit.NANOSECONDS.toSeconds(System.nanoTime()-start) - TimeUnit.MINUTES.toSeconds(TimeUnit.NANOSECONDS.toMinutes( System.nanoTime()-start))));
                     Thread.sleep(1000);
