@@ -12,7 +12,7 @@ public class SessionVars {
     public static boolean soloVsAI = false;
     public static char ourSymbol = '?';  // can be 'X' or 'O', non-offline games only
     public static String fileInterfacePath = null;
-    public static long timeoutThresholdInMillis = 900; // after this time, a new search with outOfTimeDepth is started
+    public static long timeoutThresholdInMillis = 1800; // after this time, a new search with outOfTimeDepth is started
     public static int outOfTimeDepth = 4; // depth of alternative alphabeta on timeout
     // -------------------
     public static UUID currentGameUUID = null;

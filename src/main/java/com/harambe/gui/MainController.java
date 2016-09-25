@@ -60,6 +60,10 @@ public class MainController implements Initializable {
     @FXML
     private Text player2Score;
     @FXML
+    private static Text _player1Score;
+    @FXML
+    private static Text _player2Score;
+    @FXML
     private StackPane field;
     @FXML
     private StackPane bg;
@@ -90,7 +94,7 @@ public class MainController implements Initializable {
     private int[] freeSpace;
     public static Player p1;
     public static Player p2;
-    private Player activePlayer;
+    private static Player activePlayer;
     public static Player ourPlayer; // reference whether we are p1 or p2
     private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
@@ -98,8 +102,8 @@ public class MainController implements Initializable {
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
 
-    private boolean setDone = false; // marks a set as done for the server-comm thread
-    private boolean gameDone = false; // marks a game as done for the server-comm thread
+    public static boolean setDone = false; // marks a set as done for the server-comm thread
+    private static boolean gameDone = false; // marks a game as done for the server-comm thread
 
 
     /**
@@ -130,6 +134,9 @@ public class MainController implements Initializable {
         winLocation = null;
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
+
+        _player1Score = player1Score;
+        _player2Score = player2Score;
 
 
         if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
@@ -564,25 +571,28 @@ public class MainController implements Initializable {
             System.out.println(activePlayer.getName() + " wins");
 
             //increment score and change score
-            if(!SessionVars.useFileInterface || !SessionVars.usePusherInterface) {
+            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
                 // for online games the server decides who wins (e.g. on draws)
+                // for online games the score redraw is handled in the Communicator
                 activePlayer.incrementScore();
-            }
-            SetModel setModel;
-            player1Score.setText(String.valueOf(p1.getScore()));
-            player2Score.setText(String.valueOf(p2.getScore()));
+                player1Score.setText(String.valueOf(p1.getScore()));
+                player2Score.setText(String.valueOf(p2.getScore()));
 
-            if (activePlayer == ourPlayer) {
-                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
-            } else {
-                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                SetModel setModel;
+
+                if (activePlayer == ourPlayer) {
+                    setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
+                } else {
+                    setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                }
+
+                try {
+                    setModel.persistInDatabase(App.db);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
-            try {
-                setModel.persistInDatabase(App.db);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
 
             //setting variables for win position
@@ -614,8 +624,8 @@ public class MainController implements Initializable {
                 root.getChildren().add(winCircle);
 
             }
-            //endGame or endSet
-            if (p1.getScore() >= 2 || p2.getScore() >= 2) {
+            //endGame or endSet for offline games
+            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
                 endGame();
             } else {
                 endSet(false);
@@ -623,31 +633,32 @@ public class MainController implements Initializable {
 
         } else if (board.isTerminalState()) {
             //should be a draw
-            SetModel setModel;
-            player1Score.setText(String.valueOf(p1.getScore()));
-            player2Score.setText(String.valueOf(p2.getScore()));
 
-            if (SessionVars.weWonSet != null) {
-                // server decided who won
-                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, SessionVars.weWonSet);
-            } else {
+            //increment score and change score
+            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
+                // for online games the score redraw is handled in the Communicator
+                activePlayer.incrementScore();
+                player1Score.setText(String.valueOf(p1.getScore()));
+                player2Score.setText(String.valueOf(p2.getScore()));
+
+                SetModel setModel;
                 // a draw isnt a win
                 setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                try {
+                    setModel.persistInDatabase(App.db);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                //endGame or endSet for offline game, else in the Communicator
+                if (p1.getScore() >= 2 || p2.getScore() >= 2) {
+                    endGame();
+                } else {
+                    endSet(true);
+                }
+
             }
 
-            try {
-                setModel.persistInDatabase(App.db);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            SessionVars.weWonSet = null;
-
-            //endGame or endSet
-            if (p1.getScore() >= 2 || p2.getScore() >= 2) {
-                endGame();
-            } else {
-                endSet(true);
-            }
         }
 
     }
@@ -717,11 +728,11 @@ public class MainController implements Initializable {
     /**
      * is called when a game is over. Closes the scene.
      */
-    private void endGame() {
+    public static void endGame() {
         gameDone = true;
         //acknowledge player of his victory
         boolean weWon = false;
-        if (activePlayer == ourPlayer)
+        if (ourPlayer.getScore() >= 2)
             weWon = true;
         GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, p1.getScore(), p2.getScore(), weWon);
         try {
@@ -738,5 +749,10 @@ public class MainController implements Initializable {
         alert.showAndWait();
 
         Platform.exit();
+    }
+
+    public static void redrawScore() {
+        _player1Score.setText(String.valueOf(p1.getScore()));
+        _player2Score.setText(String.valueOf(p2.getScore()));
     }
 }
