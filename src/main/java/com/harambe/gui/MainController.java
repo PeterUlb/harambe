@@ -14,7 +14,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.CacheHint;
@@ -32,7 +31,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -77,7 +75,7 @@ public class MainController implements Initializable {
     @FXML
     private ImageView asset2;
     @FXML
-    private ImageView swsd;
+    private ImageView bgAnim;
 
     @FXML
     private Button b0;
@@ -131,28 +129,9 @@ public class MainController implements Initializable {
         Image asset2Img = new Image(stage.getRandomAssetImg());
         asset2.setImage(asset2Img);
 
-        Image swsdImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/swsd.png")));
-
-        swsd.setImage(swsdImg);
-        swsd.setCache(true);
-        swsd.setCacheHint(CacheHint.QUALITY);
-        swsd.setPreserveRatio(true);
-        TranslateTransition trans = new TranslateTransition();
-        trans.setNode(swsd);
-        trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(60)));
-        trans.setByX(4000);
-        trans.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                swsd.setScaleX(swsd.getScaleX() * -1);
-                swsd.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
-                trans.setByX(trans.getByX() * -1);
-                trans.play();
-            }
-        });
-        trans.play();
 
 
+        playBgAnimation(stage);
         timerStart();
 
         chipArray = new ArrayList<>();
@@ -247,9 +226,34 @@ public class MainController implements Initializable {
             }
         }
 
-
-
     }
+
+    /**
+     * plays bg animation
+     * @param stage
+     */
+    private void playBgAnimation(Stage stage) {
+        Image bgAnimImg = new Image(getClass().getClassLoader().getResourceAsStream((stage.getBgImg())));
+
+        bgAnim.setImage(bgAnimImg);
+        bgAnim.setCache(true);
+        bgAnim.setCacheHint(CacheHint.QUALITY);
+        bgAnim.setPreserveRatio(true);
+        bgAnim.setFitHeight(100);
+        TranslateTransition trans = new TranslateTransition();
+        trans.setNode(bgAnim);
+        trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(60)));
+        trans.setByX(4000);
+        trans.setByY(-500);
+        trans.setOnFinished(event -> {
+            bgAnim.setScaleX(bgAnim.getScaleX() * -1);
+            bgAnim.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
+            trans.setByX(trans.getByX() * -1);
+            trans.play();
+        });
+        trans.play();
+    }
+
 
     /**
      * Plays the set AI driven
@@ -548,6 +552,10 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * persists drop in database
+     * @param column
+     */
     private void persistDrop(int column) {
         TurnModel turnModel = null;
         if (activePlayer == ourPlayer) {
@@ -785,6 +793,7 @@ public class MainController implements Initializable {
         } else {
             opponent = p1;
         }
+
         GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponent.getScore(), weWon);
         try {
             gameModel.persistInDatabase(db);

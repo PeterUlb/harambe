@@ -9,7 +9,7 @@
 
 <StackPane fx:id="bg" styleClass="bg" stylesheets="/styles/main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.MainController">
 
-    <ImageView fx:id="swsd" translateX="-2000" translateY="0" />
+   <ImageView fx:id="bgAnim" translateX="-1000" translateY="100" />
 
    <StackPane fx:id="field" styleClass="field" stylesheets="/styles/main.css" xmlns="http://javafx.com/javafx/8">
 
