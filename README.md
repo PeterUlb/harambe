@@ -4,7 +4,7 @@ AI for the game 'Connect 4'
 
 ## Documentation
 
-Please visit our [**Wiki**](https://github.com/PeterUlb/harambe/wiki/1-High-Level-Overview) for important documents.
+Please visit our [**Wiki**](https://github.com/PeterUlb/harambe/wiki) for important documents.
 
 
 ## General Information
