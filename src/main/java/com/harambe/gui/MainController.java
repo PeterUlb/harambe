@@ -9,7 +9,6 @@ import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
-import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,11 +22,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -507,14 +503,13 @@ public class MainController implements Initializable {
     @FXML
     private void dropChip(ActionEvent event) {
         //delete previewImg
-        root.getChildren().remove(previewImg);
+        if(previewImg != null) {
+            root.getChildren().remove(previewImg);
+        }
 
         Button btn = (Button) event.getSource();
 
-        final URL resource = getClass().getResource(activePlayer.getDropSound());
-        final Media drop = new Media(resource.toString());
-        MediaPlayer player = new MediaPlayer(drop);
-        player.play();
+        activePlayer.playDropSound();
 
         //get column
         int column = Integer.parseInt(btn.getId().substring(1));
@@ -567,7 +562,7 @@ public class MainController implements Initializable {
                 Platform.runLater(() -> {
                     fireDisabledButton(column1);
                     System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
-                    disableAllButtons(true);
+                    disableAllButtons(false);
                 });
             });
             thread.start();
@@ -664,10 +659,10 @@ public class MainController implements Initializable {
 
                 if (activePlayer == ourPlayer) {
                     setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
-                    imgJump(p1ImgView);
+                    winAnim(p1ImgView);
                 } else {
                     setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
-                    imgJump(p2ImgView);
+                    winAnim(p2ImgView);
                 }
 
                 try {
@@ -761,7 +756,9 @@ public class MainController implements Initializable {
      * transition to let the playerImage jump up and down
      * @param imgView
      */
-    private void imgJump(ImageView imgView) {
+    private void winAnim(ImageView imgView) {
+        activePlayer.playWinSound();
+
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(imgView);
         trans.setDuration(new Duration(100));
@@ -788,7 +785,6 @@ public class MainController implements Initializable {
      */
     private void endSet(boolean draw) {
         setDone = true;
-
 
         try {
             //reinitialize the board
