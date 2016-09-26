@@ -31,7 +31,6 @@ public class PusherConnector {
 
         pusher.connect();
 
-        Channel nchannel = pusher.subscribe("test_channel");
         PrivateChannel channel = pusher.subscribePrivate("private-channel");
 
 

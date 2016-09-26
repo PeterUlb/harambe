@@ -1,6 +1,7 @@
 package com.harambe.algorithm;
 
 import com.harambe.game.Board;
+import com.harambe.game.SessionVars;
 import junit.framework.TestCase;
 
 /**
@@ -9,7 +10,8 @@ import junit.framework.TestCase;
 public class MiniMaxTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
-
+        SessionVars.timeoutThresholdInMillis = 2000;
+        SessionVars.outOfTimeDepth = 4;
     }
 
 
@@ -19,7 +21,7 @@ public class MiniMaxTest extends TestCase {
         board.put(Board.COLUMNS - 2, Board.PLAYER2);
         board.put(Board.COLUMNS - 3, Board.PLAYER2);
 
-        assertEquals(Board.COLUMNS - 4, new MiniMax(4).getBestMove(board));
+        assertEquals(Board.COLUMNS - 4, new MiniMax(4, Board.PLAYER1, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
     }
 
 
@@ -29,7 +31,7 @@ public class MiniMaxTest extends TestCase {
         board.put(Board.COLUMNS - 1, Board.PLAYER1);
         board.put(Board.COLUMNS - 1, Board.PLAYER1);
 
-        assertEquals(Board.COLUMNS - 1, new MiniMax(4).getBestMove(board));
+        assertEquals(Board.COLUMNS - 1, new MiniMax(4, Board.PLAYER1, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
     }
 
     public void testWinDiagonally() throws Exception {
@@ -47,14 +49,14 @@ public class MiniMaxTest extends TestCase {
 
 
 
-        assertEquals(3, new MiniMax(4).getBestMove(board));
+        assertEquals(3, new MiniMax(4, Board.PLAYER1, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
     }
 
     public void testMiddleFirst() throws Exception {
         // first turn middle is the best turn to make in 6x7
         Board board = new Board();
 
-        assertEquals(3, new MiniMax(4).getBestMove(board));
+        assertEquals(3, new MiniMax(4, Board.PLAYER1, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
     }
 
 
