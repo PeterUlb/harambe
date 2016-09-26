@@ -9,6 +9,7 @@ import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
+import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -233,16 +234,15 @@ public class MainController implements Initializable {
      * @param stage
      */
     private void playBgAnimation(Stage stage) {
-        Image bgAnimImg = new Image(getClass().getClassLoader().getResourceAsStream((stage.getBgImg())));
+        Image bgAnimImg = new Image(getClass().getClassLoader().getResourceAsStream((stage.getBgAnimImg())));
 
         bgAnim.setImage(bgAnimImg);
         bgAnim.setCache(true);
         bgAnim.setCacheHint(CacheHint.QUALITY);
         bgAnim.setPreserveRatio(true);
-        bgAnim.setFitHeight(100);
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(bgAnim);
-        trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(60)));
+        trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(20)));
         trans.setByX(4000);
         trans.setByY(-500);
         trans.setOnFinished(event -> {
@@ -628,12 +628,15 @@ public class MainController implements Initializable {
                 player1Score.setText(String.valueOf(p1.getScore()));
                 player2Score.setText(String.valueOf(p2.getScore()));
 
+
                 SetModel setModel;
 
                 if (activePlayer == ourPlayer) {
                     setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
+                    imgJunp(p1ImgView);
                 } else {
                     setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                    imgJunp(p2ImgView);
                 }
 
                 try {
@@ -713,6 +716,21 @@ public class MainController implements Initializable {
 
     }
 
+
+    /**
+     * transition to let the playerImage jump up and down
+     * @param imgView
+     */
+    private void imgJunp(ImageView imgView) {
+        TranslateTransition trans = new TranslateTransition();
+        trans.setNode(imgView);
+        trans.setDuration(new Duration(100));
+        trans.setByY(-100);
+        trans.setCycleCount(4);
+        trans.setAutoReverse(true);
+        trans.play();
+    }
+
     /**
      * sets the current player (player 1/ player 2) as active player
      */
@@ -730,19 +748,6 @@ public class MainController implements Initializable {
      */
     private void endSet(boolean draw) {
         setDone = true;
-
-        //acknowledge player of his victory
-        //TODO: Change this to something that looks better
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information Dialog");
-        alert.setHeaderText(null);
-        if(!draw) {
-            alert.setContentText("Player " + activePlayer.getName() + " wins the set");
-        } else {
-            alert.setContentText("A draw");
-        }
-
-        alert.showAndWait();
 
         try {
             //reinitialize the board
