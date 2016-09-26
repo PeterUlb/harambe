@@ -3,6 +3,8 @@ package com.harambe.algorithm;
 import com.harambe.game.Board;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Peter on 06.09.2016.
@@ -15,14 +17,22 @@ public class MiniMax {
     private char optimizingPlayer = Board.UNMARKED;
     private char opponentPlayer = Board.UNMARKED;
 
+    private long maxNano; // max nanoseconds until function returns
+    private long start; // marks the start
+    private int outOfTimeDepth = 4;
+
     /**
-     *
      * @param depth how many iterations of the minimax algorithm will be performed
      * @param optimizingPlayer the symbol of the player (usually the AI), defined in Board class
+     * @param maxMilis maximum miliseconds until function returns, 0 for infinity. <strong>Keep in mind that this doesn't represent the whole runtime of the best move function.
+     *                 The real runtime is maxMilis + the timeOutDepth run</strong>
+     * @param outOfTimeDepth the depth that will be performed when time > maxMilis, choose something fast!
      */
-    MiniMax(int depth, char optimizingPlayer) {
+    public MiniMax(int depth, char optimizingPlayer, long maxMilis, int outOfTimeDepth) {
         this.setGlobalDepth(depth);
         this.optimizingPlayer = optimizingPlayer;
+        this.maxNano = TimeUnit.MILLISECONDS.toNanos(maxMilis);
+        this.outOfTimeDepth = outOfTimeDepth;
 
         if(optimizingPlayer == Board.PLAYER1) {
             opponentPlayer = Board.PLAYER2;
@@ -51,13 +61,33 @@ public class MiniMax {
                     {3, 4, 5, 7, 5, 4, 3}};
 
     /**
-     * @param board 2d char array with char[Board.ROWS][Board.COLUMNS]
+     * @param board Board object with 2d array grid char[Board.ROWS][Board.COLUMNS]
      * @return best column to put the next play in (starting at 0 being leftmost column)
      * -1 indicates a finished game state
      */
     public int getBestMove(Board board) {
+        this.start = System.nanoTime();
         savedMove = -1;
-        alphabeta(board, globalDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+        try {
+            alphabeta(board.getDeepCopy(), globalDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+        } catch (OutOfTimeException e) {
+            System.out.println("Out of time");
+            savedMove = getOutOfTimeMove(board);
+        }
+        return savedMove;
+    }
+
+    /**
+     * Called when the main minimax runs out of time. The depth is defined in the MiniMax Constructor
+     * @param board the current board
+     * @return the best move or random
+     */
+    private int getOutOfTimeMove(Board board) {
+        savedMove = -1;
+        savedMove = new MiniMax(outOfTimeDepth, optimizingPlayer, 0, 0).getBestMove(board.getDeepCopy());
+        if (savedMove == -1) {
+            savedMove = ThreadLocalRandom.current().nextInt(0, Board.COLUMNS);
+        }
         return savedMove;
     }
 
@@ -78,7 +108,12 @@ public class MiniMax {
      * @param isMaximizingPlayer MiniMax player type (initial call = true)
      * @return
      */
-    private int alphabeta(Board board, int depth, int alpha, int beta, boolean isMaximizingPlayer) {
+    private int alphabeta(Board board, int depth, int alpha, int beta, boolean isMaximizingPlayer) throws OutOfTimeException {
+        if(maxNano != 0 && System.nanoTime() > start + maxNano) {
+            // we do care for the time (!= 0) and the time ran out
+            throw new OutOfTimeException();
+        }
+
         // TODO: evt. die ersten male immer in die Mitte
         if (depth == 0 || board.isTerminalState()) {
             return evalValue(board, depth);

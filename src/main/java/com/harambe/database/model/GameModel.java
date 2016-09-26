@@ -3,7 +3,6 @@ package com.harambe.database.model;
 import com.harambe.database.DatabaseConnector;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -13,20 +12,48 @@ import java.util.ArrayList;
  */
 public class GameModel implements Persistable {
     private String gameUUID;
+    private String ourPlayer;
     private String opponentPlayer;
-    private int points;
+    private int ourPoints;
+    private int opponentPoints;
+    private boolean weWon;
     private Timestamp timestamp;
 
-    public GameModel(String gameUUID, String opponentPlayer, int points) {
+    /**
+     * Standard constructor for a Gamemodel object, timestamp is added on database write
+     * @param gameUUID current game UUID (found in SessionVars)
+     * @param ourPlayer Name of our player
+     * @param opponentPlayer Name of the opponent player/team
+     * @param ourPoints how many ourPoints did the we achieve in this set (saved in the Player object)
+     * @param opponentPoints how many ourPoints did the opponent achieve in this set (saved in the Player object)
+     * @param weWon did we win the game
+     */
+    public GameModel(String gameUUID, String ourPlayer, String opponentPlayer, int ourPoints, int opponentPoints, boolean weWon) {
         this.gameUUID = gameUUID;
+        this.ourPlayer = ourPlayer;
         this.opponentPlayer = opponentPlayer;
-        this.points = points;
+        this.ourPoints = ourPoints;
+        this.opponentPoints = opponentPoints;
+        this.weWon = weWon;
     }
 
-    public GameModel(String gameUUID, String opponentPlayer, int points, Timestamp timestamp) {
+    /**
+     * Constructor for database saving
+     * @param gameUUID current game UUID (found in SessionVars)
+     * @param ourPlayer Name of our player
+     * @param opponentPlayer Name of the opponent player/team
+     * @param ourPoints how many ourPoints did the we achieve in this set (saved in the Player object)
+     * @param opponentPoints how many ourPoints did the opponent achieve in this set (saved in the Player object)
+     * @param weWon did we win the game
+     * @param timestamp basic sql timestamp
+     */
+    private GameModel(String gameUUID, String ourPlayer, String opponentPlayer, int ourPoints, int opponentPoints, boolean weWon, Timestamp timestamp) {
         this.gameUUID = gameUUID;
+        this.ourPlayer = ourPlayer;
         this.opponentPlayer = opponentPlayer;
-        this.points = points;
+        this.ourPoints = ourPoints;
+        this.opponentPoints = opponentPoints;
+        this.weWon = weWon;
         this.timestamp = timestamp;
     }
 
@@ -34,16 +61,20 @@ public class GameModel implements Persistable {
         ArrayList<GameModel> gameModels = new ArrayList<>();
         ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.GAMETABLE);
 
-        String gameUUID, opponentPlayer;
-        int points;
+        String gameUUID, ourPlayer, opponentPlayer;
+        int ourPoints, opponentPoints;
+        boolean weWon;
         Timestamp timestamp;
 
         while (rs.next()) {
             gameUUID = rs.getString(1);
-            opponentPlayer = rs.getString(2);
-            points = rs.getInt(3);
-            timestamp = rs.getTimestamp(4);
-            gameModels.add(new GameModel(gameUUID, opponentPlayer, points, timestamp));
+            ourPlayer = rs.getString(2);
+            opponentPlayer = rs.getString(3);
+            ourPoints = rs.getInt(4);
+            opponentPoints = rs.getInt(5);
+            weWon = rs.getBoolean(6);
+            timestamp = rs.getTimestamp(7);
+            gameModels.add(new GameModel(gameUUID, ourPlayer, opponentPlayer, ourPoints, opponentPoints, weWon, timestamp));
         }
 
         return gameModels;
@@ -57,8 +88,20 @@ public class GameModel implements Persistable {
         return opponentPlayer;
     }
 
-    public int getPoints() {
-        return points;
+    public int getOurPoints() {
+        return ourPoints;
+    }
+
+    public String getOurPlayer() {
+        return ourPlayer;
+    }
+
+    public int getOpponentPoints() {
+        return opponentPoints;
+    }
+
+    public boolean isWeWon() {
+        return weWon;
     }
 
     public Timestamp getTimestamp() {
@@ -68,6 +111,7 @@ public class GameModel implements Persistable {
     @Override
     public void persistInDatabase(DatabaseConnector db) throws SQLException {
         db.update(
-                "INSERT INTO " + DatabaseConnector.GAMETABLE + " VALUES( '" + gameUUID + "', '" + opponentPlayer + "', "+ points + ", '" + new Timestamp(System.currentTimeMillis()) + "')");
+                "INSERT INTO " + DatabaseConnector.GAMETABLE + " VALUES( '" + gameUUID + "', '" + ourPlayer + "', '" + opponentPlayer + "', "+ ourPoints +
+                        ", " + opponentPoints + ", " + weWon + ", '" + new Timestamp(System.currentTimeMillis()) + "')");
     }
 }

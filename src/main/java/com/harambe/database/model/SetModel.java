@@ -16,6 +16,13 @@ public class SetModel implements Persistable {
     private boolean weStarted;
     private boolean weWon;
 
+    /**
+     *
+     * @param gameUUID
+     * @param setNumber starting at 0
+     * @param weStarted
+     * @param weWon
+     */
     public SetModel(String gameUUID, int setNumber, boolean weStarted, boolean weWon) {
         this.gameUUID = gameUUID;
         this.setNumber = setNumber;

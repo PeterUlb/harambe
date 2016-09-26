@@ -12,7 +12,7 @@ public class Chip {
 
 
     private void setImg(String chip) {
-        this.imgLocation = "/img/"+chip+".png";
+        this.imgLocation = "img/"+chip+".png";
     }
 
     public String getImg() {

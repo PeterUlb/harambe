@@ -12,6 +12,7 @@ import java.net.URL;
 public class Stage {
     private String imgLocation;
     private URL themeLocation;
+    static MediaPlayer player; // prevent evil GC
 
     public Stage(String stageName) {
         setImg(stageName);
@@ -34,13 +35,36 @@ public class Stage {
         }
 
         final Media media = new Media(themeLocation.toString());
-        final MediaPlayer player = new MediaPlayer(media);
+        player = new MediaPlayer(media);
         player.setOnEndOfMedia(() -> player.seek(Duration.ZERO));
         player.play();
     }
 
     public String getImg() {
         return this.imgLocation;
+    }
+
+    /**
+     * sets randomized asset image
+     */
+    public String getRandomAssetImg() {
+        int rndm = (int) Math.round(Math.random() * 2);
+        switch (rndm) {
+            case 0: return "img/tukan.png";
+            case 1: return "img/monkey.png";
+            case 2: return "img/monkey_2.png";
+        }
+        return "";
+    }
+
+    public String getBgAnimImg() {
+        double rndm = Math.random();
+        if (rndm > 0.9) {
+            return "img/swsd.png";
+        }
+        else {
+            return "img/seagull.png";
+        }
     }
 
 

@@ -18,6 +18,14 @@ public class TurnModel implements Persistable {
     private boolean isOpponent;
     private int column;
 
+    /**
+     *
+     * @param gameUUID
+     * @param setNumber starting at 0
+     * @param turnNumber starting at 0
+     * @param isOpponent
+     * @param column
+     */
     public TurnModel(String gameUUID, int setNumber, int turnNumber, boolean isOpponent, int column) {
         this.gameUUID = gameUUID;
         this.setNumber = setNumber;
