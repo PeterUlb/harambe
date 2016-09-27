@@ -1,0 +1,31 @@
+.field{
+    -fx-background-image: url("/img/coast_1.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.buttonL {
+    -fx-pref-width: 500px;
+    -fx-pref-height: 500px;
+    -fx-background-radius: 250 0 0 250;
+
+    -fx-cursor: hand;
+
+}
+.buttonR {
+    -fx-pref-width: 500px;
+    -fx-pref-height: 500px;
+    -fx-background-radius: 0 250 250 0;
+
+    -fx-cursor: hand;
+
+}
+.paneButton{
+    -fx-background-color: aqua;
+    -fx-max-width: 500px;
+    -fx-max-height: 500px;
+    -fx-shape: "M 0 0 h 500 l -300 100 H 0 Z";
+    -fx-overflow: hidden;
+}
+
