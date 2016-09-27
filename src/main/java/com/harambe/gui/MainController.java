@@ -253,6 +253,7 @@ public class MainController implements Initializable, ControlledScreen {
             bgAnim.setScaleX(bgAnim.getScaleX() * -1);
             bgAnim.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
             trans.setByX(trans.getByX() * -1);
+            trans.setByY(trans.getByY() * -1);
             trans.play();
         });
         trans.play();
@@ -709,10 +710,8 @@ public class MainController implements Initializable, ControlledScreen {
             //wait for circles to be drawn
             Thread thread = new Thread(() -> {
                 try {
-                    disableAllButtons(true);
                     bg.setCursor(Cursor.WAIT);
                     Thread.sleep(2000);
-                    disableAllButtons(false);
                     bg.setCursor(Cursor.DEFAULT);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -758,7 +757,7 @@ public class MainController implements Initializable, ControlledScreen {
                 System.out.println("a draw");
             }
 
-            cleanBoardImages();
+            Platform.runLater(() -> cleanBoardImages());
         }
 
     }
@@ -769,8 +768,10 @@ public class MainController implements Initializable, ControlledScreen {
         }
 
 
-        for (ImageView winCircle : winCircleArray) {
-            bg.getChildren().remove(winCircle);
+        if(winCircleArray.size() > 0) {
+            for (ImageView winCircle : winCircleArray) {
+                bg.getChildren().remove(winCircle);
+            }
         }
 
         chipArray = new ArrayList<>();
