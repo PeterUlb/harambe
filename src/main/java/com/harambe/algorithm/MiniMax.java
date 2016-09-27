@@ -7,8 +7,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Peter on 06.09.2016.
- *
  * Implementation for the MiniMax algorithm. Requires use of the Board class
  */
 public class MiniMax {

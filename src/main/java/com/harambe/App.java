@@ -4,23 +4,29 @@ package com.harambe;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.database.DatabaseConnector;
 import com.harambe.game.SessionVars;
+import com.harambe.gui.MasterController;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.sql.SQLException;
 
-
+/**
+ * TODO: insert documentation here
+ */
 public class App extends Application {
 
-    //public static Stage stage;
-    public static Pane root;
     public static DatabaseConnector db;
     public static ServerCommunication sC;
+
+    public static final String MENU_SCREEN = "startScreen";
+    public static final String MENU_SCREEN_FILE = "/scenes/menu.fxml";
+    public static final String MAIN_SCREEN = "main";
+    public static final String MAIN_SCREEN_FILE = "/scenes/main.fxml";
+
+
 
     public static void main(String[] args) {
         // TODO replace this with proper user interface (radio buttons etc)
@@ -49,6 +55,7 @@ public class App extends Application {
             System.exit(-1);
         }
 
+
         try {
             db = new DatabaseConnector();
         } catch (SQLException | ClassNotFoundException e) {
@@ -63,14 +70,20 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
 
 
-        //Load FXML & set name
-        root = FXMLLoader.load(getClass().getClassLoader().getResource("scenes/main.fxml"));
+        MasterController mainContainer = new MasterController();
+        mainContainer.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE);
+        mainContainer.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
+
+        //set main menu as first screen
+        mainContainer.setScreen(App.MENU_SCREEN);
+
+        StackPane root = new StackPane();
+        root.getChildren().addAll(mainContainer);
+        Scene scene = new Scene(root, 1920, 1080);
         stage.setTitle("Harambe Wins!");
-
-
-        root.getChildren();
-        stage.setScene(new Scene(root, 1920, 1080));
+        stage.setScene(scene);
         stage.show();
+
 
         //stage.setFullScreen(true);
     }

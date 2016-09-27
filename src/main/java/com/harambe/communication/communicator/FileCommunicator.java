@@ -21,7 +21,6 @@ import java.sql.SQLException;
 
 /**
  * Class for communication via files with the server (read xml, write single digit .txt)
- * Created by Peter on 21.09.2016.
  */
 public class FileCommunicator implements ServerCommunication {
     private String filePath;

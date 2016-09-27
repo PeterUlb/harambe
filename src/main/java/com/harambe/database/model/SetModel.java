@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Created by Peter on 19.09.2016.
+ * TODO: insert documentation here
  */
 public class SetModel implements Persistable {
     private String gameUUID;

@@ -3,7 +3,7 @@ package com.harambe.game;
 import java.util.UUID;
 
 /**
- * Created by Peter on 16.09.2016.
+ * TODO: insert documentation here
  */
 public class SessionVars {
     //TODO ALL of them must be UI configurable
