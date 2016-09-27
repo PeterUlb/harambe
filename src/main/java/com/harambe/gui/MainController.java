@@ -36,12 +36,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static com.harambe.App.db;
-import static com.harambe.App.root;
 
 /**
  * Controller of the main game. Contains mostly the chip dropping and logic behind the visual representation of the board.
  */
-public class MainController implements Initializable {
+public class MainController implements Initializable, ControlledScreen {
 
     //fxml views
     @FXML
@@ -109,6 +108,11 @@ public class MainController implements Initializable {
     public static boolean setDone = false; // marks a set as done for the server-comm thread
     private static boolean gameDone = false; // marks a game as done for the server-comm thread
 
+    MasterController myController;
+
+    public void setScreenParent(MasterController screenParent){
+        myController = screenParent;
+    }
 
     /**
      * initialization method. Is being called when FXMLLoader loads main.fxml.
@@ -487,12 +491,12 @@ public class MainController implements Initializable {
         previewImg.setStyle("-fx-opacity: .5");
         previewImg.setTranslateY(-500);
         previewImg.setTranslateX(btn.getTranslateX());
-        root.getChildren().add(previewImg);
+        bg.getChildren().add(previewImg);
     }
 
     @FXML
     private void erasePreviewChip(MouseEvent event) {
-        root.getChildren().remove(previewImg);
+        bg.getChildren().remove(previewImg);
     }
 
     /**
@@ -504,7 +508,7 @@ public class MainController implements Initializable {
     private void dropChip(ActionEvent event) {
         //delete previewImg
         if(previewImg != null) {
-            root.getChildren().remove(previewImg);
+            bg.getChildren().remove(previewImg);
         }
 
         Button btn = (Button) event.getSource();
@@ -697,17 +701,17 @@ public class MainController implements Initializable {
                 winCircle.setTranslateX(columnPos);
 
                 winCircleArray.add(winCircle);
-                root.getChildren().add(winCircle);
+                bg.getChildren().add(winCircle);
 
             }
             //wait for circles to be drawn
             Thread thread = new Thread(() -> {
                 try {
                     disableAllButtons(true);
-                    root.setCursor(Cursor.WAIT);
+                    bg.setCursor(Cursor.WAIT);
                     Thread.sleep(2000);
                     disableAllButtons(false);
-                    root.setCursor(Cursor.DEFAULT);
+                    bg.setCursor(Cursor.DEFAULT);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -797,7 +801,7 @@ public class MainController implements Initializable {
 
             if(!draw) {
                 for (ImageView winCircle : winCircleArray) {
-                    root.getChildren().remove(winCircle);
+                    bg.getChildren().remove(winCircle);
                 }
             }
 
