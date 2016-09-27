@@ -704,6 +704,7 @@ public class MainController implements Initializable, ControlledScreen {
                 bg.getChildren().add(winCircle);
 
             }
+
             //wait for circles to be drawn
             Thread thread = new Thread(() -> {
                 try {
@@ -718,6 +719,12 @@ public class MainController implements Initializable, ControlledScreen {
                 Platform.runLater(() -> doRest(false));
             });
             thread.start();
+
+            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
+                endGame();
+            } else {
+                endSet(false);
+            }
 
             //endGame or endSet for offline games
 
@@ -748,11 +755,19 @@ public class MainController implements Initializable, ControlledScreen {
     }
 
     private void doRest(boolean draw) {
-        if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
-            endGame();
-        } else {
-            endSet(draw);
+        for (ImageView chip: chipArray) {
+            field.getChildren().remove(chip);
         }
+
+
+        if(!draw) {
+            for (ImageView winCircle : winCircleArray) {
+                bg.getChildren().remove(winCircle);
+            }
+        }
+
+        chipArray = new ArrayList<>();
+
     }
 
 
@@ -793,19 +808,12 @@ public class MainController implements Initializable, ControlledScreen {
         try {
             //reinitialize the board
             board.reset();
-            for (ImageView chip: chipArray) {
-                field.getChildren().remove(chip);
-            }
-            chipArray = new ArrayList<>();
-
-
-            if(!draw) {
-                for (ImageView winCircle : winCircleArray) {
-                    bg.getChildren().remove(winCircle);
-                }
-            }
 
             disableAllButtons(false);
+
+            if(SessionVars.usePusherInterface || SessionVars.useFileInterface || (activePlayer != ourPlayer && SessionVars.soloVsAI)) {
+                disableAllButtons(true);
+            }
 
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
                 SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
