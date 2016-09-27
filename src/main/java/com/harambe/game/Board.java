@@ -1,6 +1,7 @@
 package com.harambe.game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Peter on 06.09.2016.
@@ -14,7 +15,7 @@ public class Board {
     //char[ROWS][COLUMNS]
     private char[][] grid;
     //holds the first available row
-    private final int[] firstAvailableRow;
+    private int[] firstAvailableRow;
 
 
     public Board() {
@@ -22,6 +23,14 @@ public class Board {
         grid = new char[ROWS][COLUMNS];
         firstAvailableRow = new int[COLUMNS];
         reset();
+    }
+
+    public Board getDeepCopy() {
+        Board returnBoard = new Board();
+        returnBoard.grid = this.getDeepCopyGrid();
+        returnBoard.firstAvailableRow = Arrays.copyOf(firstAvailableRow, firstAvailableRow.length);
+
+        return returnBoard;
     }
 
     /**

@@ -21,6 +21,8 @@ hs_err_pid*
 .idea/
 *.iml
 *.iws
+out/
+src/main/java/META-INF
 
 # Mac
 .DS_Store

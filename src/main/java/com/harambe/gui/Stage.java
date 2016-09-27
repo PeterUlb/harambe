@@ -12,6 +12,7 @@ import java.net.URL;
 public class Stage {
     private String imgLocation;
     private URL themeLocation;
+    static MediaPlayer player; // prevent evil GC
 
     public Stage(String stageName) {
         setImg(stageName);
@@ -34,7 +35,7 @@ public class Stage {
         }
 
         final Media media = new Media(themeLocation.toString());
-        final MediaPlayer player = new MediaPlayer(media);
+        player = new MediaPlayer(media);
         player.setOnEndOfMedia(() -> player.seek(Duration.ZERO));
         player.play();
     }
@@ -55,5 +56,16 @@ public class Stage {
         }
         return "";
     }
+
+    public String getBgAnimImg() {
+        double rndm = Math.random();
+        if (rndm > 0.9) {
+            return "img/swsd.png";
+        }
+        else {
+            return "img/seagull.png";
+        }
+    }
+
 
 }
