@@ -20,6 +20,7 @@ import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -716,14 +717,14 @@ public class MainController implements Initializable, ControlledScreen {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Platform.runLater(() -> doRest(false));
+                Platform.runLater(() -> cleanBoardImages());
             });
             thread.start();
 
             if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
                 endGame();
             } else {
-                endSet(false);
+                endSet();
             }
 
             //endGame or endSet for offline games
@@ -735,7 +736,6 @@ public class MainController implements Initializable, ControlledScreen {
             //increment score and change score
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
                 // for online games the score redraw is handled in the Communicator
-                activePlayer.incrementScore();
                 player1Score.setText(String.valueOf(p1.getScore()));
                 player2Score.setText(String.valueOf(p2.getScore()));
 
@@ -748,26 +748,32 @@ public class MainController implements Initializable, ControlledScreen {
                     e.printStackTrace();
                 }
 
+                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
+                    endGame();
+                } else {
+                    endSet();
+                }
+
+                // TODO do something nicer here
+                System.out.println("a draw");
             }
 
+            cleanBoardImages();
         }
 
     }
 
-    private void doRest(boolean draw) {
+    private void cleanBoardImages() {
         for (ImageView chip: chipArray) {
             field.getChildren().remove(chip);
         }
 
 
-        if(!draw) {
-            for (ImageView winCircle : winCircleArray) {
-                bg.getChildren().remove(winCircle);
-            }
+        for (ImageView winCircle : winCircleArray) {
+            bg.getChildren().remove(winCircle);
         }
 
         chipArray = new ArrayList<>();
-
     }
 
 
@@ -802,7 +808,7 @@ public class MainController implements Initializable, ControlledScreen {
     /**
      * is called when a set is over. Reinitializes the board and the visual representation of it.
      */
-    private void endSet(boolean draw) {
+    private void endSet() {
         setDone = true;
 
         try {
