@@ -1,7 +1,7 @@
 package com.harambe.gui;
 
 /**
- * Created by tim on 27.09.2016.
+ * TODO: insert documentation here
  */
 public interface ControlledScreen {
     public void setScreenParent(MasterController screenPage);
