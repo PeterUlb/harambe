@@ -15,7 +15,9 @@
             <Font name="System Bold" size="24.0" />
          </font>
       </Label>
+
       <Button fx:id="btnLokal" onAction="#playLocal" styleClass="buttonL" text="Lokal" translateX="-255.0" />
       <Button fx:id="btnOnline" styleClass="buttonR" text="Online" translateX="255.0" />
+      <Pane styleClass="paneRotate"/>
    </children>
 </StackPane>

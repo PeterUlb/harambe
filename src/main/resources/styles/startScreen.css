@@ -21,6 +21,17 @@
     -fx-cursor: hand;
 
 }
+
+.paneRotate{
+    -fx-background-image: url("/img/coast_1.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+    -fx-background-rotate: 180deg;
+    -fx-max-width: 220px;
+    -fx-max-height: 660px;
+    -fx-rotate: 25deg;
+}
 .paneButton{
     -fx-background-color: aqua;
     -fx-max-width: 500px;
