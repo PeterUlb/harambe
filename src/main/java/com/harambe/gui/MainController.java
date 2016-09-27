@@ -12,10 +12,11 @@ import javafx.scene.text.Text;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static com.harambe.App.root;
+//import static com.harambe.App.root;
 
 
-public class MainController implements Initializable {
+public class MainController implements Initializable, ControlledScreen {
+   MasterController myController;
 
     //fxml views
     @FXML
@@ -159,7 +160,7 @@ public class MainController implements Initializable {
         }
 
         //paint chip and move the layer to background
-        root.getChildren().add(imgView);
+        //root.getChildren().add(imgView);
         imgView.toBack();
 
         //end round
@@ -177,5 +178,8 @@ public class MainController implements Initializable {
             activeSymbol = 'X';
         }
 
+    }
+    public void setScreenParent(MasterController screenParent){
+        myController = screenParent;
     }
 }
