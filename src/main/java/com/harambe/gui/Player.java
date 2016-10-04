@@ -104,9 +104,9 @@ public class Player {
      * @param character character the player chose to play with (e.g. Harambe)
      */
     private void setSounds(String character) {
-        this.dropSoundLocation = "/audio/"+character+"_drop.mp3";
-        this.winSoundLocation = "/audio/"+character+"_win.mp3";
-        this.selectSoundLocation = "/audio/"+character+"_select.mp3";
+        this.dropSoundLocation = "/audio/"+character.toLowerCase()+"_drop.mp3";
+        this.winSoundLocation = "/audio/"+character.toLowerCase()+"_win.mp3";
+        this.selectSoundLocation = "/audio/"+character.toLowerCase()+"_select.mp3";
     }
 
     public void playDropSound() {
