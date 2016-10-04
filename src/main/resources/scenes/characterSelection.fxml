@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane fx:id="bg" styleClass="bg" stylesheets="/styles/characterSelection.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.characterSelectionController">
+
+      
+   <GridPane fx:id="grid" alignment="center" onMouseEntered="#selectCharacter" hgap="5" translateY="-75" vgap="50" />
+
+   <StackPane alignment="BOTTOM_CENTER">
+      <ImageView fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="-400">
+         <image>
+            <Image fx:id="player1" url="@../img/select_1.png" />
+         </image>
+      </ImageView>
+
+      <ImageView fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="400">
+         <image>
+            <Image fx:id="player2" url="@../img/select_2.png" />
+         </image>
+      </ImageView>
+   </StackPane>
+
+
+
+   <Button fx:id="playBtn" onAction="#play" text="play" translateX="700" translateY="400" />
+
+</StackPane>

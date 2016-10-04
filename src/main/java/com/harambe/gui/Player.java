@@ -57,7 +57,7 @@ public class Player {
 
     //methods for playerImg
     private void setImg(String character) {
-        this.imgLocation = "img/"+character+".png";
+        this.imgLocation = "img/"+character.toLowerCase()+".png";
     }
 
     public String  getImgLocation() {
@@ -71,9 +71,9 @@ public class Player {
      */
     private void setChip(String character) {
         switch(character) {
-            case "harambe":     this.chip = "banana";break;
-            case "poacher_1":   this.chip = "mango";break;
-            case "poacher_2":   this.chip = "bullets";break;
+            case "Harambe":     this.chip = "banana";break;
+            case "Poacher":   this.chip = "mango";break;
+            case "Hunter":   this.chip = "bullets";break;
         }
     }
 

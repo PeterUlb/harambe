@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
  */
 public class MenuController implements Initializable, ControlledScreen {
 
-    MasterController myController;
+    private MasterController myController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -28,7 +28,7 @@ public class MenuController implements Initializable, ControlledScreen {
     @FXML
     private void playLocal(ActionEvent event)/*throws IOException*/ {
 
-        myController.setScreen(App.MAIN_SCREEN);
+        myController.setScreen(App.CHARACTER_SCREEN);
     }
 
 

@@ -21,10 +21,12 @@ public class App extends Application {
     public static DatabaseConnector db;
     public static ServerCommunication sC;
 
-    public static final String MENU_SCREEN = "startScreen";
+    public static final String MENU_SCREEN = "menu";
     public static final String MENU_SCREEN_FILE = "/scenes/menu.fxml";
     public static final String MAIN_SCREEN = "main";
     public static final String MAIN_SCREEN_FILE = "/scenes/main.fxml";
+    public static final String CHARACTER_SCREEN = "characterSelection";
+    public static final String CHARACTER_SCREEN_FILE = "/scenes/characterSelection.fxml";
 
 
 
@@ -73,9 +75,10 @@ public class App extends Application {
         MasterController mainContainer = new MasterController();
         mainContainer.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE);
         mainContainer.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
+        mainContainer.loadScreen(App.CHARACTER_SCREEN, App.CHARACTER_SCREEN_FILE);
 
         //set main menu as first screen
-        mainContainer.setScreen(App.MENU_SCREEN);
+        mainContainer.setScreen(App.CHARACTER_SCREEN);
 
         StackPane root = new StackPane();
         root.getChildren().addAll(mainContainer);

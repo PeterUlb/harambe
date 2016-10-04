@@ -64,12 +64,12 @@ public class MasterController extends StackPane {
             if (!getChildren().isEmpty()) {    //if there is more than one screen
                 Timeline fade = new Timeline(
                         new KeyFrame(Duration.ZERO, new KeyValue(opacity, 1.0)),
-                        new KeyFrame(new Duration(1000), t -> {
+                        new KeyFrame(new Duration(100), t -> {
                             getChildren().remove(0);                    //remove the displayed screen
                             getChildren().add(0, screens.get(name));     //add the screen
                             Timeline fadeIn = new Timeline(
                                     new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                                    new KeyFrame(new Duration(800), new KeyValue(opacity, 1.0)));
+                                    new KeyFrame(new Duration(80), new KeyValue(opacity, 1.0)));
                             fadeIn.play();
                         }, new KeyValue(opacity, 0.0)));
                 fade.play();
@@ -79,7 +79,7 @@ public class MasterController extends StackPane {
                 getChildren().add(screens.get(name));       //no one else been displayed, then just show
                 Timeline fadeIn = new Timeline(
                         new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                        new KeyFrame(new Duration(2500), new KeyValue(opacity, 1.0)));
+                        new KeyFrame(new Duration(250), new KeyValue(opacity, 1.0)));
                 fadeIn.play();
             }
             return true;
