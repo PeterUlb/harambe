@@ -242,7 +242,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         bgAnim.setImage(bgAnimImg);
         bgAnim.setCache(true);
-        bgAnim.setCacheHint(CacheHint.QUALITY);
+        bgAnim.setCacheHint(CacheHint.SPEED);
         bgAnim.setPreserveRatio(true);
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(bgAnim);
@@ -252,7 +252,12 @@ public class MainController implements Initializable, ControlledScreen {
         trans.setOnFinished(event -> {
             bgAnim.setScaleX(bgAnim.getScaleX() * -1);
             bgAnim.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
-            trans.setByX(trans.getByX() * -1);
+            if (trans.getByX() > 0) {
+                // now to the left
+                trans.setByX(trans.getByX() * -1 - 1000);
+            } else {
+                trans.setByX(4000);
+            }
             trans.setByY(trans.getByY() * -1);
             trans.play();
         });
@@ -762,6 +767,7 @@ public class MainController implements Initializable, ControlledScreen {
 
     }
 
+    // TODO maybe rename
     private void cleanBoardImages() {
         for (ImageView chip: chipArray) {
             field.getChildren().remove(chip);
@@ -775,6 +781,11 @@ public class MainController implements Initializable, ControlledScreen {
         }
 
         chipArray = new ArrayList<>();
+
+        // end set disables all the button, if needed we enable them here again
+        if(!(SessionVars.usePusherInterface || SessionVars.useFileInterface || (activePlayer != ourPlayer && SessionVars.soloVsAI))) {
+            disableAllButtons(false);
+        }
     }
 
 
@@ -816,11 +827,7 @@ public class MainController implements Initializable, ControlledScreen {
             //reinitialize the board
             board.reset();
 
-            disableAllButtons(false);
-
-            if(SessionVars.usePusherInterface || SessionVars.useFileInterface || (activePlayer != ourPlayer && SessionVars.soloVsAI)) {
-                disableAllButtons(true);
-            }
+            disableAllButtons(true);
 
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
                 SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
