@@ -9,6 +9,7 @@ import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
+import com.harambe.tools.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,7 +21,6 @@ import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -101,10 +101,12 @@ public class MainController implements Initializable, ControlledScreen {
     public static Player p2;
     private static Player activePlayer;
     public static Player ourPlayer; // reference whether we are p1 or p2
+    public static Player opponentPlayer;
     private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
+    private MiniMax miniMax;
 
     public static boolean setDone = false; // marks a set as done for the server-comm thread
     private static boolean gameDone = false; // marks a game as done for the server-comm thread
@@ -158,6 +160,9 @@ public class MainController implements Initializable, ControlledScreen {
                 player2Name.setStyle("-fx-fill: green");
                 player1Name.setStyle("-fx-fill: red");
                 ourPlayer = p2; // keep track who we are :)
+                opponentPlayer = p1;
+                miniMax = new MiniMax(SessionVars.searchDepth, ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
+                Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, false);
                 } else if (SessionVars.usePusherInterface) {
@@ -172,6 +177,9 @@ public class MainController implements Initializable, ControlledScreen {
                 player1Name.setStyle("-fx-fill: green");
                 player2Name.setStyle("-fx-fill: red");
                 ourPlayer = p1; // keep track who we are :)
+                opponentPlayer = p2;
+                miniMax = new MiniMax(SessionVars.searchDepth, ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
+                Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, true);
                 } else if (SessionVars.usePusherInterface) {
@@ -194,6 +202,7 @@ public class MainController implements Initializable, ControlledScreen {
                 SessionVars.initializeNewSet(false);
             }
             ourPlayer = p1;
+            opponentPlayer = p2;
         }
 
 
@@ -222,12 +231,14 @@ public class MainController implements Initializable, ControlledScreen {
             thread.setDaemon(true);
             thread.start();
         } else if (SessionVars.soloVsAI) {
+            miniMax = new MiniMax(SessionVars.searchDepth, opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
             if(activePlayer != ourPlayer) {
                 // AI starts, so first turn is AI
-                // TODO maybe use one global minimax object
+                // initialize MiniMax in offline mode
+                Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
                 long start = System.nanoTime();
-                fireButton(new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
-                System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                fireButton(miniMax.getBestMove(board));
+                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
             }
         }
 
@@ -290,10 +301,10 @@ public class MainController implements Initializable, ControlledScreen {
                     activePlayer = ourPlayer;
                     SessionVars.initializeNewSet(true);
                     long start = System.nanoTime();
-                    int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                    int column = miniMax.getBestMove(board);
                     final FutureTask<Boolean> query = new FutureTask<>(() -> {
                         dropForUs(sC, column);
-                        System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                        Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                         return true;
                     });
                     Platform.runLater(query); // drop logic can only be done in the UI Thread
@@ -313,10 +324,10 @@ public class MainController implements Initializable, ControlledScreen {
                 query.get(); // wait for the logic top happen to avoid random magic
 
                 long start = System.nanoTime();
-                int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                int column = miniMax.getBestMove(board);
                 final FutureTask<Boolean> query2 = new FutureTask<>(() -> {
                     dropForUs(App.sC, column);
-                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                    Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                     return true;
                 });
                 Platform.runLater(query2); // drop logic can only be done in the UI Thread
@@ -543,7 +554,7 @@ public class MainController implements Initializable, ControlledScreen {
             board.put(column, activePlayer.getSymbol());
         }
         catch (Exception e) {
-            System.out.println("column full");
+            System.err.println("column full");
             btn.setDisable(true);
         }
 
@@ -569,10 +580,10 @@ public class MainController implements Initializable, ControlledScreen {
             disableAllButtons(true);
             long start = System.nanoTime();
             Thread thread = new Thread(() -> {
-                int column1 = new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                int column1 = miniMax.getBestMove(board);
                 Platform.runLater(() -> {
                     fireDisabledButton(column1);
-                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                    Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                     disableAllButtons(false);
                 });
             });
@@ -655,7 +666,7 @@ public class MainController implements Initializable, ControlledScreen {
     private void checkForWin() {
 
         if ((winLocation = board.getWinForUI(activePlayer.getSymbol())) != null) {
-            System.out.println(activePlayer.getName() + " wins");
+            Logger.event(activePlayer.getName() + " wins");
 
             //increment score and change score
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
@@ -759,7 +770,7 @@ public class MainController implements Initializable, ControlledScreen {
                 }
 
                 // TODO do something nicer here
-                System.out.println("a draw");
+                Logger.event("a draw");
             }
 
             Platform.runLater(() -> cleanBoardImages());
@@ -774,7 +785,7 @@ public class MainController implements Initializable, ControlledScreen {
         }
 
 
-        if(winCircleArray.size() > 0) {
+        if(winCircleArray != null) {
             for (ImageView winCircle : winCircleArray) {
                 bg.getChildren().remove(winCircle);
             }
@@ -853,15 +864,7 @@ public class MainController implements Initializable, ControlledScreen {
             weWon = true;
         }
 
-        //Todo, might be wise to have a global opponent reference like ourplayer
-        Player opponent;
-        if (ourPlayer == p1) {
-            opponent = p2;
-        } else {
-            opponent = p1;
-        }
-
-        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponent.getScore(), weWon);
+        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponentPlayer.getScore(), weWon);
         try {
             gameModel.persistInDatabase(db);
         } catch (SQLException e) {
