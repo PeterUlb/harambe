@@ -20,6 +20,7 @@ import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -241,7 +242,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         bgAnim.setImage(bgAnimImg);
         bgAnim.setCache(true);
-        bgAnim.setCacheHint(CacheHint.QUALITY);
+        bgAnim.setCacheHint(CacheHint.SPEED);
         bgAnim.setPreserveRatio(true);
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(bgAnim);
@@ -251,7 +252,13 @@ public class MainController implements Initializable, ControlledScreen {
         trans.setOnFinished(event -> {
             bgAnim.setScaleX(bgAnim.getScaleX() * -1);
             bgAnim.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
-            trans.setByX(trans.getByX() * -1);
+            if (trans.getByX() > 0) {
+                // now to the left
+                trans.setByX(trans.getByX() * -1 - 1000);
+            } else {
+                trans.setByX(4000);
+            }
+            trans.setByY(trans.getByY() * -1);
             trans.play();
         });
         trans.play();
@@ -704,20 +711,25 @@ public class MainController implements Initializable, ControlledScreen {
                 bg.getChildren().add(winCircle);
 
             }
+
             //wait for circles to be drawn
             Thread thread = new Thread(() -> {
                 try {
-                    disableAllButtons(true);
                     bg.setCursor(Cursor.WAIT);
                     Thread.sleep(2000);
-                    disableAllButtons(false);
                     bg.setCursor(Cursor.DEFAULT);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Platform.runLater(() -> doRest(false));
+                Platform.runLater(() -> cleanBoardImages());
             });
             thread.start();
+
+            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
+                endGame();
+            } else {
+                endSet();
+            }
 
             //endGame or endSet for offline games
 
@@ -728,7 +740,6 @@ public class MainController implements Initializable, ControlledScreen {
             //increment score and change score
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
                 // for online games the score redraw is handled in the Communicator
-                activePlayer.incrementScore();
                 player1Score.setText(String.valueOf(p1.getScore()));
                 player2Score.setText(String.valueOf(p2.getScore()));
 
@@ -741,17 +752,39 @@ public class MainController implements Initializable, ControlledScreen {
                     e.printStackTrace();
                 }
 
+                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
+                    endGame();
+                } else {
+                    endSet();
+                }
+
+                // TODO do something nicer here
+                System.out.println("a draw");
             }
 
+            Platform.runLater(() -> cleanBoardImages());
         }
 
     }
 
-    private void doRest(boolean draw) {
-        if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
-            endGame();
-        } else {
-            endSet(draw);
+    // TODO maybe rename
+    private void cleanBoardImages() {
+        for (ImageView chip: chipArray) {
+            field.getChildren().remove(chip);
+        }
+
+
+        if(winCircleArray.size() > 0) {
+            for (ImageView winCircle : winCircleArray) {
+                bg.getChildren().remove(winCircle);
+            }
+        }
+
+        chipArray = new ArrayList<>();
+
+        // end set disables all the button, if needed we enable them here again
+        if(!(SessionVars.usePusherInterface || SessionVars.useFileInterface || (activePlayer != ourPlayer && SessionVars.soloVsAI))) {
+            disableAllButtons(false);
         }
     }
 
@@ -787,25 +820,14 @@ public class MainController implements Initializable, ControlledScreen {
     /**
      * is called when a set is over. Reinitializes the board and the visual representation of it.
      */
-    private void endSet(boolean draw) {
+    private void endSet() {
         setDone = true;
 
         try {
             //reinitialize the board
             board.reset();
-            for (ImageView chip: chipArray) {
-                field.getChildren().remove(chip);
-            }
-            chipArray = new ArrayList<>();
 
-
-            if(!draw) {
-                for (ImageView winCircle : winCircleArray) {
-                    bg.getChildren().remove(winCircle);
-                }
-            }
-
-            disableAllButtons(false);
+            disableAllButtons(true);
 
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
                 SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
