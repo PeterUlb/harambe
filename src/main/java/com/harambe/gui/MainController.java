@@ -290,6 +290,7 @@ public class MainController implements Initializable, ControlledScreen {
         }
             while(!setDone) {
                 int col = sC.getTurnFromServer();
+                long start = System.nanoTime();
                 if(col == -2) {
                     // indicates that set has ended, and not that we have to start (server sends -1 in both cases :/
                     // so just get the next turn
@@ -300,8 +301,7 @@ public class MainController implements Initializable, ControlledScreen {
                     flag = true;
                     activePlayer = ourPlayer;
                     SessionVars.initializeNewSet(true);
-                    long start = System.nanoTime();
-                    int column = miniMax.getBestMove(board);
+                    int column = 3; // first drop in the middle :)
                     final FutureTask<Boolean> query = new FutureTask<>(() -> {
                         dropForUs(sC, column);
                         Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
@@ -323,7 +323,6 @@ public class MainController implements Initializable, ControlledScreen {
                 Platform.runLater(query); // drop logic can only be done in the UI Thread
                 query.get(); // wait for the logic top happen to avoid random magic
 
-                long start = System.nanoTime();
                 int column = miniMax.getBestMove(board);
                 final FutureTask<Boolean> query2 = new FutureTask<>(() -> {
                     dropForUs(App.sC, column);

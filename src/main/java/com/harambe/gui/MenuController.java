@@ -27,7 +27,7 @@ public class MenuController implements Initializable, ControlledScreen {
     //onClickEvent switch screen to local game
     @FXML
     private void playLocal(ActionEvent event)/*throws IOException*/ {
-
+        myController.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
         myController.setScreen(App.MAIN_SCREEN);
     }
 
