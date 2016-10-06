@@ -2,6 +2,7 @@ package com.harambe.gui;
 
 import com.harambe.App;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -39,6 +40,24 @@ public class characterSelectionController implements Initializable, ControlledSc
         final int characterSize = 200;
         Image characterBg = new Image("img/gradient_orange.png");
 
+        // Define an event handler for clicking on Character Image
+        EventHandler clickHandler = new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                System.out.println("Clicked on " + event.getSource());
+                //TODO handle Picked Character
+                event.consume();
+            }
+        };
+        // Define an event handler for entering Character Image with Mouse
+        EventHandler enterHandler = new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                Node source = (Node)event.getSource() ;
+                Integer colIndex = GridPane.getColumnIndex(source);
+                Integer rowIndex = GridPane.getRowIndex(source);
+                System.out.println("Entered Character at: " + colIndex +" , " + rowIndex);
+                event.consume();
+            }
+        };
         for (int i = 0; i < Character.characters.length; i++) {
 
             //character background image
@@ -59,6 +78,8 @@ public class characterSelectionController implements Initializable, ControlledSc
             grid.setHalignment(characterImg, HPos.CENTER);
             grid.setValignment(characterImg, VPos.BOTTOM);
             characterImg.setTranslateY(-1);
+            characterImg.addEventHandler(MouseEvent.MOUSE_CLICKED, clickHandler);
+            characterImg.addEventHandler(MouseEvent.MOUSE_ENTERED, enterHandler);
 
 
             Text t = new Text(Character.characters[i]);
@@ -66,31 +87,10 @@ public class characterSelectionController implements Initializable, ControlledSc
             grid.setHalignment(t, HPos.CENTER);
             t.setTranslateY(100);
 
-
-            Button btn = new Button();
-            HBox hbtn = new HBox();
-            btn.setOnMouseEntered( e -> {
-                System.out.println("hallo");
-            });
-            bg.getChildren().add(btn);
-
             grid.add(characterBgImg, i, 0);
             grid.add(characterImg, i, 0);
             grid.add(t, i, 0);
-            grid.add(btn, i , 0);
-            grid.setMouseTransparent(true);
-            btn.setMouseTransparent(true);
         }
-
-    }
-
-
-    @FXML
-    private void selectCharacter(MouseEvent event) {
-        Node source = (Node)event.getSource() ;
-        Integer colIndex = GridPane.getColumnIndex(source);
-        Integer rowIndex = GridPane.getRowIndex(source);
-        System.out.println("Mouse entered cell [%d, %d]%n" + colIndex + rowIndex);
 
     }
 
