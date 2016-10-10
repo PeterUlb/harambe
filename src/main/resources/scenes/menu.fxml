@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane styleClass="field" stylesheets="/styles/menu.css" xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.MenuController">
+   <children>
+      <Label layoutX="182.0" layoutY="38.0" text="Harambes Connect 4" translateY="-300">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnLokal" onAction="#playLocal" styleClass="buttonL" text="Lokal" translateX="-255.0" />
+      <Button fx:id="btnOnline" styleClass="buttonR" text="Online" translateX="255.0" />
+   </children>
+</StackPane>

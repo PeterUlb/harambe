@@ -4,7 +4,6 @@ package com.harambe.communication;
  * This interface serves as a contract for the UI. Each communication channel has to implement a method to
  * pass the column number of our turn to the server (file or websocket) and a method to return the opponent's turn or
  * -1 if we start the game
- * Created by Peter on 21.09.2016.
  */
 public interface ServerCommunication {
     /**

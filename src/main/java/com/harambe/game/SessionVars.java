@@ -3,7 +3,7 @@ package com.harambe.game;
 import java.util.UUID;
 
 /**
- * Created by Peter on 16.09.2016.
+ * TODO: insert documentation here
  */
 public class SessionVars {
     //TODO ALL of them must be UI configurable
@@ -16,7 +16,7 @@ public class SessionVars {
     public static char ourSymbol = '?';  // can be 'X' or 'O', non-offline games only
     public static String fileInterfacePath = null;
     public static int searchDepth = 10;
-    public static long timeoutThresholdInMillis = 1800; // after this time, a new search with outOfTimeDepth is started
+    public static long timeoutThresholdInMillis = 0; // after this time, a new search with outOfTimeDepth is started, 0 means unlimited
     public static int outOfTimeDepth = 4; // depth of alternative alphabeta on timeout
     // -------------------
     public static UUID currentGameUUID = null;

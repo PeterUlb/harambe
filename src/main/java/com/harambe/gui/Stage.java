@@ -57,4 +57,15 @@ public class Stage {
         return "";
     }
 
+    public String getBgAnimImg() {
+        double rndm = Math.random();
+        if (rndm > 0.9) {
+            return "img/swsd.png";
+        }
+        else {
+            return "img/seagull.png";
+        }
+    }
+
+
 }

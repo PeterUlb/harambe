@@ -3,13 +3,11 @@ package com.harambe.database.model;
 import com.harambe.database.DatabaseConnector;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Peter on 19.09.2016.
+ * TODO: insert documentation here
  */
 public class TurnModel implements Persistable {
     private String gameUUID;
@@ -77,7 +75,6 @@ public class TurnModel implements Persistable {
 
     @Override
     public void persistInDatabase(DatabaseConnector db) throws SQLException {
-        db.update(
-                "INSERT INTO " + DatabaseConnector.TURNTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + turnNumber + ", '" + isOpponent + "', " + column +  ")");
+        db.update("INSERT INTO " + DatabaseConnector.TURNTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + turnNumber + ", '" + isOpponent + "', " + column +  ")");
     }
 }

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Created by Peter on 06.09.2016.
- * <p>
  * Internal representation of the connect 4 grid as a 2d char array & logic
  */
 public class Board {

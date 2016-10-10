@@ -10,22 +10,22 @@ import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
+import com.harambe.tools.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.CacheHint;
+import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -33,18 +33,16 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static com.harambe.App.db;
-import static com.harambe.App.root;
 
 /**
  * Controller of the main game. Contains mostly the chip dropping and logic behind the visual representation of the board.
  */
-public class MainController implements Initializable {
+public class MainController implements Initializable, ControlledScreen {
 
     //fxml views
     @FXML
@@ -78,7 +76,7 @@ public class MainController implements Initializable {
     @FXML
     private ImageView asset2;
     @FXML
-    private ImageView swsd;
+    private ImageView bgAnim;
 
     @FXML
     private Button b0;
@@ -95,6 +93,8 @@ public class MainController implements Initializable {
     @FXML
     private Button b6;
 
+    private ImageView previewImg;
+
     //other variables
     private Board board;
     private int[] freeSpace;
@@ -102,15 +102,21 @@ public class MainController implements Initializable {
     public static Player p2;
     private static Player activePlayer;
     public static Player ourPlayer; // reference whether we are p1 or p2
+    public static Player opponentPlayer;
     private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
-    private ArrayList<Button> buttonArray;
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
+    private MiniMax miniMax;
 
     public static boolean setDone = false; // marks a set as done for the server-comm thread
     private static boolean gameDone = false; // marks a game as done for the server-comm thread
 
+    MasterController myController;
+
+    public void setScreenParent(MasterController screenParent){
+        myController = screenParent;
+    }
 
     /**
      * initialization method. Is being called when FXMLLoader loads main.fxml.
@@ -132,32 +138,12 @@ public class MainController implements Initializable {
         Image asset2Img = new Image(stage.getRandomAssetImg());
         asset2.setImage(asset2Img);
 
-        Image swsdImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/swsd.png")));
-
-        swsd.setImage(swsdImg);
-        swsd.setCache(true);
-        swsd.setCacheHint(CacheHint.QUALITY);
-        swsd.setPreserveRatio(true);
-        TranslateTransition trans = new TranslateTransition();
-        trans.setNode(swsd);
-        trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(60)));
-        trans.setByX(4000);
-        trans.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                swsd.setScaleX(swsd.getScaleX() * -1);
-                swsd.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
-                trans.setByX(trans.getByX() * -1);
-                trans.play();
-            }
-        });
-        trans.play();
 
 
+        playBgAnimation(stage);
         timerStart();
 
         chipArray = new ArrayList<>();
-        buttonArray = new ArrayList<>();
         winLocation = null;
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
@@ -175,6 +161,9 @@ public class MainController implements Initializable {
                 player2Name.setStyle("-fx-fill: green");
                 player1Name.setStyle("-fx-fill: red");
                 ourPlayer = p2; // keep track who we are :)
+                opponentPlayer = p1;
+                miniMax = new MiniMax(SessionVars.searchDepth, ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
+                Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, false);
                 } else if (SessionVars.usePusherInterface) {
@@ -189,6 +178,9 @@ public class MainController implements Initializable {
                 player1Name.setStyle("-fx-fill: green");
                 player2Name.setStyle("-fx-fill: red");
                 ourPlayer = p1; // keep track who we are :)
+                opponentPlayer = p2;
+                miniMax = new MiniMax(SessionVars.searchDepth, ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
+                Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, true);
                 } else if (SessionVars.usePusherInterface) {
@@ -211,6 +203,7 @@ public class MainController implements Initializable {
                 SessionVars.initializeNewSet(false);
             }
             ourPlayer = p1;
+            opponentPlayer = p2;
         }
 
 
@@ -221,7 +214,7 @@ public class MainController implements Initializable {
 
         if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
             // disable user input
-            b0.setDisable(true);b1.setDisable(true);b2.setDisable(true);b3.setDisable(true);b4.setDisable(true);b5.setDisable(true);b6.setDisable(true);
+            disableAllButtons(true);
             // we do not play offline, so run the server communication thread
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -239,18 +232,50 @@ public class MainController implements Initializable {
             thread.setDaemon(true);
             thread.start();
         } else if (SessionVars.soloVsAI) {
+            miniMax = new MiniMax(SessionVars.searchDepth, opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
             if(activePlayer != ourPlayer) {
                 // AI starts, so first turn is AI
-                // TODO maybe use one global minimax object
+                // initialize MiniMax in offline mode
+                Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
                 long start = System.nanoTime();
-                fireButton(new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
-                System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                fireButton(miniMax.getBestMove(board));
+                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
             }
         }
 
-
-
     }
+
+    /**
+     * plays bg animation
+     * @param stage
+     */
+    private void playBgAnimation(Stage stage) {
+        Image bgAnimImg = new Image(getClass().getClassLoader().getResourceAsStream((stage.getBgAnimImg())));
+
+        bgAnim.setImage(bgAnimImg);
+        bgAnim.setCache(true);
+        bgAnim.setCacheHint(CacheHint.SPEED);
+        bgAnim.setPreserveRatio(true);
+        TranslateTransition trans = new TranslateTransition();
+        trans.setNode(bgAnim);
+        trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(20)));
+        trans.setByX(4000);
+        trans.setByY(-500);
+        trans.setOnFinished(event -> {
+            bgAnim.setScaleX(bgAnim.getScaleX() * -1);
+            bgAnim.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
+            if (trans.getByX() > 0) {
+                // now to the left
+                trans.setByX(trans.getByX() * -1 - 1000);
+            } else {
+                trans.setByX(4000);
+            }
+            trans.setByY(trans.getByY() * -1);
+            trans.play();
+        });
+        trans.play();
+    }
+
 
     /**
      * Plays the set AI driven
@@ -266,6 +291,7 @@ public class MainController implements Initializable {
         }
             while(!setDone) {
                 int col = sC.getTurnFromServer();
+                long start = System.nanoTime();
                 if(col == -2) {
                     // indicates that set has ended, and not that we have to start (server sends -1 in both cases :/
                     // so just get the next turn
@@ -276,11 +302,10 @@ public class MainController implements Initializable {
                     flag = true;
                     activePlayer = ourPlayer;
                     SessionVars.initializeNewSet(true);
-                    long start = System.nanoTime();
-                    int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                    int column = 3; // first drop in the middle :)
                     final FutureTask<Boolean> query = new FutureTask<>(() -> {
                         dropForUs(sC, column);
-                        System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                        Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                         return true;
                     });
                     Platform.runLater(query); // drop logic can only be done in the UI Thread
@@ -299,11 +324,10 @@ public class MainController implements Initializable {
                 Platform.runLater(query); // drop logic can only be done in the UI Thread
                 query.get(); // wait for the logic top happen to avoid random magic
 
-                long start = System.nanoTime();
-                int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                int column = miniMax.getBestMove(board);
                 final FutureTask<Boolean> query2 = new FutureTask<>(() -> {
                     dropForUs(App.sC, column);
-                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                    Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                     return true;
                 });
                 Platform.runLater(query2); // drop logic can only be done in the UI Thread
@@ -473,6 +497,26 @@ public class MainController implements Initializable {
         p2ChipView.setCache(true);
     }
 
+    @FXML
+    private void previewChip(MouseEvent event) {
+        Button btn = (Button) event.getSource();
+
+        //spawn preview chip
+        Chip chip = new Chip(activePlayer.getChip());
+        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream((chip.getImg())));
+        previewImg = new ImageView(chipImg);
+        previewImg.setId("previewChip");
+        previewImg.setStyle("-fx-opacity: .5");
+        previewImg.setTranslateY(-500);
+        previewImg.setTranslateX(btn.getTranslateX());
+        bg.getChildren().add(previewImg);
+    }
+
+    @FXML
+    private void erasePreviewChip(MouseEvent event) {
+        bg.getChildren().remove(previewImg);
+    }
+
     /**
      * onClick event for the buttons laying over the different columns.
      * contains most of the UI-logic.
@@ -480,12 +524,14 @@ public class MainController implements Initializable {
      */
     @FXML
     private void dropChip(ActionEvent event) {
+        //delete previewImg
+        if(previewImg != null) {
+            bg.getChildren().remove(previewImg);
+        }
+
         Button btn = (Button) event.getSource();
 
-        final URL resource = getClass().getResource(activePlayer.getDropSound());
-        final Media drop = new Media(resource.toString());
-        MediaPlayer player = new MediaPlayer(drop);
-        player.play();
+        activePlayer.playDropSound();
 
         //get column
         int column = Integer.parseInt(btn.getId().substring(1));
@@ -508,18 +554,14 @@ public class MainController implements Initializable {
             board.put(column, activePlayer.getSymbol());
         }
         catch (Exception e) {
-            System.out.println("column full");
-            //add button from full line to buttonarray
-            buttonArray.add(btn);
-            btn.setVisible(false);
+            System.err.println("column full");
+            btn.setDisable(true);
         }
 
 
         //check for fullBoard
         if (board.isFull(column)) {
-            //add button from full line to buttonarray
-            buttonArray.add(btn);
-            btn.setVisible(false);
+            btn.setDisable(true);
         }
 
         //paint chip and move the layer to background
@@ -535,20 +577,33 @@ public class MainController implements Initializable {
 
         if(SessionVars.soloVsAI && activePlayer != ourPlayer) {
             // user is playing against AI, so his turn is followed by an AI turn
-            b0.setDisable(true);b1.setDisable(true);b2.setDisable(true);b3.setDisable(true);b4.setDisable(true);b5.setDisable(true);b6.setDisable(true);
+            disableAllButtons(true);
             long start = System.nanoTime();
             Thread thread = new Thread(() -> {
-                int column1 = new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                int column1 = miniMax.getBestMove(board);
                 Platform.runLater(() -> {
                     fireDisabledButton(column1);
-                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
-                    b0.setDisable(false);b1.setDisable(false);b2.setDisable(false);b3.setDisable(false);b4.setDisable(false);b5.setDisable(false);b6.setDisable(false);
+                    Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                    disableAllButtons(false);
                 });
             });
             thread.start();
         }
     }
 
+
+    /**
+     * makes all buttons/ columns unclickable
+     * @param disabled true = disabled/ false = enabled
+     */
+    private void disableAllButtons(boolean disabled) {
+        b0.setDisable(disabled);b1.setDisable(disabled);b2.setDisable(disabled);b3.setDisable(disabled);b4.setDisable(disabled);b5.setDisable(disabled);b6.setDisable(disabled);
+    }
+
+    /**
+     * persists drop in database
+     * @param column
+     */
     private void persistDrop(int column) {
         TurnModel turnModel = null;
         if (activePlayer == ourPlayer) {
@@ -611,7 +666,7 @@ public class MainController implements Initializable {
     private void checkForWin() {
 
         if ((winLocation = board.getWinForUI(activePlayer.getSymbol())) != null) {
-            System.out.println(activePlayer.getName() + " wins");
+            Logger.event(activePlayer.getName() + " wins");
 
             //increment score and change score
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
@@ -621,12 +676,15 @@ public class MainController implements Initializable {
                 player1Score.setText(String.valueOf(p1.getScore()));
                 player2Score.setText(String.valueOf(p2.getScore()));
 
+
                 SetModel setModel;
 
                 if (activePlayer == ourPlayer) {
                     setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
+                    winAnim(p1ImgView);
                 } else {
                     setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                    winAnim(p2ImgView);
                 }
 
                 try {
@@ -648,15 +706,12 @@ public class MainController implements Initializable {
             int columnPos = 0;
             winCircleArray = new ArrayList<>();
 
-            for ( int zeile = 0; zeile < winLocation.length; zeile++ )
-            {
-
-                for ( int spalte=0, i=0; spalte < winLocation[zeile].length; i=-i+1, spalte++ ) {
-                    if (i==0) {
-                        rowPos = (y0+(winLocation[zeile][spalte]*step));
-                    }
-                    else {
-                        columnPos = (x0+(winLocation[zeile][spalte]*step));
+            for (int[] aWinLocation : winLocation) {
+                for (int counter = 0, i = 0; counter < aWinLocation.length; i = -i + 1, counter++) {
+                    if (i == 0) {
+                        rowPos = (y0 + (aWinLocation[counter] * step));
+                    } else {
+                        columnPos = (x0 + (aWinLocation[counter] * step));
                     }
                 }
                 ImageView winCircle = new ImageView(winCircleImg);
@@ -664,15 +719,31 @@ public class MainController implements Initializable {
                 winCircle.setTranslateX(columnPos);
 
                 winCircleArray.add(winCircle);
-                root.getChildren().add(winCircle);
+                bg.getChildren().add(winCircle);
 
             }
-            //endGame or endSet for offline games
+
+            //wait for circles to be drawn
+            Thread thread = new Thread(() -> {
+                try {
+                    bg.setCursor(Cursor.WAIT);
+                    Thread.sleep(2000);
+                    bg.setCursor(Cursor.DEFAULT);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(() -> cleanBoardImages());
+            });
+            thread.start();
+
             if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
                 endGame();
             } else {
-                endSet(false);
+                endSet();
             }
+
+            //endGame or endSet for offline games
+
 
         } else if (board.isTerminalState()) {
             //should be a draw
@@ -680,7 +751,6 @@ public class MainController implements Initializable {
             //increment score and change score
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
                 // for online games the score redraw is handled in the Communicator
-                activePlayer.incrementScore();
                 player1Score.setText(String.valueOf(p1.getScore()));
                 player2Score.setText(String.valueOf(p2.getScore()));
 
@@ -693,17 +763,57 @@ public class MainController implements Initializable {
                     e.printStackTrace();
                 }
 
-                //endGame or endSet for offline game, else in the Communicator
-                if (p1.getScore() >= 2 || p2.getScore() >= 2) {
+                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
                     endGame();
                 } else {
-                    endSet(true);
+                    endSet();
                 }
 
+                // TODO do something nicer here
+                Logger.event("a draw");
             }
 
+            Platform.runLater(() -> cleanBoardImages());
         }
 
+    }
+
+    // TODO maybe rename
+    private void cleanBoardImages() {
+        for (ImageView chip: chipArray) {
+            field.getChildren().remove(chip);
+        }
+
+
+        if(winCircleArray != null) {
+            for (ImageView winCircle : winCircleArray) {
+                bg.getChildren().remove(winCircle);
+            }
+        }
+
+        chipArray = new ArrayList<>();
+
+        // end set disables all the button, if needed we enable them here again
+        if(!(SessionVars.usePusherInterface || SessionVars.useFileInterface || (activePlayer != ourPlayer && SessionVars.soloVsAI))) {
+            disableAllButtons(false);
+        }
+    }
+
+
+    /**
+     * transition to let the playerImage jump up and down
+     * @param imgView
+     */
+    private void winAnim(ImageView imgView) {
+        activePlayer.playWinSound();
+
+        TranslateTransition trans = new TranslateTransition();
+        trans.setNode(imgView);
+        trans.setDuration(new Duration(100));
+        trans.setByY(-100);
+        trans.setCycleCount(4);
+        trans.setAutoReverse(true);
+        trans.play();
     }
 
     /**
@@ -721,39 +831,14 @@ public class MainController implements Initializable {
     /**
      * is called when a set is over. Reinitializes the board and the visual representation of it.
      */
-    private void endSet(boolean draw) {
+    private void endSet() {
         setDone = true;
-
-        //acknowledge player of his victory
-        //TODO: Change this to something that looks better
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information Dialog");
-        alert.setHeaderText(null);
-        if(!draw) {
-            alert.setContentText("Player " + activePlayer.getName() + " wins the set");
-        } else {
-            alert.setContentText("A draw");
-        }
-
-        alert.showAndWait();
 
         try {
             //reinitialize the board
             board.reset();
-            for (ImageView chip: chipArray) {
-                field.getChildren().remove(chip);
-            }
-            chipArray = new ArrayList<>();
 
-            if(!draw) {
-                for (ImageView winCircle : winCircleArray) {
-                    root.getChildren().remove(winCircle);
-                }
-            }
-
-            for (Button column: buttonArray) {
-                column.setVisible(true);
-            }
+            disableAllButtons(true);
 
             if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
                 SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
@@ -779,14 +864,7 @@ public class MainController implements Initializable {
             weWon = true;
         }
 
-        //Todo, might be wise to have a global opponent reference like ourplayer
-        Player opponent;
-        if (ourPlayer == p1) {
-            opponent = p2;
-        } else {
-            opponent = p1;
-        }
-        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponent.getScore(), weWon);
+        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponentPlayer.getScore(), weWon);
         try {
             gameModel.persistInDatabase(db);
         } catch (SQLException e) {

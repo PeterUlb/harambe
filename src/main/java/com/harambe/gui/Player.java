@@ -1,6 +1,11 @@
 package com.harambe.gui;
 
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.net.URL;
+
 /**
  * Player class of the UI. Features the name, the character and all the parameters concerning those items.
  */
@@ -102,11 +107,29 @@ public class Player {
         this.dropSoundLocation = "/audio/"+character+"_drop.mp3";
         this.winSoundLocation = "/audio/"+character+"_win.mp3";
         this.selectSoundLocation = "/audio/"+character+"_select.mp3";
-    };
-
-    public String getDropSound() {
-        return dropSoundLocation;
     }
+
+    public void playDropSound() {
+        final URL resource = getClass().getResource(dropSoundLocation);
+        final Media drop = new Media(resource.toString());
+        MediaPlayer player = new MediaPlayer(drop);
+        player.play();
+    }
+
+    public void playWinSound() {
+            final URL resource = getClass().getResource(winSoundLocation);
+            final Media drop = new Media(resource.toString());
+            MediaPlayer player = new MediaPlayer(drop);
+            player.play();
+    }
+
+    public void playSelectSound() {
+            final URL resource = getClass().getResource(selectSoundLocation);
+            final Media drop = new Media(resource.toString());
+            MediaPlayer player = new MediaPlayer(drop);
+            player.play();
+    }
+
 
     public String getwinSound() {
         return winSoundLocation;
