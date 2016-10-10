@@ -7,6 +7,7 @@ import com.harambe.game.SessionVars;
 import com.harambe.gui.MasterController;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -78,7 +79,8 @@ public class App extends Application {
 
 
     public void start(Stage stage) throws Exception {
-
+        stage.getIcons().add(
+                new Image(getClass().getClassLoader().getResourceAsStream("img/harambe.png")));
 
         MasterController mainContainer = new MasterController();
         mainContainer.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE);
