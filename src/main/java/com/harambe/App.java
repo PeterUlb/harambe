@@ -74,8 +74,8 @@ public class App extends Application {
 
         MasterController mainContainer = new MasterController();
         mainContainer.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE);
-        mainContainer.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
         mainContainer.loadScreen(App.CHARACTER_SCREEN, App.CHARACTER_SCREEN_FILE);
+
 
         //set main menu as first screen
         mainContainer.setScreen(App.CHARACTER_SCREEN);

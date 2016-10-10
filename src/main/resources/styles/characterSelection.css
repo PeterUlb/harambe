@@ -12,3 +12,16 @@
     -fx-background-size: 1920 1080;
     -fx-background-position: center center;
 }
+
+.remove {
+    -fx-background-color: #F15A3A;
+}
+
+.remove:hover {
+    -fx-background-color: #FF1000;
+    -fx-cursor: hand;
+}
+
+.characterImg {
+    -fx-cursor: hand;
+}

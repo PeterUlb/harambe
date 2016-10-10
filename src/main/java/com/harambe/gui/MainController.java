@@ -94,6 +94,13 @@ public class MainController implements Initializable, ControlledScreen {
 
     private ImageView previewImg;
 
+    //variables from other controllers
+    static String p1Character;
+    static String p2Character;
+    static String p1Name;
+    static String p2Name;
+
+
     //other variables
     private Board board;
     private int[] freeSpace;
@@ -153,8 +160,8 @@ public class MainController implements Initializable, ControlledScreen {
             // we play "online"
             if (SessionVars.ourSymbol == 'X') {
                 // we are 'X', so right side on the UI
-                p2 = new Player(false, System.getProperty("user.name"), "Harambe", Board.PLAYER1);
-                p1 = new Player(false, "Player2", "Hunter", Board.PLAYER2);
+                p2 = new Player(false, p1Name, p1Character, Board.PLAYER1);
+                p1 = new Player(false, p2Name, p2Character, Board.PLAYER2);
                 player2Name.setStyle("-fx-fill: green");
                 player1Name.setStyle("-fx-fill: red");
                 ourPlayer = p2; // keep track who we are :)
@@ -167,8 +174,8 @@ public class MainController implements Initializable, ControlledScreen {
                 SessionVars.initializeNewGame(p2.getName(), p1.getName());
             } else {
                 // we are 'O', so left side on the UI
-                p1 = new Player(false, System.getProperty("user.name"), "Harambe", Board.PLAYER2);
-                p2 = new Player(false, "Player2", "Hunter", Board.PLAYER1);
+                p1 = new Player(false, p2Name, p2Character, Board.PLAYER2);
+                p2 = new Player(false, p1Name, p1Character, Board.PLAYER1);
                 player1Name.setStyle("-fx-fill: green");
                 player2Name.setStyle("-fx-fill: red");
                 ourPlayer = p1; // keep track who we are :)
@@ -182,8 +189,8 @@ public class MainController implements Initializable, ControlledScreen {
             }
         } else {
             // we play offline
-            p1 = new Player(false, System.getProperty("user.name"), "Harambe", Board.PLAYER1);
-            p2 = new Player(false, "Player2", "Hunter", Board.PLAYER2);
+            p1 = new Player(false, p1Name, p1Character, Board.PLAYER1);
+            p2 = new Player(false, p2Name, p2Character, Board.PLAYER2);
             SessionVars.initializeNewGame(p1.getName(), p2.getName());
             if (Math.round(Math.random())==1) {
                 activePlayer = p1;
@@ -882,4 +889,6 @@ public class MainController implements Initializable, ControlledScreen {
         _player1Score.setText(String.valueOf(p1.getScore()));
         _player2Score.setText(String.valueOf(p2.getScore()));
     }
+
+
 }
