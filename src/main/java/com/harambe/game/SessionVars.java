@@ -7,6 +7,9 @@ import java.util.UUID;
  */
 public class SessionVars {
     //TODO ALL of them must be UI configurable
+    public static String app_id = "252455";
+    public static String key = "75c96c88e0a7ef9d4c86";
+    public static String secret = "667f4dd9c288a3ad97d0";
     public static boolean useFileInterface = false;
     public static boolean usePusherInterface = false;
     public static boolean soloVsAI = false;

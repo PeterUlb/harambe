@@ -36,10 +36,10 @@ public class App extends Application {
                 System.exit(-1);
             }
         } else if (input.equalsIgnoreCase("P")) {
-            JOptionPane.showMessageDialog(null, "Not implemented!", "ERROR", 1);
-//            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").charAt(0);
+        //    JOptionPane.showMessageDialog(null, "Not implemented!", "ERROR", 1);
+            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").charAt(0);
             SessionVars.usePusherInterface = true;
-            System.exit(-1);
+        //    System.exit(-1);
         } else if (input.equalsIgnoreCase("A")) {
             SessionVars.soloVsAI = true;
         } else if (input.equalsIgnoreCase("V")) {
