@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.image.ImageView?>
 <StackPane styleClass="field" stylesheets="/styles/menu.css" xmlns="http://javafx.com/javafx/8"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.MenuController">
    <children>
@@ -13,7 +14,7 @@
             <Font name="System Bold" size="24.0" />
          </font>
       </Label>
-      <Button fx:id="btnLokal" onAction="#playLocal" styleClass="buttonL" text="Lokal" translateX="-255.0" />
-      <Button fx:id="btnOnline" styleClass="buttonR" text="Online" translateX="255.0" />
+      <ImageView fx:id="btnImgLokal" styleClass="buttonL" onMouseClicked="#playLocal" translateX="-200" />
+      <ImageView fx:id="btnImgOnline" styleClass="buttonR" onMouseClicked="#playLocal" translateX="200" />
    </children>
 </StackPane>
