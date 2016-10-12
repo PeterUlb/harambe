@@ -31,7 +31,7 @@ public class App extends Application {
 
     public static void main(String[] args) {
         // TODO replace this with proper user interface (radio buttons etc)
-        Object[] options = { "File", "Pusher", "vs AI", "Human vs Human" };
+        Object[] options = { "File", "Pusher", "Human vs AI", "Human vs Human" };
         int x = JOptionPane.showOptionDialog(null, "Choose a play type", "Selection",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);

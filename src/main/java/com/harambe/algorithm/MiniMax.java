@@ -51,7 +51,7 @@ public class MiniMax {
 
     // how many win possibilities each field offers (see picture)
     private static final short[][] winPossibilities =
-            {{3, 4, 5, 7, 5, 4, 3},
+                    {{3, 4, 5, 7, 5, 4, 3},
                     {4, 6, 8, 10, 8, 6, 4},
                     {5, 8, 11, 13, 11, 8, 5},
                     {5, 8, 11, 13, 11, 8, 5},
@@ -120,13 +120,26 @@ public class MiniMax {
         if (isMaximizingPlayer) {
             int bestValue = Integer.MIN_VALUE;
             ArrayList<Integer> moves = board.getPossibleMoves();
-            for (int move : moves) {
+            while (moves.size() != 0) {
+                int move = 0;
+                // here we do move ordering (good moves first for early alphabeta cutoff)
+                // column 3 is most likely for a win, then 2 and 4
+                if (moves.contains(3)) {
+                    move = 3;
+                } else if (moves.contains(2)) {
+                    move = 2;
+                } else if (moves.contains(4)) {
+                    move = 4;
+                } else {
+                    move = moves.get(0);
+                }
                 board.put(move, optimizingPlayer);
                 int val = alphabeta(board, depth - 1, alpha, beta, false);
 //                if(depth == globalDepth) {
 //                    System.out.println("Max: " + val);
 //                    System.out.println("-------------------------------");
 //                }
+                moves.remove(Integer.valueOf(move));
                 board.remove(move);
 
                 //after hours of searching.... only return the move on the TOP level
@@ -146,12 +159,24 @@ public class MiniMax {
         } else {
             int bestValue = Integer.MAX_VALUE;
             ArrayList<Integer> moves = board.getPossibleMoves();
-            for (int move : moves) {
+            while (moves.size() != 0) {
+                int move = 0;
+                // here we do move ordering (good moves first for early alphabeta cutoff)
+                if (moves.contains(3)) {
+                    move = 3;
+                } else if (moves.contains(2)) {
+                    move = 2;
+                } else if (moves.contains(4)) {
+                    move = 4;
+                } else {
+                    move = moves.get(0);
+                }
                 board.put(move, opponentPlayer);
                 int val = alphabeta(board, depth - 1, alpha, beta, true);
 //                if(depth == (globalDepth - 1)) {
 //                    System.out.println("Min: " + val);
 //                }
+                moves.remove(Integer.valueOf(move));
                 board.remove(move);
                 bestValue = Math.min(bestValue, val);
                 beta = Math.min(beta, bestValue);
