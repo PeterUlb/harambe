@@ -7,6 +7,7 @@ import com.harambe.game.SessionVars;
 import com.harambe.gui.MasterController;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -30,31 +31,41 @@ public class App extends Application {
 
     public static void main(String[] args) {
         // TODO replace this with proper user interface (radio buttons etc)
-        String input = JOptionPane.showInputDialog("[F]ile, [P]usher, against [A]I or [V]ersus?");
-        if(input == null) {
+        Object[] options = { "File", "Pusher", "vs AI", "Human vs Human" };
+        int x = JOptionPane.showOptionDialog(null, "Choose a play type", "Selection",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, options, options[0]);
+        if(x == -1) {
             System.exit(0);
-        } else if(input.equalsIgnoreCase("F")) {
-            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").toUpperCase().charAt(0);
+        } else if(x == 0) {
+            int symbolChoice = JOptionPane.showOptionDialog(null, "O or X?", "Selection",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, new Object[] {"O", "X"}, "O");
+            if (symbolChoice == 0) {
+                SessionVars.ourSymbol = 'O';
+            } else if (symbolChoice == 1) {
+                SessionVars.ourSymbol = 'X';
+            } else {
+                System.exit(0);
+            }
             SessionVars.useFileInterface = true;
 //            SessionVars.fileInterfacePath = "C:\\Users\\USERNAME\\Desktop\\server";
             if(SessionVars.fileInterfacePath == null) {
-                JOptionPane.showMessageDialog(null, "Set SessionVars.fileInterfacePath!!", "ERROR", 1);
-                System.exit(-1);
+                SessionVars.fileInterfacePath = JOptionPane.showInputDialog(null, "Set communication path", "C:\\Users\\USERNAME\\Desktop\\server");
+                if(SessionVars.fileInterfacePath == null) {
+                    System.exit(0);
+                }
             }
-        } else if (input.equalsIgnoreCase("P")) {
+        } else if (x == 1) {
             JOptionPane.showMessageDialog(null, "Not implemented!", "ERROR", 1);
 //            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").charAt(0);
             SessionVars.usePusherInterface = true;
             System.exit(-1);
-        } else if (input.equalsIgnoreCase("A")) {
+        } else if (x == 2) {
             SessionVars.soloVsAI = true;
-        } else if (input.equalsIgnoreCase("V")) {
+        } else if (x == 3) {
             // do not set any flag
-        } else {
-            JOptionPane.showMessageDialog(null, "F P A or V only.....", "ERROR", 1);
-            System.exit(-1);
         }
-
 
         try {
             db = new DatabaseConnector();
@@ -68,14 +79,19 @@ public class App extends Application {
 
 
     public void start(Stage stage) throws Exception {
-
+        stage.getIcons().add(
+                new Image(getClass().getClassLoader().getResourceAsStream("img/harambe.png")));
 
         MasterController mainContainer = new MasterController();
         mainContainer.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE);
-        mainContainer.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
 
-        //set main menu as first screen
-        mainContainer.setScreen(App.MENU_SCREEN);
+        //TODO remove when out of prototype stage
+        mainContainer.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
+        mainContainer.setScreen(App.MAIN_SCREEN);
+        // end remove
+
+        //set main menu as first screen TODO uncomment when out of prototype
+        //mainContainer.setScreen(App.MENU_SCREEN);
 
         StackPane root = new StackPane();
         root.getChildren().addAll(mainContainer);
