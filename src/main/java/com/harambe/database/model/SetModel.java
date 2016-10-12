@@ -30,9 +30,9 @@ public class SetModel implements Persistable {
         this.weWon = weWon;
     }
 
-    public static ArrayList<SetModel> getSets(DatabaseConnector db) throws SQLException {
+    public static ArrayList<SetModel> getSets(DatabaseConnector db, String dbGameUUID) throws SQLException {
         ArrayList<SetModel> setModels = new ArrayList<>();
-        ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.SETTABLE);
+        ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.SETTABLE + " WHERE game_uuid = '" + dbGameUUID + "'");
 
         String gameUUID;
         int setNumber;
