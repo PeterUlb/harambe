@@ -11,10 +11,12 @@
 .buttonL:hover{
     }
 .buttonR {
-    -fx-image: url("/img/ButtonLayoutRight.png");
+    -fx-image: url("/img/btnOnline.png");
     -fx-cursor: hand;
 }
-
+.buttonR:hover{
+    -fx-image: url("/img/btnOnlineHover.png");
+}
 .paneButton{
     -fx-background-color: aqua;
     -fx-max-width: 500px;
