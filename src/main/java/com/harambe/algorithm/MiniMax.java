@@ -1,36 +1,31 @@
 package com.harambe.algorithm;
 
 import com.harambe.game.Board;
+import com.harambe.tools.Logger;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation for the MiniMax algorithm. Requires use of the Board class
  */
 public class MiniMax {
-    private int savedMove = -1;
-    private int globalDepth = 7;
+    private int tempSavedMove = -1;
+    private int globalMaxDepth = -1; // points at the current max depth for the algorithm
     private char optimizingPlayer = Board.UNMARKED;
     private char opponentPlayer = Board.UNMARKED;
 
     private long maxNano; // max nanoseconds until function returns
     private long start; // marks the start
-    private int outOfTimeDepth = 4;
 
     /**
-     * @param depth how many iterations of the minimax algorithm will be performed
      * @param optimizingPlayer the symbol of the player (usually the AI), defined in Board class
      * @param maxMilis maximum miliseconds until function returns, 0 for infinity. <strong>Keep in mind that this doesn't represent the whole runtime of the best move function.
      *                 The real runtime is maxMilis + the timeOutDepth run</strong>
-     * @param outOfTimeDepth the depth that will be performed when time > maxMilis, choose something fast!
      */
-    public MiniMax(int depth, char optimizingPlayer, long maxMilis, int outOfTimeDepth) {
-        this.setGlobalDepth(depth);
+    public MiniMax(char optimizingPlayer, long maxMilis) {
         this.optimizingPlayer = optimizingPlayer;
         this.maxNano = TimeUnit.MILLISECONDS.toNanos(maxMilis);
-        this.outOfTimeDepth = outOfTimeDepth;
 
         if(optimizingPlayer == Board.PLAYER1) {
             opponentPlayer = Board.PLAYER2;
@@ -39,14 +34,6 @@ public class MiniMax {
         } else {
             throw new IllegalArgumentException("Invalid Player");
         }
-    }
-
-    public int getGlobalDepth() {
-        return globalDepth;
-    }
-
-    public void setGlobalDepth(int globalDepth) {
-        this.globalDepth = globalDepth;
     }
 
     // how many win possibilities each field offers (see picture)
@@ -65,28 +52,28 @@ public class MiniMax {
      */
     public int getBestMove(Board board) {
         this.start = System.nanoTime();
-        savedMove = -1;
-        try {
-            alphabeta(board.getDeepCopy(), globalDepth, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
-        } catch (OutOfTimeException e) {
-            System.out.println("Out of time");
-            savedMove = getOutOfTimeMove(board);
+        tempSavedMove = -1;
+        int j = 1; // debug variable
+        int trueSavedMove = -1; // temp saved move is changed in the function and can be interrupted on runtime,
+        // those we need a variable containing "completed" states
+        for (int i = 1; timeLeft() ; i++) {
+            try {
+                this.globalMaxDepth = i; // set the depth we are currently using
+                alphabeta(board.getDeepCopy(), i, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+            } catch (OutOfTimeException e) {
+                Logger.event("Out of time");
+                break;
+            }
+            // only called after a complete run through
+            trueSavedMove = tempSavedMove;
+            j = i;
         }
-        return savedMove;
+        Logger.debug("Managed to get depth " + j);
+        return trueSavedMove;
     }
 
-    /**
-     * Called when the main minimax runs out of time. The depth is defined in the MiniMax Constructor
-     * @param board the current board
-     * @return the best move or random
-     */
-    private int getOutOfTimeMove(Board board) {
-        savedMove = -1;
-        savedMove = new MiniMax(outOfTimeDepth, optimizingPlayer, 0, 0).getBestMove(board.getDeepCopy());
-        if (savedMove == -1) {
-            savedMove = ThreadLocalRandom.current().nextInt(0, Board.COLUMNS);
-        }
-        return savedMove;
+    private boolean timeLeft() {
+        return System.nanoTime() < start + maxNano;
     }
 
 
@@ -100,18 +87,16 @@ public class MiniMax {
      * http://www.emunix.emich.edu/~evett/AI/AlphaBeta_movie/sld009.htm
      *
      * @param board              2d char array with char[Board.ROWS][Board.COLUMNS]
-     * @param depth              how many node-levels will be search (decreases performance), initial call = globalDepth
+     * @param depth              how many node-levels will be search (decreases performance)
      * @param alpha              initial call: -infinity; value that max-player (we) will receive as a minimum
      * @param beta               initial call: +infinity; value that min-player (enemy) will receive at max
      * @param isMaximizingPlayer MiniMax player type (initial call = true)
      * @return
      */
     private int alphabeta(Board board, int depth, int alpha, int beta, boolean isMaximizingPlayer) throws OutOfTimeException {
-        if(maxNano != 0 && System.nanoTime() > start + maxNano) {
-            // we do care for the time (!= 0) and the time ran out
+        if (!timeLeft()) {
             throw new OutOfTimeException();
         }
-
         // TODO: evt. die ersten male immer in die Mitte
         if (depth == 0 || board.isTerminalState()) {
             return evalValue(board, depth);
@@ -123,19 +108,17 @@ public class MiniMax {
             while (moves.size() != 0) {
                 int move = 0;
                 // here we do move ordering (good moves first for early alphabeta cutoff)
-                // column 3 is most likely for a win, then 2 and 4
-                if (moves.contains(3)) {
+                // we start with old "good" moves
+                if (moves.contains(tempSavedMove)) {
+                    move = tempSavedMove;
+                } else if (moves.contains(3)) {
                     move = 3;
-                } else if (moves.contains(2)) {
-                    move = 2;
-                } else if (moves.contains(4)) {
-                    move = 4;
                 } else {
                     move = moves.get(0);
                 }
                 board.put(move, optimizingPlayer);
                 int val = alphabeta(board, depth - 1, alpha, beta, false);
-//                if(depth == globalDepth) {
+//                if(depth == globalMaxDepth) {
 //                    System.out.println("Max: " + val);
 //                    System.out.println("-------------------------------");
 //                }
@@ -143,8 +126,8 @@ public class MiniMax {
                 board.remove(move);
 
                 //after hours of searching.... only return the move on the TOP level
-                if (val > bestValue && depth == globalDepth) {
-                    savedMove = move;
+                if (val > bestValue && depth == globalMaxDepth) {
+                    tempSavedMove = move;
                 }
                 bestValue = Math.max(bestValue, val);
                 alpha = Math.max(alpha, bestValue);
@@ -162,18 +145,17 @@ public class MiniMax {
             while (moves.size() != 0) {
                 int move = 0;
                 // here we do move ordering (good moves first for early alphabeta cutoff)
-                if (moves.contains(3)) {
+                // we start with old "good" moves
+                if (moves.contains(tempSavedMove)) {
+                    move = tempSavedMove;
+                } else if (moves.contains(3)) {
                     move = 3;
-                } else if (moves.contains(2)) {
-                    move = 2;
-                } else if (moves.contains(4)) {
-                    move = 4;
                 } else {
                     move = moves.get(0);
                 }
                 board.put(move, opponentPlayer);
                 int val = alphabeta(board, depth - 1, alpha, beta, true);
-//                if(depth == (globalDepth - 1)) {
+//                if(depth == (globalMaxDepth - 1)) {
 //                    System.out.println("Min: " + val);
 //                }
                 moves.remove(Integer.valueOf(move));
