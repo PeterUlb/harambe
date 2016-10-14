@@ -41,7 +41,7 @@ public class SessionVars {
         SessionVars.turnNumber = 0;
     }
 
-    private static void resetFlags() {
+    public static void resetFlags() {
         SessionVars.useFileInterface = false;
         SessionVars.usePusherInterface = false;
         SessionVars.soloVsAI = false;

@@ -66,7 +66,7 @@ public class MenuController implements Initializable, ControlledScreen {
             SessionVars.soloVsAI(true);
         } else if (result.get() == buttonTypeVersus) {
             // do not set any flags for Human vs Human for now
-
+            SessionVars.resetFlags();
         } else {
             btnImgLocal.setDisable(false);
             return;

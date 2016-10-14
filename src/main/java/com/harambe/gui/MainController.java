@@ -215,6 +215,7 @@ public class MainController implements Initializable, ControlledScreen {
             opponentPlayer = p2;
         }
 
+        Logger.event("Create game " + SessionVars.currentGameUUID);
 
         winCircleImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/wincircle.png")));
 
@@ -254,9 +255,7 @@ public class MainController implements Initializable, ControlledScreen {
             // disable user input
             disableAllButtons(true);
             // we do not play offline, so run the server communication thread
-            Thread thread = new Thread(() -> {
-                playReplay();
-            });
+            Thread thread = new Thread(this::playReplay);
             thread.setDaemon(true);
             thread.start();
         }
@@ -619,7 +618,10 @@ public class MainController implements Initializable, ControlledScreen {
                 Platform.runLater(() -> {
                     fireDisabledButton(column1);
                     Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
-                    disableAllButtons(false);
+                    if(!setDone) {
+                        // only renable buttons if the new set has started
+                        disableAllButtons(false);
+                    }
                 });
             });
             thread.start();
@@ -801,7 +803,7 @@ public class MainController implements Initializable, ControlledScreen {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Platform.runLater(() -> cleanBoardImages());
+                Platform.runLater(this::cleanBoardImages);
             });
             thread.start();
 
@@ -867,6 +869,11 @@ public class MainController implements Initializable, ControlledScreen {
         // end set disables all the button, if needed we enable them here again
         if(!(SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface() || (activePlayer != ourPlayer && SessionVars.getSoloVsAI()) || SessionVars.getReplayMode())) {
             disableAllButtons(false);
+        }
+
+        if(SessionVars.getSoloVsAI()) {
+            // needed to verify that new moves can be done by the player
+            setDone = false;
         }
     }
 
