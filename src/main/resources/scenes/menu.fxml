@@ -18,6 +18,6 @@
          </font>
       </Label>
       <ImageView fx:id="btnImgLocal" styleClass="buttonL" onMouseClicked="#playLocal" translateX="-200" />
-      <ImageView fx:id="btnImgOnline" styleClass="buttonR" onMouseClicked="#playLocal" translateX="200" />
+      <ImageView fx:id="btnImgOnline" styleClass="buttonR" onMouseClicked="#playOnline" translateX="200" />
    </children>
 </StackPane>

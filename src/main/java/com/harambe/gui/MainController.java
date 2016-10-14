@@ -150,7 +150,7 @@ public class MainController implements Initializable, ControlledScreen {
         _player1Score = player1Score;
         _player2Score = player2Score;
 
-        if(SessionVars.usePusherInterface() || SessionVars.useFileInterface()) {
+        if(SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             // we play "online"
             if (SessionVars.ourSymbol == 'X') {
                 // we are 'X', so right side on the UI
@@ -162,9 +162,9 @@ public class MainController implements Initializable, ControlledScreen {
                 opponentPlayer = p1;
                 miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
                 Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
-                if (SessionVars.useFileInterface()) {
-                    App.sC = new FileCommunicator(SessionVars.fileInterfacePath(), false);
-                } else if (SessionVars.usePusherInterface()) {
+                if (SessionVars.getUseFileInterface()) {
+                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false);
+                } else if (SessionVars.getUsePusherInterface()) {
                     // TODO when done instantiate here
 //                App.sC = new PusherCommunicator();
                 }
@@ -179,15 +179,15 @@ public class MainController implements Initializable, ControlledScreen {
                 opponentPlayer = p2;
                 miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
                 Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
-                if (SessionVars.useFileInterface()) {
-                    App.sC = new FileCommunicator(SessionVars.fileInterfacePath(), true);
-                } else if (SessionVars.usePusherInterface()) {
+                if (SessionVars.getUseFileInterface()) {
+                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true);
+                } else if (SessionVars.getUsePusherInterface()) {
                     // TODO when done instantiate here
 //                App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p1.getName(), p2.getName());
             }
-        } else if (SessionVars.replayMode()) {
+        } else if (SessionVars.getReplayMode()) {
             // should be a replay
             Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
             Logger.debug("ReplaySet: " + SessionVars.setNumber);
@@ -221,7 +221,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         initPlayers(p1, p2);
 
-        if(SessionVars.usePusherInterface() || SessionVars.useFileInterface()) {
+        if(SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             // disable user input
             disableAllButtons(true);
             // we do not play offline, so run the server communication thread
@@ -240,7 +240,7 @@ public class MainController implements Initializable, ControlledScreen {
             });
             thread.setDaemon(true);
             thread.start();
-        } else if (SessionVars.soloVsAI()) {
+        } else if (SessionVars.getSoloVsAI()) {
             miniMax = new MiniMax(opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
             if(activePlayer != ourPlayer) {
                 // AI starts, so first turn is AI
@@ -250,7 +250,7 @@ public class MainController implements Initializable, ControlledScreen {
                 fireButton(miniMax.getBestMove(board));
                 Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
             }
-        } else if (SessionVars.replayMode()) {
+        } else if (SessionVars.getReplayMode()) {
             // disable user input
             disableAllButtons(true);
             // we do not play offline, so run the server communication thread
@@ -610,7 +610,7 @@ public class MainController implements Initializable, ControlledScreen {
         //end round
         switchPlayer();
 
-        if(SessionVars.soloVsAI() && activePlayer != ourPlayer) {
+        if(SessionVars.getSoloVsAI() && activePlayer != ourPlayer) {
             // user is playing against AI, so his turn is followed by an AI turn
             disableAllButtons(true);
             long start = System.nanoTime();
@@ -678,7 +678,7 @@ public class MainController implements Initializable, ControlledScreen {
         }
 
         try {
-            if(!SessionVars.replayMode()) {
+            if(!SessionVars.getReplayMode()) {
                 turnModel.persistInDatabase(App.db);
             }
             SessionVars.turnNumber++;
@@ -736,7 +736,7 @@ public class MainController implements Initializable, ControlledScreen {
             Logger.event(activePlayer.getName() + " wins");
 
             //increment score and change score
-            if(!SessionVars.useFileInterface() && !SessionVars.usePusherInterface()) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 // for online games the server decides who wins (e.g. on draws)
                 // for online games the score redraw is handled in the Communicator
                 activePlayer.incrementScore();
@@ -755,7 +755,7 @@ public class MainController implements Initializable, ControlledScreen {
                 }
 
                 try {
-                    if(!SessionVars.replayMode()) {
+                    if(!SessionVars.getReplayMode()) {
                         setModel.persistInDatabase(App.db);
                     }
                 } catch (SQLException e) {
@@ -805,7 +805,7 @@ public class MainController implements Initializable, ControlledScreen {
             });
             thread.start();
 
-            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface() && !SessionVars.usePusherInterface())) {
+            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
                 endGame();
             } else {
                 endSet();
@@ -818,7 +818,7 @@ public class MainController implements Initializable, ControlledScreen {
             //should be a draw
 
             //increment score and change score
-            if(!SessionVars.useFileInterface() && !SessionVars.usePusherInterface()) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 // for online games the score redraw is handled in the Communicator
                 player1Score.setText(String.valueOf(p1.getScore()));
                 player2Score.setText(String.valueOf(p2.getScore()));
@@ -827,14 +827,14 @@ public class MainController implements Initializable, ControlledScreen {
                 // a draw isnt a win
                 setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, false);
                 try {
-                    if(!SessionVars.replayMode()) {
+                    if(!SessionVars.getReplayMode()) {
                         setModel.persistInDatabase(App.db);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
-                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface() && !SessionVars.usePusherInterface())) {
+                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
                     endGame();
                 } else {
                     endSet();
@@ -865,7 +865,7 @@ public class MainController implements Initializable, ControlledScreen {
         chipArray = new ArrayList<>();
 
         // end set disables all the button, if needed we enable them here again
-        if(!(SessionVars.usePusherInterface() || SessionVars.useFileInterface() || (activePlayer != ourPlayer && SessionVars.soloVsAI()) || SessionVars.replayMode())) {
+        if(!(SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface() || (activePlayer != ourPlayer && SessionVars.getSoloVsAI()) || SessionVars.getReplayMode())) {
             disableAllButtons(false);
         }
     }
@@ -911,7 +911,7 @@ public class MainController implements Initializable, ControlledScreen {
 
             disableAllButtons(true);
 
-            if(!SessionVars.useFileInterface() && !SessionVars.usePusherInterface()) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
                 // online games do it in the playSet method, since there is decided who starts
             }
@@ -937,7 +937,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         GameModel gameModel = new GameModel(SessionVars.currentGameUUID, SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponentPlayer.getScore(), weWon);
         try {
-            if(!SessionVars.replayMode()) {
+            if(!SessionVars.getReplayMode()) {
                 gameModel.persistInDatabase(db);
             }
         } catch (SQLException e) {
@@ -945,6 +945,7 @@ public class MainController implements Initializable, ControlledScreen {
         }
         //TODO: Change this to something that looks better
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initOwner(App.stage);
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
         alert.setContentText("Player " + activePlayer.getName() + " wins the game");

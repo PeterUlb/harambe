@@ -60,7 +60,7 @@ public class SessionVars {
         SessionVars.opponentPlayerName = opponentPlayerName;
     }
 
-    public static boolean useFileInterface() {
+    public static boolean getUseFileInterface() {
         return useFileInterface;
     }
 
@@ -70,7 +70,7 @@ public class SessionVars {
         SessionVars.fileInterfacePath = fileInterfacePath;
     }
 
-    public static boolean usePusherInterface() {
+    public static boolean getUsePusherInterface() {
         return usePusherInterface;
     }
 
@@ -79,7 +79,7 @@ public class SessionVars {
         SessionVars.usePusherInterface = usePusherInterface;
     }
 
-    public static boolean soloVsAI() {
+    public static boolean getSoloVsAI() {
         return soloVsAI;
     }
 
@@ -88,7 +88,7 @@ public class SessionVars {
         SessionVars.soloVsAI = soloVsAI;
     }
 
-    public static boolean replayMode() {
+    public static boolean getReplayMode() {
         return replayMode;
     }
 
@@ -97,7 +97,7 @@ public class SessionVars {
         SessionVars.replayMode = replayMode;
     }
 
-    public static String fileInterfacePath() {
+    public static String getFileInterfacePath() {
         return fileInterfacePath;
     }
 }

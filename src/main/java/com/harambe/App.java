@@ -29,6 +29,7 @@ public class App extends Application {
 
     public static DatabaseConnector db;
     public static ServerCommunication sC;
+    public static Stage stage; //used for alert ownership
 
     public static final String MENU_SCREEN = "startScreen";
     public static final String MENU_SCREEN_FILE = "/scenes/menu.fxml";
@@ -43,41 +44,6 @@ public class App extends Application {
 
 
     public static void main(String[] args) {
-        // TODO replace this with proper user interface (radio buttons etc)
-        Object[] options = { "File", "Pusher", "Human vs AI", "Human vs Human" };
-        int x = JOptionPane.showOptionDialog(null, "Choose a play type", "Selection",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-                null, options, options[0]);
-        if(x == -1) {
-            System.exit(0);
-        } else if(x == 0) {
-            int symbolChoice = JOptionPane.showOptionDialog(null, "O or X?", "Selection",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-                    null, new Object[] {"O", "X"}, "O");
-            if (symbolChoice == 0) {
-                SessionVars.ourSymbol = 'O';
-            } else if (symbolChoice == 1) {
-                SessionVars.ourSymbol = 'X';
-            } else {
-                System.exit(0);
-            }
-
-            String path = JOptionPane.showInputDialog(null, "Set communication path", "C:\\Users\\USERNAME\\Desktop\\server");
-                if(path == null) {
-                    System.exit(0);
-                }
-            SessionVars.useFileInterface(true, path);
-        } else if (x == 1) {
-            JOptionPane.showMessageDialog(null, "Not implemented!", "ERROR", 1);
-//            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").charAt(0);
-            SessionVars.usePusherInterface(true);
-            System.exit(-1);
-        } else if (x == 2) {
-            SessionVars.soloVsAI(true);
-        } else if (x == 3) {
-            // do not set any flag
-        }
-
         try {
             db = new DatabaseConnector();
         } catch (SQLException | ClassNotFoundException e) {
@@ -90,6 +56,7 @@ public class App extends Application {
 
 
     public void start(Stage stage) throws Exception {
+        App.stage = stage;
         stage.getIcons().add(
                 new Image(getClass().getClassLoader().getResourceAsStream("img/harambe.png")));
 
