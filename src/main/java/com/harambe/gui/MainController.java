@@ -191,14 +191,12 @@ public class MainController implements Initializable, ControlledScreen {
             // should be a replay
             Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
             Logger.debug("ReplaySet: " + SessionVars.setNumber);
+            p1 = new Player(false, SessionVars.ourPlayerName, "harambe", Board.PLAYER1);
+            p2 = new Player(false, SessionVars.opponentPlayerName, "poacher_2", Board.PLAYER2);
             if (SessionVars.weStartSet) {
-                p1 = new Player(false, SessionVars.ourPlayerName, "harambe", Board.PLAYER1);
-                p2 = new Player(false, SessionVars.opponentPlayerName, "poacher_2", Board.PLAYER2);
                 activePlayer = p1;
             } else {
-                p2 = new Player(false, SessionVars.ourPlayerName, "harambe", Board.PLAYER1);
-                p1 = new Player(false, SessionVars.opponentPlayerName, "poacher_2", Board.PLAYER2);
-                activePlayer = p1;
+                activePlayer = p2;
             }
         } else {
             // we play offline
@@ -748,7 +746,7 @@ public class MainController implements Initializable, ControlledScreen {
 
                 SetModel setModel;
 
-                if (activePlayer == ourPlayer) {
+                if (activePlayer == p1) {
                     setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, true);
                     winAnim(p1ImgView);
                 } else {
