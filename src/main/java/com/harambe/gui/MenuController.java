@@ -128,6 +128,8 @@ public class MenuController implements Initializable, ControlledScreen {
                     directoryChooser.showDialog(App.stage);
             if (selectedDirectory != null) {
                 SessionVars.useFileInterface(true, selectedDirectory.getAbsolutePath());
+            } else {
+                return;
             }
 
 

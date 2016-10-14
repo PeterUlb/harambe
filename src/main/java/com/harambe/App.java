@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCharacterCombination;
@@ -78,9 +79,13 @@ public class App extends Application {
                 alert.initOwner(stage);
                 alert.setTitle("Confirmation Dialog");
                 alert.setHeaderText("Do you really want to exit?");
+                ButtonType toMenuScreen = new ButtonType("Menu Screen", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(ButtonType.YES, toMenuScreen ,ButtonType.CANCEL);
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK){
+                if (result.get() == ButtonType.YES){
                     Platform.exit();
+                } else if (result.get() == toMenuScreen) {
+                    mainContainer.setScreen(MENU_SCREEN);
                 }
             }
         });
