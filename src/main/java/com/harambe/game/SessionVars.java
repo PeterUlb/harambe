@@ -14,7 +14,7 @@ public class SessionVars {
     public static String fileInterfacePath = null;
     public static long timeoutThresholdInMillis = 1000; // time the algorithm has to finish
     // -------------------
-    public static UUID currentGameUUID = null;
+    public static String currentGameUUID = null;
     public static String ourPlayerName = null;
     public static String opponentPlayerName = null;
     public static int setNumber = -1; // current set: #0, #1 or #2?
@@ -23,7 +23,7 @@ public class SessionVars {
     public static int turnNumber = 0;
 
     public static void initializeNewGame(String ourPlayerName, String opponentPlayerName) {
-        SessionVars.currentGameUUID = UUID.randomUUID();
+        SessionVars.currentGameUUID = UUID.randomUUID().toString();
         SessionVars.ourPlayerName = ourPlayerName;
         SessionVars.opponentPlayerName = opponentPlayerName;
         SessionVars.setNumber = -1;
@@ -36,5 +36,13 @@ public class SessionVars {
         SessionVars.setNumber++;
         SessionVars.weStartSet = weStartSet;
         SessionVars.turnNumber = 0;
+    }
+
+    public static void setupReplay(String gameUUID, int setNumber, boolean weStartSet, String ourPlayerName, String opponentPlayerName) {
+        SessionVars.currentGameUUID = gameUUID;
+        SessionVars.setNumber = setNumber;
+        SessionVars.weStartSet = weStartSet;
+        SessionVars.ourPlayerName = ourPlayerName;
+        SessionVars.opponentPlayerName = opponentPlayerName;
     }
 }

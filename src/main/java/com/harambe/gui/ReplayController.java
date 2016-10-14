@@ -3,6 +3,8 @@ package com.harambe.gui;
 import com.harambe.App;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
+import com.harambe.game.SessionVars;
+import com.harambe.tools.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -99,7 +101,10 @@ public class ReplayController implements Initializable, ControlledScreen {
         GameModel g = gameTableView.getSelectionModel().getSelectedItem();
         SetModel s = setTableView.getSelectionModel().getSelectedItem();
         if (g != null && s != null) {
-            System.out.println(g.getGameUUID() + " | " + s.getSetNumber());
+            SessionVars.setupReplay(g.getGameUUID(), s.getSetNumber(), s.isWeStarted(), g.getOurPlayer(), g.getOpponentPlayer());
+            Logger.event("Replay started");
+            myController.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
+            myController.setScreen(App.MAIN_SCREEN);
         }
     }
 

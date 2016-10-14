@@ -107,6 +107,7 @@ public class MainController implements Initializable, ControlledScreen {
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
     private MiniMax miniMax;
+    private static boolean replayMode = false;
 
     public static boolean setDone = false; // marks a set as done for the server-comm thread
     private static boolean gameDone = false; // marks a game as done for the server-comm thread
@@ -150,7 +151,6 @@ public class MainController implements Initializable, ControlledScreen {
         _player1Score = player1Score;
         _player2Score = player2Score;
 
-
         if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
             // we play "online"
             if (SessionVars.ourSymbol == 'X') {
@@ -187,6 +187,20 @@ public class MainController implements Initializable, ControlledScreen {
 //                App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p1.getName(), p2.getName());
+            }
+        } else if (SessionVars.currentGameUUID != null) {
+            // should be a replay
+            Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
+            Logger.debug("ReplaySet: " + SessionVars.setNumber);
+            replayMode = true;
+            if (SessionVars.weStartSet) {
+                p1 = new Player(false, SessionVars.ourPlayerName, "harambe", Board.PLAYER1);
+                p2 = new Player(false, SessionVars.opponentPlayerName, "poacher_2", Board.PLAYER2);
+                activePlayer = p1;
+            } else {
+                p2 = new Player(false, SessionVars.ourPlayerName, "harambe", Board.PLAYER1);
+                p1 = new Player(false, SessionVars.opponentPlayerName, "poacher_2", Board.PLAYER2);
+                activePlayer = p1;
             }
         } else {
             // we play offline
@@ -240,8 +254,34 @@ public class MainController implements Initializable, ControlledScreen {
                 fireButton(miniMax.getBestMove(board));
                 Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
             }
+        } else if (replayMode) {
+            // disable user input
+            disableAllButtons(true);
+            // we do not play offline, so run the server communication thread
+            Thread thread = new Thread(() -> {
+                playReplay();
+            });
+            thread.setDaemon(true);
+            thread.start();
         }
 
+    }
+
+    private void playReplay() {
+        ArrayList<TurnModel> turns = null;
+        try {
+            turns = TurnModel.getTurns(App.db, SessionVars.currentGameUUID, SessionVars.setNumber);
+            for (TurnModel turn :
+                    turns) {
+                Thread.sleep(1000);
+                Platform.runLater(() -> fireDisabledButton(turn.getColumn()));
+            }
+            disableAllButtons(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -596,7 +636,37 @@ public class MainController implements Initializable, ControlledScreen {
      * @param disabled true = disabled/ false = enabled
      */
     private void disableAllButtons(boolean disabled) {
-        b0.setDisable(disabled);b1.setDisable(disabled);b2.setDisable(disabled);b3.setDisable(disabled);b4.setDisable(disabled);b5.setDisable(disabled);b6.setDisable(disabled);
+        if (disabled) {
+            b0.setDisable(true);
+            b1.setDisable(true);
+            b2.setDisable(true);
+            b3.setDisable(true);
+            b4.setDisable(true);
+            b5.setDisable(true);
+            b6.setDisable(true);
+        } else {
+            if (freeSpace[0] >= 0 ) {
+                b0.setDisable(false);
+            }
+            if (freeSpace[1] >= 0 ) {
+                b1.setDisable(false);
+            }
+            if (freeSpace[2] >= 0 ) {
+                b2.setDisable(false);
+            }
+            if (freeSpace[3] >= 0 ) {
+                b3.setDisable(false);
+            }
+            if (freeSpace[4] >= 0 ) {
+                b4.setDisable(false);
+            }
+            if (freeSpace[5] >= 0 ) {
+                b5.setDisable(false);
+            }
+            if (freeSpace[6] >= 0 ) {
+                b6.setDisable(false);
+            }
+        }
     }
 
     /**
@@ -606,13 +676,15 @@ public class MainController implements Initializable, ControlledScreen {
     private void persistDrop(int column) {
         TurnModel turnModel = null;
         if (activePlayer == ourPlayer) {
-            turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, false, column);
+            turnModel = new TurnModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.turnNumber, false, column);
         } else {
-            turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, true, column);
+            turnModel = new TurnModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.turnNumber, true, column);
         }
 
         try {
-            turnModel.persistInDatabase(App.db);
+            if(!replayMode) {
+                turnModel.persistInDatabase(App.db);
+            }
             SessionVars.turnNumber++;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -679,15 +751,17 @@ public class MainController implements Initializable, ControlledScreen {
                 SetModel setModel;
 
                 if (activePlayer == ourPlayer) {
-                    setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
+                    setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, true);
                     winAnim(p1ImgView);
                 } else {
-                    setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                    setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, false);
                     winAnim(p2ImgView);
                 }
 
                 try {
-                    setModel.persistInDatabase(App.db);
+                    if(!replayMode) {
+                        setModel.persistInDatabase(App.db);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -755,9 +829,11 @@ public class MainController implements Initializable, ControlledScreen {
 
                 SetModel setModel;
                 // a draw isnt a win
-                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, false);
                 try {
-                    setModel.persistInDatabase(App.db);
+                    if(!replayMode) {
+                        setModel.persistInDatabase(App.db);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -772,7 +848,7 @@ public class MainController implements Initializable, ControlledScreen {
                 Logger.event("a draw");
             }
 
-            Platform.runLater(() -> cleanBoardImages());
+            Platform.runLater(this::cleanBoardImages);
         }
 
     }
@@ -793,7 +869,7 @@ public class MainController implements Initializable, ControlledScreen {
         chipArray = new ArrayList<>();
 
         // end set disables all the button, if needed we enable them here again
-        if(!(SessionVars.usePusherInterface || SessionVars.useFileInterface || (activePlayer != ourPlayer && SessionVars.soloVsAI))) {
+        if(!(SessionVars.usePusherInterface || SessionVars.useFileInterface || (activePlayer != ourPlayer && SessionVars.soloVsAI) || replayMode)) {
             disableAllButtons(false);
         }
     }
@@ -863,9 +939,11 @@ public class MainController implements Initializable, ControlledScreen {
             weWon = true;
         }
 
-        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponentPlayer.getScore(), weWon);
+        GameModel gameModel = new GameModel(SessionVars.currentGameUUID, SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponentPlayer.getScore(), weWon);
         try {
-            gameModel.persistInDatabase(db);
+            if(!replayMode) {
+                gameModel.persistInDatabase(db);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

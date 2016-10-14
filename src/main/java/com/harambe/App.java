@@ -108,7 +108,6 @@ public class App extends Application {
         scene.addEventHandler(KeyEvent.KEY_RELEASED, t -> {
             if(t.getCode()== KeyCode.ESCAPE)
             {
-                System.out.println("hi");
                 stage.setFullScreen(true);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initOwner(stage);
