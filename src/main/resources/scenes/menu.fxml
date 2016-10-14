@@ -9,12 +9,15 @@
 <StackPane styleClass="field" stylesheets="/styles/menu.css" xmlns="http://javafx.com/javafx/8"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.MenuController">
    <children>
+      <StackPane alignment="BOTTOM_RIGHT">
+         <ImageView fx:id="btnImgReplay" styleClass="buttonReplay" />
+      </StackPane>
       <Label layoutX="182.0" layoutY="38.0" text="Harambes Connect 4" translateY="-300">
          <font>
             <Font name="System Bold" size="24.0" />
          </font>
       </Label>
-      <ImageView fx:id="btnImgLokal" styleClass="buttonL" onMouseClicked="#playLocal" translateX="-200" />
+      <ImageView fx:id="btnImgLocal" styleClass="buttonL" onMouseClicked="#playLocal" translateX="-200" />
       <ImageView fx:id="btnImgOnline" styleClass="buttonR" onMouseClicked="#playLocal" translateX="200" />
    </children>
 </StackPane>

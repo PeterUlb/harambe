@@ -18,7 +18,7 @@ public class MenuController implements Initializable, ControlledScreen {
 
     MasterController myController;
     @FXML
-    private ImageView btnImgLokal;
+    private ImageView btnImgLocal;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

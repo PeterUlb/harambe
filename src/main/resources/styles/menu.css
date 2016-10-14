@@ -17,6 +17,13 @@
 .buttonR:hover{
     -fx-image: url("/img/btnOnlineHover.png");
 }
+.buttonReplay {
+    -fx-image: url("/img/replay_button.png");
+    -fx-cursor: hand;
+}
+.buttonReplay:hover {
+    -fx-image: url("/img/replay_button_hover.png");
+}
 .paneButton{
     -fx-background-color: aqua;
     -fx-max-width: 500px;
