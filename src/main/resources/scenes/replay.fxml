@@ -40,7 +40,7 @@
 
    <HBox spacing="-10" alignment="BOTTOM_RIGHT" GridPane.columnIndex="1"
          GridPane.rowIndex="2">
-      <Button fx:id="startReplayBtn" text="next" onAction="#startReplay" disable="true"/>
+      <Button fx:id="startReplayBtn" text="start Replay" onAction="#startReplay" disable="true"/>
    </HBox>
 
     <HBox spacing="-10" alignment="TOP_RIGHT" GridPane.columnIndex="1"

@@ -40,11 +40,11 @@ public class ReplayController implements Initializable, ControlledScreen {
     @FXML
     TableView<SetModel> setTableView;
     @FXML
-    public TableColumn<GameModel, Integer> SetNumber;
+    public TableColumn<SetModel, Integer> SetNumber;
     @FXML
-    public TableColumn<GameModel, Boolean> WeStarted;
+    public TableColumn<SetModel, Boolean> WeStarted;
     @FXML
-    public TableColumn<GameModel, Boolean> WeWon;
+    public TableColumn<SetModel, Boolean> WeWon;
 
     @FXML
     public Button startReplayBtn;
@@ -66,6 +66,7 @@ public class ReplayController implements Initializable, ControlledScreen {
         OpponentScore.setCellValueFactory(new PropertyValueFactory<GameModel, Integer>("opponentPoints"));
         GameDate.setCellValueFactory(new PropertyValueFactory<GameModel, String>("timestamp"));
         gameTableView.getItems().setAll(gameModels);
+        gameTableView.getSortOrder().add(GameDate);
 
         setTableView.setPlaceholder(new Label("Select game..."));
     }
@@ -81,18 +82,19 @@ public class ReplayController implements Initializable, ControlledScreen {
     @FXML
     private void displaySets() {
         startReplayBtn.setDisable(true);
-        String gameUUID = gameTableView.getSelectionModel().getSelectedItem().getGameUUID();
-        if (gameUUID != null) {
+        GameModel gameModel = gameTableView.getSelectionModel().getSelectedItem();
+        if (gameModel != null) {
             ArrayList<SetModel> setModels = null;
             try {
-                setModels = SetModel.getSets(App.db, gameUUID);
+                setModels = SetModel.getSets(App.db, gameModel.getGameUUID());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            SetNumber.setCellValueFactory(new PropertyValueFactory<GameModel, Integer>("setNumber"));
-            WeStarted.setCellValueFactory(new PropertyValueFactory<GameModel, Boolean>("weStarted"));
-            WeWon.setCellValueFactory(new PropertyValueFactory<GameModel, Boolean>("weWon"));
+            SetNumber.setCellValueFactory(new PropertyValueFactory<SetModel, Integer>("setNumber"));
+            WeStarted.setCellValueFactory(new PropertyValueFactory<SetModel, Boolean>("weStarted"));
+            WeWon.setCellValueFactory(new PropertyValueFactory<SetModel, Boolean>("weWon"));
             setTableView.getItems().setAll(setModels);
+            setTableView.getSortOrder().add(SetNumber);
         }
     }
 

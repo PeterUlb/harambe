@@ -7,11 +7,14 @@ import java.util.UUID;
  */
 public class SessionVars {
     //TODO ALL of them must be UI configurable
-    public static boolean useFileInterface = false;
-    public static boolean usePusherInterface = false;
-    public static boolean soloVsAI = false;
+    // access via corrosponding method (makes sure that other flags are resetted)
+    private static boolean useFileInterface = false;
+    private static String fileInterfacePath = null;
+    private static boolean usePusherInterface = false;
+    private static boolean soloVsAI = false;
+    private static boolean replayMode = false;
+
     public static char ourSymbol = '?';  // can be 'X' or 'O', non-offline games only
-    public static String fileInterfacePath = null;
     public static long timeoutThresholdInMillis = 1000; // time the algorithm has to finish
     // -------------------
     public static String currentGameUUID = null;
@@ -38,11 +41,63 @@ public class SessionVars {
         SessionVars.turnNumber = 0;
     }
 
+    private static void resetFlags() {
+        SessionVars.useFileInterface = false;
+        SessionVars.usePusherInterface = false;
+        SessionVars.soloVsAI = false;
+        SessionVars.replayMode = false;
+    }
+
     public static void setupReplay(String gameUUID, int setNumber, boolean weStartSet, String ourPlayerName, String opponentPlayerName) {
+        // reset all flags
+        SessionVars.resetFlags();
+
+        SessionVars.replayMode(true);
         SessionVars.currentGameUUID = gameUUID;
         SessionVars.setNumber = setNumber;
         SessionVars.weStartSet = weStartSet;
         SessionVars.ourPlayerName = ourPlayerName;
         SessionVars.opponentPlayerName = opponentPlayerName;
+    }
+
+    public static boolean useFileInterface() {
+        return useFileInterface;
+    }
+
+    public static void useFileInterface(boolean useFileInterface, String fileInterfacePath) {
+        SessionVars.resetFlags();
+        SessionVars.useFileInterface = useFileInterface;
+        SessionVars.fileInterfacePath = fileInterfacePath;
+    }
+
+    public static boolean usePusherInterface() {
+        return usePusherInterface;
+    }
+
+    public static void usePusherInterface(boolean usePusherInterface) {
+        SessionVars.resetFlags();
+        SessionVars.usePusherInterface = usePusherInterface;
+    }
+
+    public static boolean soloVsAI() {
+        return soloVsAI;
+    }
+
+    public static void soloVsAI(boolean soloVsAI) {
+        SessionVars.resetFlags();
+        SessionVars.soloVsAI = soloVsAI;
+    }
+
+    public static boolean replayMode() {
+        return replayMode;
+    }
+
+    private static void replayMode(boolean replayMode) {
+        SessionVars.resetFlags();
+        SessionVars.replayMode = replayMode;
+    }
+
+    public static String fileInterfacePath() {
+        return fileInterfacePath;
     }
 }

@@ -61,21 +61,19 @@ public class App extends Application {
             } else {
                 System.exit(0);
             }
-            SessionVars.useFileInterface = true;
-//            SessionVars.fileInterfacePath = "C:\\Users\\USERNAME\\Desktop\\server";
-            if(SessionVars.fileInterfacePath == null) {
-                SessionVars.fileInterfacePath = JOptionPane.showInputDialog(null, "Set communication path", "C:\\Users\\USERNAME\\Desktop\\server");
-                if(SessionVars.fileInterfacePath == null) {
+
+            String path = JOptionPane.showInputDialog(null, "Set communication path", "C:\\Users\\USERNAME\\Desktop\\server");
+                if(path == null) {
                     System.exit(0);
                 }
-            }
+            SessionVars.useFileInterface(true, path);
         } else if (x == 1) {
             JOptionPane.showMessageDialog(null, "Not implemented!", "ERROR", 1);
 //            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").charAt(0);
-            SessionVars.usePusherInterface = true;
+            SessionVars.usePusherInterface(true);
             System.exit(-1);
         } else if (x == 2) {
-            SessionVars.soloVsAI = true;
+            SessionVars.soloVsAI(true);
         } else if (x == 3) {
             // do not set any flag
         }
