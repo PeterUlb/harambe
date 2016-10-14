@@ -105,9 +105,10 @@ public class App extends Application {
         Scene scene = new Scene(root, 1920, 1080);
         stage.setTitle("Harambe Wins!");
         stage.setScene(scene);
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+        scene.addEventHandler(KeyEvent.KEY_RELEASED, t -> {
             if(t.getCode()== KeyCode.ESCAPE)
             {
+                System.out.println("hi");
                 stage.setFullScreen(true);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initOwner(stage);
@@ -116,8 +117,6 @@ public class App extends Application {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK){
                     Platform.exit();
-                } else {
-
                 }
             }
         });
