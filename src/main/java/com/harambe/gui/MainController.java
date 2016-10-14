@@ -935,6 +935,11 @@ public class MainController implements Initializable, ControlledScreen {
      * is called when a game is over. Closes the scene.
      */
     public static void endGame() {
+        if (gameDone) {
+            // this method is called twice with file interface (1st: enemies winning move, second: notifiny of win) (at least I think so)
+            // thats why we avoid the second call (so no PK violations)
+            return;
+        }
         gameDone = true;
         //acknowledge player of his victory
         boolean weWon = false;
