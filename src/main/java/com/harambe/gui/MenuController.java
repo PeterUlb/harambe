@@ -72,6 +72,7 @@ public class MenuController implements Initializable, ControlledScreen {
             return;
         }
         myController.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
+        btnImgLocal.setDisable(false);
         myController.setScreen(App.MAIN_SCREEN);
     }
 
@@ -160,6 +161,7 @@ public class MenuController implements Initializable, ControlledScreen {
             return;
         }
         myController.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
+        btnImgOnline.setDisable(false);
         myController.setScreen(App.MAIN_SCREEN);
     }
 

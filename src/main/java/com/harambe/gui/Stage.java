@@ -13,6 +13,7 @@ public class Stage {
     private String imgLocation;
     private URL themeLocation;
     static MediaPlayer player; // prevent evil GC
+    static boolean themePlaying = false;
 
     public Stage(String stageName) {
         setImg(stageName);
@@ -29,15 +30,20 @@ public class Stage {
      */
     private void playTheme(String stageName){
         // music player
-        switch (stageName) {
-            case "coast_1": themeLocation = getClass().getResource("/audio/mainTheme.mp3");
-            case "coast_2": themeLocation = getClass().getResource("/audio/mainTheme.mp3");
-        }
+        if(!themePlaying) {
+            themePlaying = true;
+            switch (stageName) {
+                case "coast_1":
+                    themeLocation = getClass().getResource("/audio/mainTheme.mp3");
+                case "coast_2":
+                    themeLocation = getClass().getResource("/audio/mainTheme.mp3");
+            }
 
-        final Media media = new Media(themeLocation.toString());
-        player = new MediaPlayer(media);
-        player.setOnEndOfMedia(() -> player.seek(Duration.ZERO));
-        player.play();
+            final Media media = new Media(themeLocation.toString());
+            player = new MediaPlayer(media);
+            player.setOnEndOfMedia(() -> player.seek(Duration.ZERO));
+            player.play();
+        }
     }
 
     public String getImg() {

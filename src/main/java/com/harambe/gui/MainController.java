@@ -111,7 +111,7 @@ public class MainController implements Initializable, ControlledScreen {
     public static boolean setDone = false; // marks a set as done for the server-comm thread
     private static boolean gameDone = false; // marks a game as done for the server-comm thread
 
-    MasterController myController;
+    static MasterController myController;
 
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -952,7 +952,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         alert.showAndWait();
 
-        Platform.exit();
+        myController.setScreen(App.MENU_SCREEN);
     }
 
     public static void redrawScore() {

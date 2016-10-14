@@ -12,7 +12,10 @@
    </padding>
 
 
-    <PieChart id="pieChart" fx:id="pieChart" GridPane.columnIndex="1"
+    <PieChart id="gamesPieChart" fx:id="gamesPieChart" GridPane.columnIndex="1"
+              GridPane.rowIndex="1" />
+
+    <PieChart fx:id="setsPieChart" GridPane.columnIndex="2"
               GridPane.rowIndex="1" />
 
     <HBox spacing="10" alignment="BOTTOM_LEFT" GridPane.columnIndex="0"

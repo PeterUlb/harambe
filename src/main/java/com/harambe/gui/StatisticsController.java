@@ -23,34 +23,40 @@ public class StatisticsController implements Initializable, ControlledScreen {
     MasterController myController;
 
     @FXML
-    private PieChart pieChart;
+    private PieChart gamesPieChart;
+    @FXML
+    private PieChart setsPieChart;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        int won = 0;
-        int lost = 0;
+        int wonGames = 0;
+        int lostGames = 0;
+        int wonSets = 0;
+        int lostSets = 0;
         ArrayList<GameModel> games = null;
         try {
              games = GameModel.getGames(App.db);
             for (GameModel gM :
                     games) {
                 if (gM.isWeWon()) {
-                    won++;
+                    wonGames++;
                 } else {
-                    lost++;
+                    lostGames++;
                 }
+                wonSets += gM.getOurPoints();
+                lostSets += gM.getOpponentPoints();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        ObservableList<PieChart.Data> pieChartData =
+        ObservableList<PieChart.Data> gamesData =
                 FXCollections.observableArrayList(
-                        new PieChart.Data("Won", won),
-                        new PieChart.Data("Lost", lost)
+                        new PieChart.Data("Won", wonGames),
+                        new PieChart.Data("Lost", lostGames)
                 );
 
-        pieChartData.forEach(data ->
+        gamesData.forEach(data ->
                 data.nameProperty().bind(
                         Bindings.concat(
                                 data.getName(), " ", (int) data.pieValueProperty().get(), " Game(s)"
@@ -58,8 +64,25 @@ public class StatisticsController implements Initializable, ControlledScreen {
                 )
         );
 
-        pieChart.setLabelsVisible(false);
-        pieChart.setData(pieChartData);
+        gamesPieChart.setLabelsVisible(false);
+        gamesPieChart.setData(gamesData);
+
+        ObservableList<PieChart.Data> setsData =
+                FXCollections.observableArrayList(
+                        new PieChart.Data("Won", wonSets),
+                        new PieChart.Data("Lost", lostSets)
+                );
+
+        setsData.forEach(data ->
+                data.nameProperty().bind(
+                        Bindings.concat(
+                                data.getName(), " ", (int) data.pieValueProperty().get(), " Set(s)"
+                        )
+                )
+        );
+
+        setsPieChart.setLabelsVisible(false);
+        setsPieChart.setData(setsData);
     }
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
