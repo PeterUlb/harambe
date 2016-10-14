@@ -36,6 +36,8 @@ public class App extends Application {
     public static final String MAIN_SCREEN_FILE = "/scenes/main.fxml";
     public static final String REPLAY_SCREEN = "replay";
     public static final String REPLAY_SCREEN_FILE = "/scenes/replay.fxml";
+    public static final String STATISTICS_SCREEN = "statistics";
+    public static final String STATISTICS_SCREEN_FILE = "/scenes/statistics.fxml";
 
 
 

@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.*?>
-
 <?import javafx.scene.image.ImageView?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.collections.FXCollections?>
 <GridPane styleClass="field" stylesheets="/styles/replay.css" alignment="center" hgap="10.0" vgap="10.0" fx:controller="com.harambe.gui.ReplayController"
           xmlns:fx="http://javafx.com/fxml">
    <padding>
@@ -47,6 +42,11 @@
          GridPane.rowIndex="2">
       <Button fx:id="startReplayBtn" text="next" onAction="#startReplay" disable="true"/>
    </HBox>
+
+    <HBox spacing="-10" alignment="TOP_RIGHT" GridPane.columnIndex="1"
+          GridPane.rowIndex="0">
+        <Button onAction="#openStatistics" styleClass="buttonStatistics" />
+    </HBox>
 
 
 </GridPane>

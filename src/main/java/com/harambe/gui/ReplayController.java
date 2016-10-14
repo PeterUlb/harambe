@@ -112,6 +112,12 @@ public class ReplayController implements Initializable, ControlledScreen {
         }
     }
 
+    @FXML
+    private void openStatistics() {
+        myController.loadScreen(App.STATISTICS_SCREEN, App.STATISTICS_SCREEN_FILE);
+        myController.setScreen(App.STATISTICS_SCREEN);
+    }
+
 
 
 }

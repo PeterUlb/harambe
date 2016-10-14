@@ -5,4 +5,13 @@
     -fx-background-position: center center;
 }
 
+.buttonStatistics {
+    -fx-graphic: url("/img/statistics_icon.png");
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+.buttonStatistics:hover{
+    -fx-graphic: url("/img/statistics_icon_hover.png");
+}
+
 
