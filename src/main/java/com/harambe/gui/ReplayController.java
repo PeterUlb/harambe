@@ -2,14 +2,14 @@ package com.harambe.gui;
 
 import com.harambe.App;
 import com.harambe.database.model.GameModel;
-import javafx.collections.ObservableList;
+import com.harambe.database.model.SetModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 public class ReplayController implements Initializable, ControlledScreen {
 
     @FXML
-    TableView<GameModel> tableView;
+    TableView<GameModel> gameTableView;
     @FXML
     public TableColumn<GameModel, String> GameUUID;
     @FXML
@@ -35,6 +35,17 @@ public class ReplayController implements Initializable, ControlledScreen {
     @FXML
     public TableColumn<GameModel, String> GameDate;
 
+    @FXML
+    TableView<SetModel> setTableView;
+    @FXML
+    public TableColumn<GameModel, Integer> SetNumber;
+    @FXML
+    public TableColumn<GameModel, Boolean> WeStarted;
+    @FXML
+    public TableColumn<GameModel, Boolean> WeWon;
+
+    @FXML
+    public Button startReplayBtn;
 
     MasterController myController;
 
@@ -52,7 +63,9 @@ public class ReplayController implements Initializable, ControlledScreen {
         OurScore.setCellValueFactory(new PropertyValueFactory<GameModel, Integer>("ourPoints"));
         OpponentScore.setCellValueFactory(new PropertyValueFactory<GameModel, Integer>("opponentPoints"));
         GameDate.setCellValueFactory(new PropertyValueFactory<GameModel, String>("timestamp"));
-        tableView.getItems().setAll(gameModels);
+        gameTableView.getItems().setAll(gameModels);
+
+        setTableView.setPlaceholder(new Label("Select game..."));
     }
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -61,6 +74,42 @@ public class ReplayController implements Initializable, ControlledScreen {
     @FXML
     private void backToMainMenu() {
         myController.setScreen(App.MENU_SCREEN);
+    }
+
+    @FXML
+    private void displaySets() {
+        startReplayBtn.setDisable(true);
+        String gameUUID = gameTableView.getSelectionModel().getSelectedItem().getGameUUID();
+        if (gameUUID != null) {
+            ArrayList<SetModel> setModels = null;
+            try {
+                setModels = SetModel.getSets(App.db, gameUUID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            SetNumber.setCellValueFactory(new PropertyValueFactory<GameModel, Integer>("setNumber"));
+            WeStarted.setCellValueFactory(new PropertyValueFactory<GameModel, Boolean>("weStarted"));
+            WeWon.setCellValueFactory(new PropertyValueFactory<GameModel, Boolean>("weWon"));
+            setTableView.getItems().setAll(setModels);
+        }
+    }
+
+    @FXML
+    private void startReplay() {
+        GameModel g = gameTableView.getSelectionModel().getSelectedItem();
+        SetModel s = setTableView.getSelectionModel().getSelectedItem();
+        if (g != null && s != null) {
+            System.out.println(g.getGameUUID() + " | " + s.getSetNumber());
+        }
+    }
+
+    @FXML
+    private void enableButton() {
+        GameModel g = gameTableView.getSelectionModel().getSelectedItem();
+        SetModel s = setTableView.getSelectionModel().getSelectedItem();
+        if (g != null && s != null) {
+            startReplayBtn.setDisable(false);
+        }
     }
 
 

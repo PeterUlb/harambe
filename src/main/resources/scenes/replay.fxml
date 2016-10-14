@@ -18,25 +18,35 @@
    <Label text="Past Games" GridPane.columnIndex="0" GridPane.rowIndex="0"
           style="-fx-font: NORMAL 20 Tahoma;"/>
 
-   <TableView fx:id="tableView" GridPane.columnIndex="0"
-              GridPane.rowIndex="1">
-      <columns>
-         <TableColumn fx:id="GameUUID" text="Game-ID" prefWidth="300" />
-         <TableColumn fx:id="OpponentName" text="Opponent" prefWidth="100" />
-         <TableColumn fx:id="OurScore" text="We" prefWidth="50" />
-         <TableColumn fx:id="OpponentScore" text="Op." prefWidth="50" />
-         <TableColumn fx:id="GameDate" text="Date" prefWidth="200" />
-      </columns>
-   </TableView>
+    <TableView fx:id="gameTableView" GridPane.columnIndex="0"
+               GridPane.rowIndex="1" onMouseClicked="#displaySets">
+        <columns>
+            <TableColumn fx:id="GameUUID" text="Game-ID" prefWidth="300" />
+            <TableColumn fx:id="OpponentName" text="Opponent" prefWidth="100" />
+            <TableColumn fx:id="OurScore" text="We" prefWidth="50" />
+            <TableColumn fx:id="OpponentScore" text="Op." prefWidth="50" />
+            <TableColumn fx:id="GameDate" text="Date" prefWidth="200" />
+        </columns>
+    </TableView>
 
-   <HBox spacing="10" alignment="BOTTOM_RIGHT" GridPane.columnIndex="0"
+    <TableView fx:id="setTableView" GridPane.columnIndex="1"
+               GridPane.rowIndex="1" onMouseClicked="#enableButton">
+        <columns>
+            <TableColumn fx:id="SetNumber" text="Set" prefWidth="50" />
+            <TableColumn fx:id="WeStarted" text="We Started" prefWidth="100" />
+            <TableColumn fx:id="WeWon" text="We Won" prefWidth="100" />
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="BOTTOM_LEFT" GridPane.columnIndex="0"
+          GridPane.rowIndex="2">
+        <Button text="back" onAction="#backToMainMenu"/>
+    </HBox>
+
+   <HBox spacing="-10" alignment="BOTTOM_RIGHT" GridPane.columnIndex="1"
          GridPane.rowIndex="2">
-      <Button text="next"/>
+      <Button fx:id="startReplayBtn" text="next" onAction="#startReplay" disable="true"/>
    </HBox>
 
-   <HBox spacing="10" alignment="BOTTOM_LEFT" GridPane.columnIndex="0"
-         GridPane.rowIndex="2">
-      <Button text="back" onAction="#backToMainMenu"/>
-   </HBox>
 
 </GridPane>

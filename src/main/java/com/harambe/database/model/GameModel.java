@@ -106,7 +106,7 @@ public class GameModel implements Persistable {
     }
 
     public String getTimestamp() {
-        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(timestamp);
+        return new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(timestamp);
     }
 
     @Override
