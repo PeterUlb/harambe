@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.collections.FXCollections?>
+<GridPane styleClass="field" stylesheets="/styles/replay.css" alignment="center" hgap="10.0" vgap="10.0" fx:controller="com.harambe.gui.ReplayController"
+          xmlns:fx="http://javafx.com/fxml">
+   <padding>
+      <Insets bottom="10.0" left="10.0" right ="10.0" top="10.0"/>
+   </padding>
+
+   <Label text="Past Games" GridPane.columnIndex="0" GridPane.rowIndex="0"
+          style="-fx-font: NORMAL 20 Tahoma;"/>
+
+   <TableView fx:id="tableView" GridPane.columnIndex="0"
+              GridPane.rowIndex="1">
+      <columns>
+         <TableColumn fx:id="GameUUID" text="Game-ID" prefWidth="300" />
+         <TableColumn fx:id="OpponentName" text="Opponent" prefWidth="100" />
+         <TableColumn fx:id="OurScore" text="We" prefWidth="50" />
+         <TableColumn fx:id="OpponentScore" text="Op." prefWidth="50" />
+         <TableColumn fx:id="GameDate" text="Date" prefWidth="200" />
+      </columns>
+   </TableView>
+
+   <HBox spacing="10" alignment="BOTTOM_RIGHT" GridPane.columnIndex="0"
+         GridPane.rowIndex="2">
+      <Button text="next"/>
+   </HBox>
+
+   <HBox spacing="10" alignment="BOTTOM_LEFT" GridPane.columnIndex="0"
+         GridPane.rowIndex="2">
+      <Button text="back" onAction="#backToMainMenu"/>
+   </HBox>
+
+</GridPane>

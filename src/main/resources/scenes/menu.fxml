@@ -10,7 +10,7 @@
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.MenuController">
    <children>
       <StackPane alignment="BOTTOM_RIGHT">
-         <ImageView fx:id="btnImgReplay" styleClass="buttonReplay" />
+         <ImageView fx:id="btnImgReplay" styleClass="buttonReplay" onMouseClicked="#openReplay" />
       </StackPane>
       <Label layoutX="182.0" layoutY="38.0" text="Harambes Connect 4" translateY="-300">
          <font>

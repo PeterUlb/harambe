@@ -34,6 +34,9 @@ public class App extends Application {
     public static final String MENU_SCREEN_FILE = "/scenes/menu.fxml";
     public static final String MAIN_SCREEN = "main";
     public static final String MAIN_SCREEN_FILE = "/scenes/main.fxml";
+    public static final String REPLAY_SCREEN = "replay";
+    public static final String REPLAY_SCREEN_FILE = "/scenes/replay.fxml";
+
 
 
 
@@ -92,7 +95,6 @@ public class App extends Application {
 
         MasterController mainContainer = new MasterController();
         mainContainer.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE);
-        mainContainer.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
 
         mainContainer.setScreen(App.MENU_SCREEN);
 
