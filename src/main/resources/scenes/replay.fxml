@@ -45,7 +45,7 @@
 
     <HBox spacing="-10" alignment="TOP_RIGHT" GridPane.columnIndex="1"
           GridPane.rowIndex="0">
-        <Button onAction="#openStatistics" styleClass="buttonStatistics" />
+        <Button fx:id="statisticsBtn" onAction="#openStatistics" styleClass="buttonStatistics" />
     </HBox>
 
 

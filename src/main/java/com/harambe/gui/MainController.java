@@ -969,7 +969,7 @@ public class MainController implements Initializable, ControlledScreen {
         alert.setHeaderText(null);
         alert.setContentText("Player " + activePlayer.getName() + " wins the game");
 
-        alert.showAndWait();
+        alert.show();
 
         myController.setScreen(App.MENU_SCREEN);
     }

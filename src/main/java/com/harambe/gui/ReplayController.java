@@ -5,12 +5,10 @@ import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.game.SessionVars;
 import com.harambe.tools.Logger;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
@@ -48,12 +46,30 @@ public class ReplayController implements Initializable, ControlledScreen {
 
     @FXML
     public Button startReplayBtn;
+    @FXML
+    public Button statisticsBtn;
 
     MasterController myController;
 
+    Tooltip tooltip;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        tooltip = new Tooltip("Click here for statistics");
+        statisticsBtn.setTooltip(tooltip);
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(1800); //TODO change based on final screen change time
+                Platform.runLater(() -> {
+                    tooltip.show(statisticsBtn, 1420, 340); //TODO, hard coded coordinates suck, but every single method return 0,0 for the position of the button (local, parent, scene, screen etc)
+                });
+                Thread.sleep(10000);
+                Platform.runLater(tooltip::hide);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
         ArrayList<GameModel> gameModels = null;
         try {
             gameModels = GameModel.getGames(App.db);
@@ -100,6 +116,7 @@ public class ReplayController implements Initializable, ControlledScreen {
 
     @FXML
     private void startReplay() {
+        tooltip.hide();
         GameModel g = gameTableView.getSelectionModel().getSelectedItem();
         SetModel s = setTableView.getSelectionModel().getSelectedItem();
         if (g != null && s != null) {
