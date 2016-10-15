@@ -123,7 +123,8 @@ public class MainController implements Initializable, ControlledScreen {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-
+        setDone = false; // reset the setDone flag when the screen is loaded a second time
+        gameDone = false; // same here
         board = new Board();
 
         Stage stage = new Stage("coast_2");
@@ -201,7 +202,13 @@ public class MainController implements Initializable, ControlledScreen {
         } else {
             // we play offline
             p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
-            p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+            if (SessionVars.getSoloVsAI()) {
+                p2 = new Player(true, "AI", "poacher_2", Board.PLAYER2);
+            } else {
+                p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+            }
+            player1Name.setStyle("-fx-fill: green");
+            player2Name.setStyle("-fx-fill: red");
             SessionVars.initializeNewGame(p1.getName(), p2.getName());
             if (Math.round(Math.random())==1) {
                 activePlayer = p1;
