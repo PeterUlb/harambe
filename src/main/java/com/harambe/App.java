@@ -86,7 +86,9 @@ public class App extends Application {
                     mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, false);
                 }
             } else if(t.getCode() == KeyCode.M) {
-                com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
+                if(com.harambe.gui.Stage.player != null) {
+                    com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
+                }
             }
         });
 

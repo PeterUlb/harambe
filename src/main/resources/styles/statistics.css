@@ -12,3 +12,28 @@
     -fx-pie-color: red;
 }
 
+
+.axis {
+    -fx-font-size: 24;
+    -fx-tick-label-fill: ghostwhite;
+    -fx-tick-label-font-size: 16;
+}
+
+.axis-label {
+    -fx-text-fill: floralwhite;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: transparent;
+}
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+    -fx-stroke-width: 0;
+}

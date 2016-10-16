@@ -2,16 +2,22 @@ package com.harambe.gui;
 
 import com.harambe.App;
 import com.harambe.database.model.GameModel;
+import com.harambe.database.model.SetModel;
+import com.harambe.database.model.TurnModel;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ResourceBundle;
 
 
@@ -26,6 +32,13 @@ public class StatisticsController implements Initializable, ControlledScreen {
     private PieChart gamesPieChart;
     @FXML
     private PieChart setsPieChart;
+    @FXML
+    private AreaChart<Number, Number> turnsPerSetChart;
+    @FXML
+    private NumberAxis turnsPerSetChartxAxis;
+    @FXML
+    private NumberAxis turnsPerSetChartyAxis;
+
 
 
     @Override
@@ -35,6 +48,7 @@ public class StatisticsController implements Initializable, ControlledScreen {
         int wonSets = 0;
         int lostSets = 0;
         ArrayList<GameModel> games = null;
+        ArrayList<Integer> turnNumbers = new ArrayList<>();
         try {
              games = GameModel.getGames(App.db);
             for (GameModel gM :
@@ -46,6 +60,16 @@ public class StatisticsController implements Initializable, ControlledScreen {
                 }
                 wonSets += gM.getOurPoints();
                 lostSets += gM.getOpponentPoints();
+
+                for (SetModel set :
+                        SetModel.getSets(App.db, gM.getGameUUID())) {
+                    int turnsInSet = 0;
+                    for (TurnModel turn :
+                            TurnModel.getTurns(App.db, gM.getGameUUID(), set.getSetNumber())) {
+                        turnsInSet++;
+                    }
+                    turnNumbers.add(turnsInSet);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -83,6 +107,28 @@ public class StatisticsController implements Initializable, ControlledScreen {
 
         setsPieChart.setLabelsVisible(false);
         setsPieChart.setData(setsData);
+
+        turnsPerSetChart.setLegendVisible(false);
+
+        turnsPerSetChartxAxis.setLowerBound(1);
+        turnsPerSetChartxAxis.setUpperBound(wonSets + lostSets);
+        turnsPerSetChartxAxis.setTickUnit(1);
+        turnsPerSetChartxAxis.setAutoRanging(false);
+        turnsPerSetChartxAxis.setMinorTickVisible(false);
+        turnsPerSetChartxAxis.setLabel("Set Number");
+
+        turnsPerSetChartyAxis.setLowerBound(0);
+        turnsPerSetChartyAxis.setUpperBound(Collections.max(turnNumbers)); // max turns played in all sets
+        turnsPerSetChartyAxis.setTickUnit(1);
+        turnsPerSetChartyAxis.setAutoRanging(false);
+        turnsPerSetChartyAxis.setMinorTickVisible(false);
+        turnsPerSetChartyAxis.setLabel("Turns");
+
+        XYChart.Series<Number, Number> turnSeries = new XYChart.Series<>();
+        for (int i = 0; i < turnNumbers.size(); i++) {
+            turnSeries.getData().add(new XYChart.Data<>(i + 1, turnNumbers.get(i)));
+        }
+        turnsPerSetChart.getData().add(turnSeries);
     }
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
