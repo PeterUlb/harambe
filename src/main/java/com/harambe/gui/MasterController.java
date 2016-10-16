@@ -43,13 +43,13 @@ public class MasterController extends StackPane {
      *
      * @param name Name of the scene defined in App
      * @param resource Resource File of the scene defined in App
-     * @param forceReload if true: the fxml+controller is forced to reload
+     * @param forceReload if true: the fxml+controller is forced to reload (useful for e.g. the main game)
      */
     public void loadAndSetScreen(String name, String resource, boolean forceReload) {
         ThreadManager.reset();
-        // always reload every screen
+        // remove screen from the loaded screens, forcing a reload (useful for MainGame)
         if (forceReload) {
-            screens.clear();
+            screens.remove(name);
         }
         if(!setScreen(name)) {
             loadScreen(name, resource);

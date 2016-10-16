@@ -92,6 +92,7 @@ public class ReplayController implements Initializable, ControlledScreen {
 
     @FXML
     private void backToMainMenu() {
+        tooltip.hide();
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
     }
 
