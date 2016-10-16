@@ -616,23 +616,27 @@ public class MainController implements Initializable, ControlledScreen {
         //end round
         switchPlayer();
 
-        if(SessionVars.getSoloVsAI() && activePlayer != ourPlayer) {
+        if(SessionVars.getSoloVsAI() && activePlayer != ourPlayer && !setDone) {
             // user is playing against AI, so his turn is followed by an AI turn
-            disableAllButtons(true);
-            long start = System.nanoTime();
-            Thread thread = new Thread(() -> {
-                int column1 = miniMax.getBestMove(board);
-                Platform.runLater(() -> {
-                    fireDisabledButton(column1);
-                    Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
-                    if(!setDone) {
-                        // only renable buttons if the new set has started
-                        disableAllButtons(false);
-                    }
-                });
-            });
-            thread.start();
+            dropForAI();
         }
+    }
+
+    private void dropForAI() {
+        disableAllButtons(true);
+        long start = System.nanoTime();
+        Thread thread = new Thread(() -> {
+            int column1 = miniMax.getBestMove(board);
+            Platform.runLater(() -> {
+                fireDisabledButton(column1);
+                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                if(!setDone) {
+                    // only renable buttons if the new set has started
+                    disableAllButtons(false);
+                }
+            });
+        });
+        thread.start();
     }
 
 
@@ -879,6 +883,10 @@ public class MainController implements Initializable, ControlledScreen {
         }
 
         if(SessionVars.getSoloVsAI()) {
+            // if ai starts, put next drop for AI
+            if (activePlayer == opponentPlayer) {
+                dropForAI();
+            }
             // needed to verify that new moves can be done by the player
             setDone = false;
         }
