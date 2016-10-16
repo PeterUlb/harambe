@@ -75,6 +75,6 @@ public class TurnModel implements Persistable {
 
     @Override
     public void persistInDatabase(DatabaseConnector db) throws SQLException {
-        db.update("INSERT INTO " + DatabaseConnector.TURNTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + turnNumber + ", '" + isOpponent + "', " + column +  ")");
+        db.update("INSERT INTO " + DatabaseConnector.TURNTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + turnNumber + ", " + isOpponent + ", " + column +  ")");
     }
 }

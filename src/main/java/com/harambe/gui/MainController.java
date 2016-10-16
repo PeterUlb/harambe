@@ -124,7 +124,6 @@ public class MainController implements Initializable, ControlledScreen {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-        System.out.println("INITIALIZED");
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
@@ -841,8 +840,8 @@ public class MainController implements Initializable, ControlledScreen {
                 player2Score.setText(String.valueOf(p2.getScore()));
 
                 SetModel setModel;
-                // a draw isnt a win
-                setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, false);
+                // a draw is a null for our boolean value
+                setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, null);
                 try {
                     if(!SessionVars.getReplayMode()) {
                         setModel.persistInDatabase(App.db);

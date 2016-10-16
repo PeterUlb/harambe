@@ -47,6 +47,7 @@ public class StatisticsController implements Initializable, ControlledScreen {
         int lostGames = 0;
         int wonSets = 0;
         int lostSets = 0;
+        int drawSets = 0;
         ArrayList<GameModel> games = null;
         ArrayList<Integer> turnNumbers = new ArrayList<>();
         try {
@@ -63,6 +64,9 @@ public class StatisticsController implements Initializable, ControlledScreen {
 
                 for (SetModel set :
                         SetModel.getSets(App.db, gM.getGameUUID())) {
+                    if (set.getWeWon().equals("draw")) {
+                        drawSets++;
+                    }
                     int turnsInSet = 0;
                     for (TurnModel turn :
                             TurnModel.getTurns(App.db, gM.getGameUUID(), set.getSetNumber())) {
@@ -94,7 +98,8 @@ public class StatisticsController implements Initializable, ControlledScreen {
         ObservableList<PieChart.Data> setsData =
                 FXCollections.observableArrayList(
                         new PieChart.Data("Won", wonSets),
-                        new PieChart.Data("Lost", lostSets)
+                        new PieChart.Data("Lost", lostSets),
+                        new PieChart.Data("Draw: ", drawSets)
                 );
 
         setsData.forEach(data ->
@@ -111,7 +116,7 @@ public class StatisticsController implements Initializable, ControlledScreen {
         turnsPerSetChart.setLegendVisible(false);
 
         turnsPerSetChartxAxis.setLowerBound(1);
-        turnsPerSetChartxAxis.setUpperBound(wonSets + lostSets);
+        turnsPerSetChartxAxis.setUpperBound(wonSets + lostSets + drawSets);
         turnsPerSetChartxAxis.setTickUnit(1);
         turnsPerSetChartxAxis.setAutoRanging(false);
         turnsPerSetChartxAxis.setMinorTickVisible(false);

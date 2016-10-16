@@ -12,6 +12,9 @@
     -fx-pie-color: red;
 }
 
+.default-color2.chart-pie {
+    -fx-pie-color: yellow;
+}
 
 .axis {
     -fx-font-size: 24;
