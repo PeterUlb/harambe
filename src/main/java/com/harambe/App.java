@@ -62,9 +62,8 @@ public class App extends Application {
                 new Image(getClass().getClassLoader().getResourceAsStream("img/harambe.png")));
 
         MasterController mainContainer = new MasterController();
-        mainContainer.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE);
+        mainContainer.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
 
-        mainContainer.setScreen(App.MENU_SCREEN);
 
         StackPane root = new StackPane();
         root.getChildren().addAll(mainContainer);
@@ -72,8 +71,7 @@ public class App extends Application {
         stage.setTitle("Harambe Wins!");
         stage.setScene(scene);
         scene.addEventHandler(KeyEvent.KEY_RELEASED, t -> {
-            if(t.getCode()== KeyCode.ESCAPE)
-            {
+            if(t.getCode()== KeyCode.ESCAPE) {
                 stage.setFullScreen(true);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initOwner(stage);
@@ -85,8 +83,10 @@ public class App extends Application {
                 if (result.get() == ButtonType.YES){
                     Platform.exit();
                 } else if (result.get() == toMenuScreen) {
-                    mainContainer.setScreen(MENU_SCREEN);
+                    mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, false);
                 }
+            } else if(t.getCode() == KeyCode.M) {
+                com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
             }
         });
 

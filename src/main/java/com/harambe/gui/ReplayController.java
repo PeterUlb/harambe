@@ -92,7 +92,7 @@ public class ReplayController implements Initializable, ControlledScreen {
 
     @FXML
     private void backToMainMenu() {
-        myController.setScreen(App.MENU_SCREEN);
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
     }
 
     @FXML
@@ -122,8 +122,7 @@ public class ReplayController implements Initializable, ControlledScreen {
         if (g != null && s != null) {
             SessionVars.setupReplay(g.getGameUUID(), s.getSetNumber(), s.isWeStarted(), g.getOurPlayer(), g.getOpponentPlayer());
             Logger.event("Replay started");
-            myController.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
-            myController.setScreen(App.MAIN_SCREEN);
+            myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);
         }
     }
 
@@ -138,8 +137,8 @@ public class ReplayController implements Initializable, ControlledScreen {
 
     @FXML
     private void openStatistics() {
-        myController.loadScreen(App.STATISTICS_SCREEN, App.STATISTICS_SCREEN_FILE);
-        myController.setScreen(App.STATISTICS_SCREEN);
+        tooltip.hide();
+        myController.loadAndSetScreen(App.STATISTICS_SCREEN, App.STATISTICS_SCREEN_FILE, true);
     }
 
 

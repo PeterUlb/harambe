@@ -90,7 +90,7 @@ public class StatisticsController implements Initializable, ControlledScreen {
 
     @FXML
     private void backToReplayScreen() {
-        myController.setScreen(App.REPLAY_SCREEN);
+        myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);
     }
 
 

@@ -12,7 +12,7 @@ import java.net.URL;
 public class Stage {
     private String imgLocation;
     private URL themeLocation;
-    static MediaPlayer player; // prevent evil GC
+    public static MediaPlayer player; // prevent evil GC
     static boolean themePlaying = false;
 
     public Stage(String stageName) {

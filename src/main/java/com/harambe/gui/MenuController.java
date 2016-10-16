@@ -71,15 +71,13 @@ public class MenuController implements Initializable, ControlledScreen {
             btnImgLocal.setDisable(false);
             return;
         }
-        myController.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
         btnImgLocal.setDisable(false);
-        myController.setScreen(App.MAIN_SCREEN);
+        myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);
     }
 
     @FXML
     private void openReplay(MouseEvent event) {
-        myController.loadScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE);
-        myController.setScreen(App.REPLAY_SCREEN);
+        myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, true);
     }
 
     @FXML
@@ -160,9 +158,8 @@ public class MenuController implements Initializable, ControlledScreen {
             btnImgOnline.setDisable(false);
             return;
         }
-        myController.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
         btnImgOnline.setDisable(false);
-        myController.setScreen(App.MAIN_SCREEN);
+        myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);
     }
 
 

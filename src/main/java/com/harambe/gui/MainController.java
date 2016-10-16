@@ -9,6 +9,7 @@ import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
+import com.harambe.game.ThreadManager;
 import com.harambe.tools.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -123,6 +124,7 @@ public class MainController implements Initializable, ControlledScreen {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        System.out.println("INITIALIZED");
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
@@ -246,6 +248,7 @@ public class MainController implements Initializable, ControlledScreen {
                     }
                 }
             });
+            ThreadManager.threads.add(thread);
             thread.setDaemon(true);
             thread.start();
         } else if (SessionVars.getSoloVsAI()) {
@@ -261,8 +264,8 @@ public class MainController implements Initializable, ControlledScreen {
         } else if (SessionVars.getReplayMode()) {
             // disable user input
             disableAllButtons(true);
-            // we do not play offline, so run the server communication thread
             Thread thread = new Thread(this::playReplay);
+            ThreadManager.threads.add(thread);
             thread.setDaemon(true);
             thread.start();
         }
@@ -495,6 +498,7 @@ public class MainController implements Initializable, ControlledScreen {
             }
         });
         thread.setDaemon(true);
+        ThreadManager.threads.add(thread);
         thread.start();
     }
 
@@ -979,7 +983,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         alert.show();
 
-        myController.setScreen(App.MENU_SCREEN);
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
     }
 
     public static void redrawScore() {
