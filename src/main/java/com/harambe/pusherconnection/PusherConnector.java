@@ -1,5 +1,6 @@
 package com.harambe.pusherconnection;
 
+import com.harambe.game.SessionVars;
 import com.pusher.client.AuthorizationFailureException;
 import com.pusher.client.Authorizer;
 import com.pusher.client.Pusher;
@@ -38,13 +39,13 @@ public class PusherConnector implements Runnable {
              */
             @Override
             public String authorize(String channel, String socketId) throws AuthorizationFailureException {
-                com.pusher.rest.Pusher pusher = new com.pusher.rest.Pusher("249870", "082f8d2ee2e06acd7c98", "fc29424e4ab1e692a42b");
+                com.pusher.rest.Pusher pusher = new com.pusher.rest.Pusher(SessionVars.app_id, SessionVars.key, SessionVars.secret);
                 String response = pusher.authenticate(socketId,channel);
                 //System.out.println(response);
                 return response;
             }
         });
-        Pusher pusher = new Pusher("082f8d2ee2e06acd7c98", options);
+        Pusher pusher = new Pusher(SessionVars.key, options);
 
         pusher.connect();
 

@@ -8,9 +8,9 @@ import java.util.UUID;
 public class SessionVars {
     //TODO ALL of them must be UI configurable
     // access via corrosponding method (makes sure that other flags are resetted)
-    public static String app_id = "252455";
-    public static String key = "75c96c88e0a7ef9d4c86";
-    public static String secret = "667f4dd9c288a3ad97d0";
+    public static String app_id = "249870";
+    public static String key = "082f8d2ee2e06acd7c98";
+    public static String secret = "fc29424e4ab1e692a42b";
     private static boolean useFileInterface = false;
     private static String fileInterfacePath = null;
     private static boolean usePusherInterface = false;
