@@ -65,10 +65,6 @@ public class MainController implements Initializable, ControlledScreen {
     @FXML
     private Text player2Score;
     @FXML
-    private static Text _player1Score;
-    @FXML
-    private static Text _player2Score;
-    @FXML
     private StackPane field;
     @FXML
     private StackPane bg;
@@ -101,11 +97,11 @@ public class MainController implements Initializable, ControlledScreen {
     //other variables
     private Board board;
     private int[] freeSpace;
-    public static Player p1;
-    public static Player p2;
-    private static Player activePlayer;
-    public static Player ourPlayer; // reference whether we are p1 or p2
-    public static Player opponentPlayer;
+    public Player p1;
+    public Player p2;
+    private Player activePlayer;
+    public Player ourPlayer; // reference whether we are p1 or p2
+    public Player opponentPlayer;
     private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
     private ArrayList<ImageView> winCircleArray;
@@ -113,10 +109,10 @@ public class MainController implements Initializable, ControlledScreen {
     private MiniMax miniMax;
     private Stage stage;
 
-    public static boolean setDone = false; // marks a set as done for the server-comm thread
-    private static boolean gameDone = false; // marks a game as done for the server-comm thread
+    public boolean setDone = false; // marks a set as done for the server-comm thread
+    boolean gameDone = false; // marks a game as done for the server-comm thread
 
-    static MasterController myController;
+    MasterController myController;
 
     static String p1Character = Character.characters[0];
     static String p2Character = Character.characters[1];
@@ -138,6 +134,7 @@ public class MainController implements Initializable, ControlledScreen {
         stage = new Stage("coast_2");
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
         //take static music player and play mainTheme
+        MenuController.themePlayer.stop();
         final URL resource = getClass().getResource("/audio/mainTheme.mp3");
         MenuController.themePlayer = new MediaPlayer(new Media(resource.toString()));
         MenuController.themePlayer.play();
@@ -160,9 +157,6 @@ public class MainController implements Initializable, ControlledScreen {
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
 
-        _player1Score = player1Score;
-        _player2Score = player2Score;
-
         if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             // we play "online"
             if (SessionVars.ourSymbol == 'X') {
@@ -176,9 +170,9 @@ public class MainController implements Initializable, ControlledScreen {
                 miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
                 Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
                 if (SessionVars.getUseFileInterface()) {
-                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false);
+                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false, this);
                 } else if (SessionVars.getUsePusherInterface()) {
-                    App.sC = new PusherCommunicator();
+                    App.sC = new PusherCommunicator(this);
                 }
                 SessionVars.initializeNewGame(p2.getName(), p1.getName());
             } else {
@@ -192,9 +186,9 @@ public class MainController implements Initializable, ControlledScreen {
                 miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
                 Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
                 if (SessionVars.getUseFileInterface()) {
-                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true);
+                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true, this);
                 } else if (SessionVars.getUsePusherInterface()) {
-                    App.sC = new PusherCommunicator();
+                    App.sC = new PusherCommunicator(this);
                 }
                 SessionVars.initializeNewGame(p1.getName(), p2.getName());
             }
@@ -960,7 +954,7 @@ public class MainController implements Initializable, ControlledScreen {
     /**
      * is called when a game is over. Closes the scene.
      */
-    public static void endGame() {
+    public void endGame() {
         if (gameDone) {
             // this method is called twice with file interface (1st: enemies winning move, second: notifiny of win) (at least I think so)
             // thats why we avoid the second call (so no PK violations)
@@ -993,8 +987,8 @@ public class MainController implements Initializable, ControlledScreen {
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
-    public static void redrawScore() {
-        _player1Score.setText(String.valueOf(p1.getScore()));
-        _player2Score.setText(String.valueOf(p2.getScore()));
+    public void redrawScore() {
+        player1Score.setText(String.valueOf(p1.getScore()));
+        player2Score.setText(String.valueOf(p2.getScore()));
     }
 }

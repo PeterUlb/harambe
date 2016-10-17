@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
 /**
  * TODO: insert documentation here
  */
-public class characterSelectionController implements Initializable, ControlledScreen {
+public class CharacterSelectionController implements Initializable, ControlledScreen {
 
 
     @FXML
@@ -236,7 +236,6 @@ public class characterSelectionController implements Initializable, ControlledSc
             MainController.p1Character = player1Character;
             SessionVars.opponentPlayerName = "Player 2";
             MainController.p2Character = player2Character;
-            MenuController.themePlayer.stop();
 
             myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);
         }
@@ -244,7 +243,7 @@ public class characterSelectionController implements Initializable, ControlledSc
 
     @FXML
     private void back(ActionEvent event)/*throws IOException*/ {
-        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
 
     }
 

@@ -8,6 +8,7 @@ import com.harambe.tools.Logger;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -49,9 +50,9 @@ public class ReplayController implements Initializable, ControlledScreen {
     @FXML
     public Button statisticsBtn;
 
-    MasterController myController;
+    private MasterController myController;
 
-    Tooltip tooltip;
+    private Tooltip tooltip;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,9 +60,10 @@ public class ReplayController implements Initializable, ControlledScreen {
         statisticsBtn.setTooltip(tooltip);
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(1800); //TODO change based on final screen change time
+                Thread.sleep(800); //TODO change based on final screen change time
                 Platform.runLater(() -> {
-                    tooltip.show(statisticsBtn, 1420, 340); //TODO, hard coded coordinates suck, but every single method return 0,0 for the position of the button (local, parent, scene, screen etc)
+                    Bounds bounds = statisticsBtn.localToScene(statisticsBtn.getBoundsInLocal());
+                    tooltip.show(statisticsBtn, bounds.getMaxX(), bounds.getMinY() + bounds.getHeight() / 2);
                 });
                 Thread.sleep(10000);
                 Platform.runLater(tooltip::hide);

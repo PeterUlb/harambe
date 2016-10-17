@@ -15,8 +15,10 @@ public class PusherCommunicator implements ServerCommunication {
 
     private PusherConnector pusher;
     private long repeatTime = 100;
+    private MainController game;
 
-    public PusherCommunicator(){
+    public PusherCommunicator(MainController game){
+        this.game = game;
         pusher = new PusherConnector();
         Thread thread = new Thread(pusher);
         thread.setDaemon(true);
@@ -70,22 +72,22 @@ public class PusherCommunicator implements ServerCommunication {
         if (!splitMessage[3].contains("offen")){
             //System.out.println("Winner detected!");
             if (!splitMessage[3].contains("X")){
-                if(MainController.p1.getSymbol() == 'X') {
-                    MainController.p1.incrementScore();
+                if(game.p1.getSymbol() == 'X') {
+                    game.p1.incrementScore();
                 }else{
-                    MainController.p2.incrementScore();
+                    game.p2.incrementScore();
                 }
-                SessionVars.weWonSet = MainController.ourPlayer.getSymbol() == 'X';
+                SessionVars.weWonSet = game.ourPlayer.getSymbol() == 'X';
             }else{
-                if(MainController.p1.getSymbol() == 'O') {
-                    MainController.p1.incrementScore();
+                if(game.p1.getSymbol() == 'O') {
+                    game.p1.incrementScore();
                 }else{
-                    MainController.p2.incrementScore();
+                    game.p2.incrementScore();
                 }
-                SessionVars.weWonSet = MainController.ourPlayer.getSymbol() == 'O';
+                SessionVars.weWonSet = game.ourPlayer.getSymbol() == 'O';
             }
-            MainController.redrawScore();
-            SetModel setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, SessionVars.weWonSet);
+            game.redrawScore();
+            SetModel setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, SessionVars.weWonSet);
             try {
                 setModel.persistInDatabase(App.db);
             } catch (SQLException e) {
@@ -93,13 +95,13 @@ public class PusherCommunicator implements ServerCommunication {
             }
             SessionVars.weWonSet = null;
 
-            if (MainController.p1.getScore() >= 2 || MainController.p2.getScore() >= 2) {
+            if (game.p1.getScore() >= 2 || game.p2.getScore() >= 2) {
                 Platform.runLater(() -> {
-                    MainController.endGame();
+                    game.endGame();
                 });
             }
 
-            MainController.setDone = true;
+            game.setDone = true;
             return -2;
         }
 

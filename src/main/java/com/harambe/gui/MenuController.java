@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
  */
 public class MenuController implements Initializable, ControlledScreen {
 
-    MasterController myController;
+    private MasterController myController;
     @FXML
     private ImageView btnImgLocal;
     @FXML

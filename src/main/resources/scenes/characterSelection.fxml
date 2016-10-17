@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane styleClass="bg" stylesheets="/styles/characterSelection.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.characterSelectionController">
+<StackPane styleClass="bg" stylesheets="/styles/characterSelection.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.CharacterSelectionController">
 
     <StackPane fx:id="bg" styleClass="fg">
 

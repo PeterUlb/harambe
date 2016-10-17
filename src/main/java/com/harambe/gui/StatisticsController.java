@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
  */
 public class StatisticsController implements Initializable, ControlledScreen {
 
-    MasterController myController;
+    private MasterController myController;
 
     @FXML
     private PieChart gamesPieChart;

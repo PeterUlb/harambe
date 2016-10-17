@@ -88,6 +88,7 @@ public class App extends Application {
                 if (result.get() == ButtonType.YES){
                     Platform.exit();
                 } else if (result.get() == toMenuScreen) {
+                    System.out.println("stop");
                     MenuController.themePlayer.stop();
                     mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, true);
                 }

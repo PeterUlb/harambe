@@ -27,13 +27,14 @@ public class FileCommunicator implements ServerCommunication {
     private String agentFile;
     private String serverFile;
     private long repeatTime = 100; // interval in ms to check for new files
+    private MainController game;
 
     /**
      *  Class for server communication via communicator interface
      * @param filePath e.g. C:\Users\Username\Desktop\server\
      * @param weArePlayerO determines the filename
      */
-    public FileCommunicator(String filePath, boolean weArePlayerO) {
+    public FileCommunicator(String filePath, boolean weArePlayerO, MainController game) {
         this.filePath = filePath;
         if(weArePlayerO) {
             this.agentFile = File.separator + "spielero2server.txt";
@@ -42,6 +43,7 @@ public class FileCommunicator implements ServerCommunication {
             this.agentFile = File.separator + "spielerx2server.txt";
             this.serverFile = File.separator + "server2spielerx.xml";
         }
+        this.game = game;
     }
 
     /**
@@ -86,19 +88,19 @@ public class FileCommunicator implements ServerCommunication {
             //indicate that set has ended, and not that we have to start (server sends -1 in both cases :/
             if (nL.item(7).getTextContent().equals("Spieler O")) {
                 // Player O wins
-                if (MainController.p1.getSymbol() == 'O') {
-                    MainController.p1.incrementScore();
-                } else if (MainController.p2.getSymbol() == 'O') {
-                    MainController.p2.incrementScore();
+                if (game.p1.getSymbol() == 'O') {
+                    game.p1.incrementScore();
+                } else if (game.p2.getSymbol() == 'O') {
+                    game.p2.incrementScore();
                 }
-                SessionVars.weWonSet = MainController.ourPlayer.getSymbol() == 'O';
+                SessionVars.weWonSet = game.ourPlayer.getSymbol() == 'O';
             } else if (nL.item(7).getTextContent().equals("Spieler X")) {
-                if (MainController.p1.getSymbol() == 'X') {
-                    MainController.p1.incrementScore();
-                } else if (MainController.p2.getSymbol() == 'X') {
-                    MainController.p2.incrementScore();
+                if (game.p1.getSymbol() == 'X') {
+                    game.p1.incrementScore();
+                } else if (game.p2.getSymbol() == 'X') {
+                    game.p2.incrementScore();
                 }
-                SessionVars.weWonSet = MainController.ourPlayer.getSymbol() == 'X';
+                SessionVars.weWonSet = game.ourPlayer.getSymbol() == 'X';
             }
             SetModel setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, SessionVars.weWonSet);
             try {
@@ -107,16 +109,16 @@ public class FileCommunicator implements ServerCommunication {
                 e.printStackTrace();
             }
             SessionVars.weWonSet = null;
-            MainController.redrawScore();
-            if (MainController.p1.getScore() >= 2 || MainController.p2.getScore() >= 2) {
+            game.redrawScore();
+            if (game.p1.getScore() >= 2 || game.p2.getScore() >= 2) {
                 Platform.runLater(() -> {
-                    MainController.endGame();
+                    game.endGame();
                 });
             }
 
             if( Integer.valueOf(nL.item(5).getTextContent()) == -1) {
                 // we won, now wait for the next file
-                MainController.setDone = true;
+                game.setDone = true;
                 return -2; // -2 means set ended, not that we start (-1)
             } else {
                 // we lost, pass the winning move
