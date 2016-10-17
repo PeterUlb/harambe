@@ -13,6 +13,7 @@ import java.sql.SQLException;
 public class PusherCommunicator implements ServerCommunication {
 
     private PusherConnector pusher;
+    private long repeatTime = 100;
 
     public PusherCommunicator(){
         pusher = new PusherConnector();
@@ -50,7 +51,7 @@ public class PusherCommunicator implements ServerCommunication {
         String message = pusher.getMessage();
         while (message == null) {
             message = pusher.getMessage();
-            Thread.sleep(100);
+            Thread.sleep(repeatTime);
         }
         //System.out.println("Message found!" + message);
 

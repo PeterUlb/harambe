@@ -14,6 +14,7 @@ public class PusherConnector implements Runnable {
 
     private String message;
     private PrivateChannel channel;
+    private long repeatTime = 100;
 
 
 
@@ -81,7 +82,7 @@ public class PusherConnector implements Runnable {
         while(!channel.isSubscribed()){
             //wait for finished subscription
             try {
-                Thread.sleep(10);
+                Thread.sleep(repeatTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -91,7 +92,7 @@ public class PusherConnector implements Runnable {
         while(channel.isSubscribed()){
             //busy waiting for channel events
             try {
-                Thread.sleep(10);
+                Thread.sleep(repeatTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
