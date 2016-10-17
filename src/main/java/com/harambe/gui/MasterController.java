@@ -1,5 +1,7 @@
 package com.harambe.gui;
 
+import com.harambe.game.ThreadManager;
+import com.harambe.tools.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -37,8 +39,32 @@ public class MasterController extends StackPane {
         return screens.get(name);
     }
 
-    //Loads the fxml file, add the screen to the screens collection and
-    //finally injects the screenPane to the controller.
+    /**
+     *
+     * @param name Name of the scene defined in App
+     * @param resource Resource File of the scene defined in App
+     * @param forceReload if true: the fxml+controller is forced to reload (useful for e.g. the main game)
+     */
+    public void loadAndSetScreen(String name, String resource, boolean forceReload) {
+        ThreadManager.reset();
+        // remove screen from the loaded screens, forcing a reload (useful for MainGame)
+        if (forceReload) {
+            screens.remove(name);
+        }
+        if(!setScreen(name)) {
+            loadScreen(name, resource);
+            setScreen(name);
+        }
+    }
+
+
+    /**
+     * ONLY USE IF PRELOADING IS NECESSARY, ELSE USE 'loadAndSetScreen'
+     * Loads the fxml file, add the screen to the screens collection and finally injects the screenPane to the controller.
+     * @param name Name of the scene defined in App
+     * @param resource Resource File of the scene defined in App
+     * @return
+     */
     public boolean loadScreen(String name, String resource) {
         try {
             FXMLLoader myLoader = new FXMLLoader(getClass().getResource(resource));
@@ -53,11 +79,12 @@ public class MasterController extends StackPane {
         }
     }
 
-    //This method tries to displayed the screen with a predefined name.
-    //First it makes sure the screen has been already loaded.  Then if there is more than
-    //one screen the new screen is been added second, and then the current screen is removed.
-    // If there isn't any screen being displayed, the new screen is just added to the root.
-    public boolean setScreen(final String name) {
+    /**
+     * Loads the scene
+     * @param name Name of the scene defined in App
+     * @return boolean indicating the success
+     */
+    private boolean setScreen(final String name) {
         if (screens.get(name) != null) {   //screen loaded
             final DoubleProperty opacity = opacityProperty();
 
@@ -84,7 +111,6 @@ public class MasterController extends StackPane {
             }
             return true;
         } else {
-            System.out.println("screen hasn't been loaded!!! \n");
             return false;
         }
     }

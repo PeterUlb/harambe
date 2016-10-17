@@ -5,6 +5,7 @@ import com.harambe.database.DatabaseConnector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -104,8 +105,8 @@ public class GameModel implements Persistable {
         return weWon;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public String getTimestamp() {
+        return new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(timestamp);
     }
 
     @Override
