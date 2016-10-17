@@ -1001,6 +1001,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         alert.show();
 
+        MenuController.themePlayer.stop();
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 

@@ -3,6 +3,7 @@ package com.harambe;
 
 import com.harambe.communication.ServerCommunication;
 import com.harambe.database.DatabaseConnector;
+import com.harambe.gui.MainController;
 import com.harambe.gui.MasterController;
 import com.harambe.gui.MenuController;
 import javafx.application.Application;
@@ -95,6 +96,9 @@ public class App extends Application {
             } else if(t.getCode() == KeyCode.M) {
                 if(com.harambe.gui.Stage.player != null) {
                     com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
+                }
+                if(MenuController.themePlayer != null) {
+                    MenuController.themePlayer.setMute(!MenuController.themePlayer.isMute());
                 }
             } else if (t.getCode() == KeyCode.F) {
                 stage.setFullScreen(!stage.isFullScreen());
