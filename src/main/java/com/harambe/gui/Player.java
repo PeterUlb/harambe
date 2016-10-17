@@ -57,7 +57,7 @@ public class Player {
 
     //methods for playerImg
     private void setImg(String character) {
-        this.imgLocation = "img/"+character+".png";
+        this.imgLocation = "img/"+character.toLowerCase()+".png";
     }
 
     public String  getImgLocation() {
@@ -71,9 +71,10 @@ public class Player {
      */
     private void setChip(String character) {
         switch(character) {
-            case "harambe":     this.chip = "banana";break;
-            case "poacher_1":   this.chip = "mango";break;
-            case "poacher_2":   this.chip = "bullets";break;
+            case "Harambe":     this.chip = "banana";break;
+            case "Poacher":   this.chip = "shotgun_shells";break;
+            case "Hunter":   this.chip = "bullets";break;
+            case "DatBoi":   this.chip = "unicycle";break;
         }
     }
 
@@ -104,9 +105,8 @@ public class Player {
      * @param character character the player chose to play with (e.g. Harambe)
      */
     private void setSounds(String character) {
-        this.dropSoundLocation = "/audio/"+character+"_drop.mp3";
-        this.winSoundLocation = "/audio/"+character+"_win.mp3";
-        this.selectSoundLocation = "/audio/"+character+"_select.mp3";
+        this.dropSoundLocation = "/audio/"+character.toLowerCase()+"_drop.mp3";
+        this.winSoundLocation = "/audio/"+character.toLowerCase()+"_win.mp3";
     }
 
     public void playDropSound() {

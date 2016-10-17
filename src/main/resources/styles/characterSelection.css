@@ -1,0 +1,35 @@
+.characterText{
+    -fx-font-size: 30px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.bg {
+    -fx-background-image: url("/img/coast_1.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.fg {
+    -fx-background-image: url("/img/characterSelectionBg.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+
+.remove {
+    -fx-background-color: #F15A3A;
+}
+
+.remove:hover {
+    -fx-background-color: #FF1000;
+    -fx-cursor: hand;
+}
+
+.select {
+    -fx-cursor: hand;
+}

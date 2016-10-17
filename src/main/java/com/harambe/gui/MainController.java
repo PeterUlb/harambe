@@ -27,6 +27,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -109,11 +111,15 @@ public class MainController implements Initializable, ControlledScreen {
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
     private MiniMax miniMax;
+    private Stage stage;
 
     public static boolean setDone = false; // marks a set as done for the server-comm thread
     private static boolean gameDone = false; // marks a game as done for the server-comm thread
 
     static MasterController myController;
+
+    static String p1Character = Character.characters[0];
+    static String p2Character = Character.characters[1];
 
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -129,8 +135,13 @@ public class MainController implements Initializable, ControlledScreen {
         gameDone = false; // same here
         board = new Board();
 
-        Stage stage = new Stage("coast_2");
+        stage = new Stage("coast_2");
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
+        //take static music player and play mainTheme
+        final URL resource = getClass().getResource("/audio/mainTheme.mp3");
+        MenuController.themePlayer = new MediaPlayer(new Media(resource.toString()));
+        MenuController.themePlayer.play();
+
 
         //init extra images
         Image asset1Img = new Image(stage.getRandomAssetImg());
@@ -139,7 +150,6 @@ public class MainController implements Initializable, ControlledScreen {
 
         Image asset2Img = new Image(stage.getRandomAssetImg());
         asset2.setImage(asset2Img);
-
 
 
         playBgAnimation(stage);
@@ -153,12 +163,12 @@ public class MainController implements Initializable, ControlledScreen {
         _player1Score = player1Score;
         _player2Score = player2Score;
 
-        if(SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
+        if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             // we play "online"
             if (SessionVars.ourSymbol == 'X') {
                 // we are 'X', so right side on the UI
-                p2 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
-                p1 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+                p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+                p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
                 player2Name.setStyle("-fx-fill: green");
                 player1Name.setStyle("-fx-fill: red");
                 ourPlayer = p2; // keep track who we are :)
@@ -173,8 +183,8 @@ public class MainController implements Initializable, ControlledScreen {
                 SessionVars.initializeNewGame(p2.getName(), p1.getName());
             } else {
                 // we are 'O', so left side on the UI
-                p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER2);
-                p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER1);
+                p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
+                p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
                 player1Name.setStyle("-fx-fill: green");
                 player2Name.setStyle("-fx-fill: red");
                 ourPlayer = p1; // keep track who we are :)
@@ -192,8 +202,8 @@ public class MainController implements Initializable, ControlledScreen {
             // should be a replay
             Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
             Logger.debug("ReplaySet: " + SessionVars.setNumber);
-            p1 = new Player(false, SessionVars.ourPlayerName, "harambe", Board.PLAYER1);
-            p2 = new Player(false, SessionVars.opponentPlayerName, "poacher_2", Board.PLAYER2);
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
             if (SessionVars.weStartSet) {
                 activePlayer = p1;
             } else {
@@ -201,16 +211,15 @@ public class MainController implements Initializable, ControlledScreen {
             }
         } else {
             // we play offline
-            p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
             if (SessionVars.getSoloVsAI()) {
-                p2 = new Player(true, "AI", "poacher_2", Board.PLAYER2);
+                p2 = new Player(true, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
             } else {
-                p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
+                p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
             }
-            player1Name.setStyle("-fx-fill: green");
-            player2Name.setStyle("-fx-fill: red");
+
             SessionVars.initializeNewGame(p1.getName(), p2.getName());
-            if (Math.round(Math.random())==1) {
+            if (Math.round(Math.random()) == 1) {
                 activePlayer = p1;
                 SessionVars.initializeNewSet(true);
 
@@ -229,7 +238,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         initPlayers(p1, p2);
 
-        if(SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
+        if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             // disable user input
             disableAllButtons(true);
             // we do not play offline, so run the server communication thread
@@ -251,13 +260,13 @@ public class MainController implements Initializable, ControlledScreen {
             thread.start();
         } else if (SessionVars.getSoloVsAI()) {
             miniMax = new MiniMax(opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-            if(activePlayer != ourPlayer) {
+            if (activePlayer != ourPlayer) {
                 // AI starts, so first turn is AI
                 // initialize MiniMax in offline mode
                 Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
                 long start = System.nanoTime();
                 fireButton(miniMax.getBestMove(board));
-                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");
             }
         } else if (SessionVars.getReplayMode()) {
             // disable user input
@@ -267,7 +276,6 @@ public class MainController implements Initializable, ControlledScreen {
             thread.setDaemon(true);
             thread.start();
         }
-
     }
 
     private void playReplay() {
@@ -506,6 +514,7 @@ public class MainController implements Initializable, ControlledScreen {
      * @param p2
      */
     private void initPlayers(Player p1, Player p2) {
+
         //load image in ImageViewContainer for player 1
         Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
         p1ImgView.setImage(p1Img);
@@ -981,7 +990,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         alert.show();
 
-        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
     public static void redrawScore() {
