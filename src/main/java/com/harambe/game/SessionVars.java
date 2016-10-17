@@ -15,9 +15,7 @@ public class SessionVars {
     public static boolean soloVsAI = false;
     public static char ourSymbol = '?';  // can be 'X' or 'O', non-offline games only
     public static String fileInterfacePath = null;
-    public static int searchDepth = 10;
-    public static long timeoutThresholdInMillis = 0; // after this time, a new search with outOfTimeDepth is started, 0 means unlimited
-    public static int outOfTimeDepth = 4; // depth of alternative alphabeta on timeout
+    public static long timeoutThresholdInMillis = 1000; // time the algorithm has to finish
     // -------------------
     public static UUID currentGameUUID = null;
     public static String ourPlayerName = null;

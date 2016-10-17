@@ -162,7 +162,7 @@ public class MainController implements Initializable, ControlledScreen {
                 player1Name.setStyle("-fx-fill: red");
                 ourPlayer = p2; // keep track who we are :)
                 opponentPlayer = p1;
-                miniMax = new MiniMax(SessionVars.searchDepth, ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
+                miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
                 Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, false);
@@ -179,7 +179,7 @@ public class MainController implements Initializable, ControlledScreen {
                 player2Name.setStyle("-fx-fill: red");
                 ourPlayer = p1; // keep track who we are :)
                 opponentPlayer = p2;
-                miniMax = new MiniMax(SessionVars.searchDepth, ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
+                miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
                 Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
                 if (SessionVars.useFileInterface) {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, true);
@@ -232,7 +232,7 @@ public class MainController implements Initializable, ControlledScreen {
             thread.setDaemon(true);
             thread.start();
         } else if (SessionVars.soloVsAI) {
-            miniMax = new MiniMax(SessionVars.searchDepth, opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth);
+            miniMax = new MiniMax(opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
             if(activePlayer != ourPlayer) {
                 // AI starts, so first turn is AI
                 // initialize MiniMax in offline mode
