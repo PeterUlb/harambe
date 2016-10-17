@@ -20,5 +20,6 @@
 
 
     <Button fx:id="playBtn" onAction="#play" text="play" translateX="700" translateY="400" />
+    <Button onAction="#back" text="back" translateX="-700" translateY="-400" />
 
 </StackPane>

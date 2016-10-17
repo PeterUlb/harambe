@@ -72,8 +72,9 @@ public class Player {
     private void setChip(String character) {
         switch(character) {
             case "Harambe":     this.chip = "banana";break;
-            case "Poacher":   this.chip = "mango";break;
+            case "Poacher":   this.chip = "shotgun_shells";break;
             case "Hunter":   this.chip = "bullets";break;
+            case "DatBoi":   this.chip = "unicycle";break;
         }
     }
 
@@ -106,7 +107,6 @@ public class Player {
     private void setSounds(String character) {
         this.dropSoundLocation = "/audio/"+character.toLowerCase()+"_drop.mp3";
         this.winSoundLocation = "/audio/"+character.toLowerCase()+"_win.mp3";
-        this.selectSoundLocation = "/audio/"+character.toLowerCase()+"_select.mp3";
     }
 
     public void playDropSound() {
