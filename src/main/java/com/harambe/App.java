@@ -4,6 +4,7 @@ package com.harambe;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.database.DatabaseConnector;
 import com.harambe.gui.MasterController;
+import com.harambe.gui.MenuController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -19,6 +20,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -42,8 +44,6 @@ public class App extends Application {
     public static final String REPLAY_SCREEN_FILE = "/scenes/replay.fxml";
     public static final String STATISTICS_SCREEN = "statistics";
     public static final String STATISTICS_SCREEN_FILE = "/scenes/statistics.fxml";
-
-    public static MediaPlayer themePlayer;
 
 
 
@@ -75,7 +75,9 @@ public class App extends Application {
         stage.setScene(scene);
         scene.addEventHandler(KeyEvent.KEY_RELEASED, t -> {
             if(t.getCode()== KeyCode.ESCAPE) {
-                stage.setFullScreen(true);
+                if (stage.isFullScreen()) {
+                    stage.setFullScreen(true);
+                }
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initOwner(stage);
                 alert.setTitle("Confirmation Dialog");
@@ -86,28 +88,28 @@ public class App extends Application {
                 if (result.get() == ButtonType.YES){
                     Platform.exit();
                 } else if (result.get() == toMenuScreen) {
-                    mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, false);
+                    MenuController.themePlayer.stop();
+                    mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, true);
                 }
             } else if(t.getCode() == KeyCode.M) {
                 if(com.harambe.gui.Stage.player != null) {
                     com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
                 }
+            } else if (t.getCode() == KeyCode.F) {
+                stage.setFullScreen(!stage.isFullScreen());
             }
         });
-
-        //set & play menuTheme
-        final URL resource = getClass().getResource("/audio/menuTheme.mp3");
-        final Media theme = new Media(resource.toString());
-        themePlayer = new MediaPlayer(theme);
-        themePlayer.setVolume(0.1);
-        themePlayer.play();
 
 
         stage.show();
 
         stage.setFullScreenExitHint("");
-        stage.setFullScreenExitKeyCombination(new KeyCharacterCombination("x"));
-        stage.setFullScreen(true);
+        stage.setFullScreenExitKeyCombination(new KeyCharacterCombination("´"));
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        if (screenSize.getHeight() == 1080 && screenSize.getWidth() == 1920) {
+            stage.setFullScreen(true);
+        }
     }
 
     @Override

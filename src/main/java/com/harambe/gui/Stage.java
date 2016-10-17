@@ -17,35 +17,10 @@ public class Stage {
 
     public Stage(String stageName) {
         setImg(stageName);
-        playTheme(stageName);
     }
 
     private void setImg(String stageName) {
         this.imgLocation = "/img/"+stageName+".jpg";
-    }
-
-    /**
-     * plays the theme(mp3) of the selected stage
-     * @param stageName
-     */
-    private void playTheme(String stageName){
-        // music player
-        stopTheme();
-        switch (stageName) {
-            case "coast_1":
-                themeLocation = getClass().getResource("/audio/mainTheme.mp3");
-            case "coast_2":
-                themeLocation = getClass().getResource("/audio/mainTheme.mp3");
-        }
-
-        final Media media = new Media(themeLocation.toString());
-        player = new MediaPlayer(media);
-        player.setOnEndOfMedia(() -> player.seek(Duration.ZERO));
-        player.play();
-    }
-
-    public void stopTheme() {
-        player.stop();
     }
 
     public String getImg() {

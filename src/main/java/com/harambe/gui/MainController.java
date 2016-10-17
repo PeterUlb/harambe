@@ -27,6 +27,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -39,7 +41,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static com.harambe.App.db;
-import static com.harambe.App.themePlayer;
 
 /**
  * Controller of the main game. Contains mostly the chip dropping and logic behind the visual representation of the board.
@@ -136,6 +137,11 @@ public class MainController implements Initializable, ControlledScreen {
 
         stage = new Stage("coast_2");
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
+        //take static music player and play mainTheme
+        final URL resource = getClass().getResource("/audio/mainTheme.mp3");
+        MenuController.themePlayer = new MediaPlayer(new Media(resource.toString()));
+        MenuController.themePlayer.play();
+
 
         //init extra images
         Image asset1Img = new Image(stage.getRandomAssetImg());
@@ -508,10 +514,6 @@ public class MainController implements Initializable, ControlledScreen {
      * @param p2
      */
     private void initPlayers(Player p1, Player p2) {
-
-        System.out.println(p1.getImgLocation());
-        System.out.println(p2.getImgLocation());
-
 
         //load image in ImageViewContainer for player 1
         Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
@@ -988,7 +990,7 @@ public class MainController implements Initializable, ControlledScreen {
 
         alert.show();
 
-        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
     public static void redrawScore() {

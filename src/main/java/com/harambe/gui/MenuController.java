@@ -12,6 +12,8 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -33,9 +35,16 @@ public class MenuController implements Initializable, ControlledScreen {
     @FXML
     private ImageView btnImgOnline;
 
+    public static MediaPlayer themePlayer;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        //set & play menuTheme
+        final URL resource = getClass().getResource("/audio/menuTheme.mp3");
+        final Media theme = new Media(resource.toString());
+        themePlayer = new MediaPlayer(theme);
+        themePlayer.setVolume(0.1);
+        themePlayer.play();
     }
 
     public void setScreenParent(MasterController screenParent) {

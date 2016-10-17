@@ -236,7 +236,7 @@ public class characterSelectionController implements Initializable, ControlledSc
             MainController.p1Character = player1Character;
             SessionVars.opponentPlayerName = "Player 2";
             MainController.p2Character = player2Character;
-            App.themePlayer.stop();
+            MenuController.themePlayer.stop();
 
             myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);
         }
