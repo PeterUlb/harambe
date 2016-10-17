@@ -149,7 +149,6 @@ public class MenuController implements Initializable, ControlledScreen {
             }
 
             SessionVars.usePusherInterface(true);
-            return;
 
         } else {
             btnImgOnline.setDisable(false);

@@ -168,8 +168,7 @@ public class MainController implements Initializable, ControlledScreen {
                 if (SessionVars.getUseFileInterface()) {
                     App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false);
                 } else if (SessionVars.getUsePusherInterface()) {
-                    // TODO when done instantiate here
-//                App.sC = new PusherCommunicator();
+                    App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p2.getName(), p1.getName());
             } else {
@@ -185,8 +184,7 @@ public class MainController implements Initializable, ControlledScreen {
                 if (SessionVars.getUseFileInterface()) {
                     App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true);
                 } else if (SessionVars.getUsePusherInterface()) {
-                    // TODO when done instantiate here
-                App.sC = new PusherCommunicator();
+                    App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p1.getName(), p2.getName());
             }
