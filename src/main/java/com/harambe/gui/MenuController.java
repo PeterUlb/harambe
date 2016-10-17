@@ -99,8 +99,6 @@ public class MenuController implements Initializable, ControlledScreen {
 
         alert.getButtonTypes().setAll(buttonTypeFile, buttonTypePusher, buttonTypeCancel);
 
-        alert.getDialogPane().lookupButton(buttonTypePusher).setDisable(true); //TODO remove this when pusher is implemented
-
         Optional<ButtonType> result = alert.showAndWait();
         alert.close();
 
@@ -151,7 +149,6 @@ public class MenuController implements Initializable, ControlledScreen {
             }
 
             SessionVars.usePusherInterface(true);
-            Logger.event("Pusher not implemented");
             return;
 
         } else {
