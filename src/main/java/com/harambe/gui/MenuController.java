@@ -99,8 +99,6 @@ public class MenuController implements Initializable, ControlledScreen {
 
         alert.getButtonTypes().setAll(buttonTypeFile, buttonTypePusher, buttonTypeCancel);
 
-        alert.getDialogPane().lookupButton(buttonTypePusher).setDisable(true); //TODO remove this when pusher is implemented
-
         Optional<ButtonType> result = alert.showAndWait();
         alert.close();
 
@@ -134,25 +132,23 @@ public class MenuController implements Initializable, ControlledScreen {
 
         } else if (result.get() == buttonTypePusher) {
 
-//            Alert alertXO = new Alert(Alert.AlertType.CONFIRMATION);
-//            alertXO.initOwner(App.stage);
-//            alertXO.setTitle("Selection");
-//            alertXO.setHeaderText("Player symbol");
-//            alertXO.setContentText("Choose your symbol.");
-//            alertXO.getButtonTypes().setAll(buttonTypeO, buttonTypeX, buttonTypeCancel);
-//            Optional<ButtonType> resultXO = alertXO.showAndWait();
-//            if (resultXO.get() == buttonTypeO) {
-//                SessionVars.ourSymbol = 'O';
-//            } else if (resultXO.get() == buttonTypeX) {
-//                SessionVars.ourSymbol = 'X';
-//            } else {
-//                btnImgOnline.setDisable(false);
-//                return;
-//            }
-//
-//            SessionVars.usePusherInterface(true);
-            Logger.event("Pusher not implemented");
-            return;
+            Alert alertXO = new Alert(Alert.AlertType.CONFIRMATION);
+            alertXO.initOwner(App.stage);
+            alertXO.setTitle("Selection");
+            alertXO.setHeaderText("Player symbol");
+            alertXO.setContentText("Choose your symbol.");
+            alertXO.getButtonTypes().setAll(buttonTypeO, buttonTypeX, buttonTypeCancel);
+            Optional<ButtonType> resultXO = alertXO.showAndWait();
+            if (resultXO.get() == buttonTypeO) {
+                SessionVars.ourSymbol = 'O';
+            } else if (resultXO.get() == buttonTypeX) {
+                SessionVars.ourSymbol = 'X';
+            } else {
+                btnImgOnline.setDisable(false);
+                return;
+            }
+
+            SessionVars.usePusherInterface(true);
 
         } else {
             btnImgOnline.setDisable(false);
