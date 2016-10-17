@@ -4,6 +4,7 @@ import com.harambe.App;
 import com.harambe.algorithm.MiniMax;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.communication.communicator.FileCommunicator;
+import com.harambe.communication.communicator.PusherCommunicator;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
@@ -184,7 +185,7 @@ public class MainController implements Initializable, ControlledScreen {
                     App.sC = new FileCommunicator(SessionVars.fileInterfacePath, true);
                 } else if (SessionVars.usePusherInterface) {
                     // TODO when done instantiate here
-//                App.sC = new PusherCommunicator();
+                App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p1.getName(), p2.getName());
             }

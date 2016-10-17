@@ -56,11 +56,19 @@ public class App extends Application {
                     System.exit(0);
                 }
             }
+
         } else if (x == 1) {
-            JOptionPane.showMessageDialog(null, "Not implemented!", "ERROR", 1);
-//            SessionVars.ourSymbol = JOptionPane.showInputDialog("O or X?").charAt(0);
+            int symbolChoice = JOptionPane.showOptionDialog(null, "O or X?", "Selection",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, new Object[] {"O", "X"}, "O");
+            if (symbolChoice == 0) {
+                SessionVars.ourSymbol = 'O';
+            } else if (symbolChoice == 1) {
+                SessionVars.ourSymbol = 'X';
+            } else {
+                System.exit(0);
+            }
             SessionVars.usePusherInterface = true;
-            System.exit(-1);
         } else if (x == 2) {
             SessionVars.soloVsAI = true;
         } else if (x == 3) {
