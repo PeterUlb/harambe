@@ -4,6 +4,7 @@ import com.harambe.App;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.database.model.SetModel;
 import com.harambe.game.SessionVars;
+import com.harambe.game.ThreadManager;
 import com.harambe.gui.MainController;
 import com.harambe.pusherconnection.PusherConnector;
 import javafx.application.Platform;
@@ -18,12 +19,13 @@ public class PusherCommunicator implements ServerCommunication {
     public PusherCommunicator(){
         pusher = new PusherConnector();
         Thread thread = new Thread(pusher);
+        thread.setDaemon(true);
+        ThreadManager.threads.add(thread);
         thread.start();
     }
 
     @Override
     public void passTurnToServer(int column) throws Exception {
-        // TODO
         pusher.sendTurn(column);
     }
 
