@@ -6,7 +6,7 @@ import com.harambe.database.model.SetModel;
 import com.harambe.game.SessionVars;
 import com.harambe.game.ThreadManager;
 import com.harambe.gui.MainController;
-import com.harambe.pusherconnection.PusherConnector;
+import com.harambe.communication.PusherConnector;
 import javafx.application.Platform;
 
 import java.sql.SQLException;

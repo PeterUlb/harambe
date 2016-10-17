@@ -5,9 +5,6 @@ import junit.framework.TestCase;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
-/**
- * Created by Peter on 16.09.2016.
- */
 public class DatabaseConnectorTest extends TestCase {
 
     public void setUp() throws Exception {

@@ -4,9 +4,6 @@ import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
 import junit.framework.TestCase;
 
-/**
- * Created by Peter on 08.09.2016.
- */
 public class MiniMaxTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();

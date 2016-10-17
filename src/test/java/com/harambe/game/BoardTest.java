@@ -6,9 +6,6 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by Peter on 08.09.2016.
- */
 public class BoardTest extends TestCase {
     Board board;
 

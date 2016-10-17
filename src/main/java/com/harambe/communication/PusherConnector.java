@@ -1,4 +1,4 @@
-package com.harambe.pusherconnection;
+package com.harambe.communication;
 
 import com.harambe.game.SessionVars;
 import com.pusher.client.AuthorizationFailureException;
@@ -9,7 +9,7 @@ import com.pusher.client.channel.PrivateChannel;
 import com.pusher.client.channel.PrivateChannelEventListener;
 
 /**
- * Created by Jann on 12.09.2016.
+ * TODO Insert documentation here.
  */
 public class PusherConnector implements Runnable {
 
