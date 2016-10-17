@@ -1,6 +1,7 @@
 package com.harambe.gui;
 
 import com.harambe.App;
+import com.harambe.game.SessionVars;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -20,7 +21,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import javax.xml.stream.events.Characters;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -53,7 +53,6 @@ public class characterSelectionController implements Initializable, ControlledSc
     private Image p2ImgDefault = new Image(("img/select_2.png"));
     private String player1Character;
     private String player2Character;
-    private MediaPlayer themePlayer;
     private ArrayList<Rectangle> squareArray;
 
 
@@ -65,12 +64,7 @@ public class characterSelectionController implements Initializable, ControlledSc
 
         playBtn.setDisable(true);
 
-        //set & play menuTheme
-        final URL resource = getClass().getResource("/audio/menuTheme.mp3");
-        final Media theme = new Media(resource.toString());
-        themePlayer = new MediaPlayer(theme);
-        themePlayer.setVolume(0.1);
-        themePlayer.play();
+
 
         //setup windows
         final int characterSize = 200;
@@ -238,22 +232,20 @@ public class characterSelectionController implements Initializable, ControlledSc
 
         if (player1Character!=null && player2Character!=null) {
 
-            MainController.p1Name = "Player 1";
+            SessionVars.ourPlayerName = "Player 1";
             MainController.p1Character = player1Character;
-            MainController.p2Name = "Player 2";
+            SessionVars.opponentPlayerName = "Player 2";
             MainController.p2Character = player2Character;
-            themePlayer.stop();
+            App.themePlayer.stop();
 
-            myController.loadScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE);
-            myController.setScreen(App.MAIN_SCREEN);
+            myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);
         }
     }
 
     @FXML
     private void back(ActionEvent event)/*throws IOException*/ {
-        themePlayer.stop();
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
 
-        myController.setScreen(App.MENU_SCREEN);
     }
 
 

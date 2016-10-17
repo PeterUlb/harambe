@@ -5,21 +5,24 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane fx:id="bg" styleClass="bg" stylesheets="/styles/characterSelection.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.characterSelectionController">
+<StackPane styleClass="bg" stylesheets="/styles/characterSelection.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.characterSelectionController">
+
+    <StackPane fx:id="bg" styleClass="fg">
+
+        <StackPane alignment="BOTTOM_CENTER">
+          <ImageView fx:id="player1" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="-400"/>
+          <ImageView fx:id="player2" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="400"/>
+        </StackPane>
+
+        <GridPane fx:id="grid" alignment="center" hgap="5" translateY="-75" vgap="50"/>
+
+        <Button fx:id="player1Remove" visible="false" disable="true" onAction="#deletePlayer" text="X" styleClass="remove" translateX="-260" translateY="220"/>
+        <Button fx:id="player2Remove" visible="false" disable="true" onAction="#deletePlayer" text="X" styleClass="remove" translateX="550" translateY="220"/>
 
 
-   <StackPane alignment="BOTTOM_CENTER">
-      <ImageView fx:id="player1" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="-400"/>
-      <ImageView fx:id="player2" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="400"/>
-   </StackPane>
+        <Button fx:id="playBtn" onAction="#play" text="play" translateX="700" translateY="400" />
+        <Button onAction="#back" text="back" translateX="-700" translateY="-400" />
 
-   <GridPane fx:id="grid" alignment="center" hgap="5" translateY="-75" vgap="50"/>
-
-    <Button fx:id="player1Remove" visible="false" disable="true" onAction="#deletePlayer" text="X" styleClass="remove" translateX="-260" translateY="220"/>
-    <Button fx:id="player2Remove" visible="false" disable="true" onAction="#deletePlayer" text="X" styleClass="remove" translateX="550" translateY="220"/>
-
-
-    <Button fx:id="playBtn" onAction="#play" text="play" translateX="700" translateY="400" />
-    <Button onAction="#back" text="back" translateX="-700" translateY="-400" />
+    </StackPane>
 
 </StackPane>

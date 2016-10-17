@@ -100,7 +100,7 @@ public class FileCommunicator implements ServerCommunication {
                 }
                 SessionVars.weWonSet = MainController.ourPlayer.getSymbol() == 'X';
             }
-            SetModel setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, SessionVars.weWonSet);
+            SetModel setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, SessionVars.weWonSet);
             try {
                 setModel.persistInDatabase(App.db);
             } catch (SQLException e) {

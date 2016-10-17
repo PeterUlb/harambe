@@ -4,11 +4,14 @@ import com.harambe.App;
 import com.harambe.algorithm.MiniMax;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.communication.communicator.FileCommunicator;
+import com.harambe.communication.communicator.PusherCommunicator;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
+import com.harambe.game.ThreadManager;
+import com.harambe.tools.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,7 +23,6 @@ import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -37,6 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static com.harambe.App.db;
+import static com.harambe.App.themePlayer;
 
 /**
  * Controller of the main game. Contains mostly the chip dropping and logic behind the visual representation of the board.
@@ -94,13 +97,6 @@ public class MainController implements Initializable, ControlledScreen {
 
     private ImageView previewImg;
 
-    //variables from other controllers
-    static String p1Character;
-    static String p2Character;
-    static String p1Name;
-    static String p2Name;
-
-
     //other variables
     private Board board;
     private int[] freeSpace;
@@ -108,15 +104,21 @@ public class MainController implements Initializable, ControlledScreen {
     public static Player p2;
     private static Player activePlayer;
     public static Player ourPlayer; // reference whether we are p1 or p2
+    public static Player opponentPlayer;
     private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
+    private MiniMax miniMax;
+    private Stage stage;
 
     public static boolean setDone = false; // marks a set as done for the server-comm thread
     private static boolean gameDone = false; // marks a game as done for the server-comm thread
 
-    MasterController myController;
+    static MasterController myController;
+
+    static String p1Character = Character.characters[0];
+    static String p2Character = Character.characters[1];
 
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -128,10 +130,11 @@ public class MainController implements Initializable, ControlledScreen {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-
+        setDone = false; // reset the setDone flag when the screen is loaded a second time
+        gameDone = false; // same here
         board = new Board();
 
-        Stage stage = new Stage("coast_2");
+        stage = new Stage("coast_2");
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
 
         //init extra images
@@ -141,7 +144,6 @@ public class MainController implements Initializable, ControlledScreen {
 
         Image asset2Img = new Image(stage.getRandomAssetImg());
         asset2.setImage(asset2Img);
-
 
 
         playBgAnimation(stage);
@@ -155,44 +157,63 @@ public class MainController implements Initializable, ControlledScreen {
         _player1Score = player1Score;
         _player2Score = player2Score;
 
-
-        if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
+        if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             // we play "online"
             if (SessionVars.ourSymbol == 'X') {
                 // we are 'X', so right side on the UI
-                p2 = new Player(false, p1Name, p1Character, Board.PLAYER1);
-                p1 = new Player(false, p2Name, p2Character, Board.PLAYER2);
+                p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+                p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
                 player2Name.setStyle("-fx-fill: green");
                 player1Name.setStyle("-fx-fill: red");
                 ourPlayer = p2; // keep track who we are :)
-                if (SessionVars.useFileInterface) {
-                    App.sC = new FileCommunicator(SessionVars.fileInterfacePath, false);
-                } else if (SessionVars.usePusherInterface) {
-                    // TODO when done instantiate here
-//                App.sC = new PusherCommunicator();
+                opponentPlayer = p1;
+                miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+                Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+                if (SessionVars.getUseFileInterface()) {
+                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false);
+                } else if (SessionVars.getUsePusherInterface()) {
+                    App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p2.getName(), p1.getName());
             } else {
                 // we are 'O', so left side on the UI
-                p1 = new Player(false, p2Name, p2Character, Board.PLAYER2);
-                p2 = new Player(false, p1Name, p1Character, Board.PLAYER1);
+                p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
+                p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
                 player1Name.setStyle("-fx-fill: green");
                 player2Name.setStyle("-fx-fill: red");
                 ourPlayer = p1; // keep track who we are :)
-                if (SessionVars.useFileInterface) {
-                    App.sC = new FileCommunicator(SessionVars.fileInterfacePath, true);
-                } else if (SessionVars.usePusherInterface) {
-                    // TODO when done instantiate here
-//                App.sC = new PusherCommunicator();
+                opponentPlayer = p2;
+                miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+                Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+                if (SessionVars.getUseFileInterface()) {
+                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true);
+                } else if (SessionVars.getUsePusherInterface()) {
+                    App.sC = new PusherCommunicator();
                 }
                 SessionVars.initializeNewGame(p1.getName(), p2.getName());
             }
+        } else if (SessionVars.getReplayMode()) {
+            // should be a replay
+            Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
+            Logger.debug("ReplaySet: " + SessionVars.setNumber);
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+            if (SessionVars.weStartSet) {
+                activePlayer = p1;
+            } else {
+                activePlayer = p2;
+            }
         } else {
             // we play offline
-            p1 = new Player(false, p1Name, p1Character, Board.PLAYER1);
-            p2 = new Player(false, p2Name, p2Character, Board.PLAYER2);
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+            if (SessionVars.getSoloVsAI()) {
+                p2 = new Player(true, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+            } else {
+                p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+            }
+
             SessionVars.initializeNewGame(p1.getName(), p2.getName());
-            if (Math.round(Math.random())==1) {
+            if (Math.round(Math.random()) == 1) {
                 activePlayer = p1;
                 SessionVars.initializeNewSet(true);
 
@@ -201,15 +222,17 @@ public class MainController implements Initializable, ControlledScreen {
                 SessionVars.initializeNewSet(false);
             }
             ourPlayer = p1;
+            opponentPlayer = p2;
         }
 
+        Logger.event("Create game " + SessionVars.currentGameUUID);
 
         winCircleImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/wincircle.png")));
 
 
         initPlayers(p1, p2);
 
-        if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
+        if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             // disable user input
             disableAllButtons(true);
             // we do not play offline, so run the server communication thread
@@ -226,18 +249,44 @@ public class MainController implements Initializable, ControlledScreen {
                     }
                 }
             });
+            ThreadManager.threads.add(thread);
             thread.setDaemon(true);
             thread.start();
-        } else if (SessionVars.soloVsAI) {
-            if(activePlayer != ourPlayer) {
+        } else if (SessionVars.getSoloVsAI()) {
+            miniMax = new MiniMax(opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+            if (activePlayer != ourPlayer) {
                 // AI starts, so first turn is AI
-                // TODO maybe use one global minimax object
+                // initialize MiniMax in offline mode
+                Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
                 long start = System.nanoTime();
-                fireButton(new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
-                System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                fireButton(miniMax.getBestMove(board));
+                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");
             }
+        } else if (SessionVars.getReplayMode()) {
+            // disable user input
+            disableAllButtons(true);
+            Thread thread = new Thread(this::playReplay);
+            ThreadManager.threads.add(thread);
+            thread.setDaemon(true);
+            thread.start();
         }
+    }
 
+    private void playReplay() {
+        ArrayList<TurnModel> turns = null;
+        try {
+            turns = TurnModel.getTurns(App.db, SessionVars.currentGameUUID, SessionVars.setNumber);
+            for (TurnModel turn :
+                    turns) {
+                Thread.sleep(1000);
+                Platform.runLater(() -> fireDisabledButton(turn.getColumn()));
+            }
+            disableAllButtons(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -286,6 +335,7 @@ public class MainController implements Initializable, ControlledScreen {
         }
             while(!setDone) {
                 int col = sC.getTurnFromServer();
+                long start = System.nanoTime();
                 if(col == -2) {
                     // indicates that set has ended, and not that we have to start (server sends -1 in both cases :/
                     // so just get the next turn
@@ -296,11 +346,10 @@ public class MainController implements Initializable, ControlledScreen {
                     flag = true;
                     activePlayer = ourPlayer;
                     SessionVars.initializeNewSet(true);
-                    long start = System.nanoTime();
-                    int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                    int column = 3; // first drop in the middle :)
                     final FutureTask<Boolean> query = new FutureTask<>(() -> {
                         dropForUs(sC, column);
-                        System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                        Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                         return true;
                     });
                     Platform.runLater(query); // drop logic can only be done in the UI Thread
@@ -319,11 +368,10 @@ public class MainController implements Initializable, ControlledScreen {
                 Platform.runLater(query); // drop logic can only be done in the UI Thread
                 query.get(); // wait for the logic top happen to avoid random magic
 
-                long start = System.nanoTime();
-                int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                int column = miniMax.getBestMove(board);
                 final FutureTask<Boolean> query2 = new FutureTask<>(() -> {
                     dropForUs(App.sC, column);
-                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                    Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                     return true;
                 });
                 Platform.runLater(query2); // drop logic can only be done in the UI Thread
@@ -450,6 +498,7 @@ public class MainController implements Initializable, ControlledScreen {
             }
         });
         thread.setDaemon(true);
+        ThreadManager.threads.add(thread);
         thread.start();
     }
 
@@ -459,6 +508,11 @@ public class MainController implements Initializable, ControlledScreen {
      * @param p2
      */
     private void initPlayers(Player p1, Player p2) {
+
+        System.out.println(p1.getImgLocation());
+        System.out.println(p2.getImgLocation());
+
+
         //load image in ImageViewContainer for player 1
         Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
         p1ImgView.setImage(p1Img);
@@ -550,7 +604,7 @@ public class MainController implements Initializable, ControlledScreen {
             board.put(column, activePlayer.getSymbol());
         }
         catch (Exception e) {
-            System.out.println("column full");
+            System.err.println("column full");
             btn.setDisable(true);
         }
 
@@ -571,20 +625,27 @@ public class MainController implements Initializable, ControlledScreen {
         //end round
         switchPlayer();
 
-        if(SessionVars.soloVsAI && activePlayer != ourPlayer) {
+        if(SessionVars.getSoloVsAI() && activePlayer != ourPlayer && !setDone) {
             // user is playing against AI, so his turn is followed by an AI turn
-            disableAllButtons(true);
-            long start = System.nanoTime();
-            Thread thread = new Thread(() -> {
-                int column1 = new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
-                Platform.runLater(() -> {
-                    fireDisabledButton(column1);
-                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
-                    disableAllButtons(false);
-                });
-            });
-            thread.start();
+            dropForAI();
         }
+    }
+
+    private void dropForAI() {
+        disableAllButtons(true);
+        long start = System.nanoTime();
+        Thread thread = new Thread(() -> {
+            int column1 = miniMax.getBestMove(board);
+            Platform.runLater(() -> {
+                fireDisabledButton(column1);
+                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                if(!setDone) {
+                    // only renable buttons if the new set has started
+                    disableAllButtons(false);
+                }
+            });
+        });
+        thread.start();
     }
 
 
@@ -593,7 +654,37 @@ public class MainController implements Initializable, ControlledScreen {
      * @param disabled true = disabled/ false = enabled
      */
     private void disableAllButtons(boolean disabled) {
-        b0.setDisable(disabled);b1.setDisable(disabled);b2.setDisable(disabled);b3.setDisable(disabled);b4.setDisable(disabled);b5.setDisable(disabled);b6.setDisable(disabled);
+        if (disabled) {
+            b0.setDisable(true);
+            b1.setDisable(true);
+            b2.setDisable(true);
+            b3.setDisable(true);
+            b4.setDisable(true);
+            b5.setDisable(true);
+            b6.setDisable(true);
+        } else {
+            if (freeSpace[0] >= 0 ) {
+                b0.setDisable(false);
+            }
+            if (freeSpace[1] >= 0 ) {
+                b1.setDisable(false);
+            }
+            if (freeSpace[2] >= 0 ) {
+                b2.setDisable(false);
+            }
+            if (freeSpace[3] >= 0 ) {
+                b3.setDisable(false);
+            }
+            if (freeSpace[4] >= 0 ) {
+                b4.setDisable(false);
+            }
+            if (freeSpace[5] >= 0 ) {
+                b5.setDisable(false);
+            }
+            if (freeSpace[6] >= 0 ) {
+                b6.setDisable(false);
+            }
+        }
     }
 
     /**
@@ -603,13 +694,15 @@ public class MainController implements Initializable, ControlledScreen {
     private void persistDrop(int column) {
         TurnModel turnModel = null;
         if (activePlayer == ourPlayer) {
-            turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, false, column);
+            turnModel = new TurnModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.turnNumber, false, column);
         } else {
-            turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, true, column);
+            turnModel = new TurnModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.turnNumber, true, column);
         }
 
         try {
-            turnModel.persistInDatabase(App.db);
+            if(!SessionVars.getReplayMode()) {
+                turnModel.persistInDatabase(App.db);
+            }
             SessionVars.turnNumber++;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -662,10 +755,10 @@ public class MainController implements Initializable, ControlledScreen {
     private void checkForWin() {
 
         if ((winLocation = board.getWinForUI(activePlayer.getSymbol())) != null) {
-            System.out.println(activePlayer.getName() + " wins");
+            Logger.event(activePlayer.getName() + " wins");
 
             //increment score and change score
-            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 // for online games the server decides who wins (e.g. on draws)
                 // for online games the score redraw is handled in the Communicator
                 activePlayer.incrementScore();
@@ -675,16 +768,18 @@ public class MainController implements Initializable, ControlledScreen {
 
                 SetModel setModel;
 
-                if (activePlayer == ourPlayer) {
-                    setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
+                if (activePlayer == p1) {
+                    setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, true);
                     winAnim(p1ImgView);
                 } else {
-                    setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                    setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, false);
                     winAnim(p2ImgView);
                 }
 
                 try {
-                    setModel.persistInDatabase(App.db);
+                    if(!SessionVars.getReplayMode()) {
+                        setModel.persistInDatabase(App.db);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -728,11 +823,11 @@ public class MainController implements Initializable, ControlledScreen {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Platform.runLater(() -> cleanBoardImages());
+                Platform.runLater(this::cleanBoardImages);
             });
             thread.start();
 
-            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
+            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
                 endGame();
             } else {
                 endSet();
@@ -745,31 +840,33 @@ public class MainController implements Initializable, ControlledScreen {
             //should be a draw
 
             //increment score and change score
-            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 // for online games the score redraw is handled in the Communicator
                 player1Score.setText(String.valueOf(p1.getScore()));
                 player2Score.setText(String.valueOf(p2.getScore()));
 
                 SetModel setModel;
-                // a draw isnt a win
-                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                // a draw is a null for our boolean value
+                setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, null);
                 try {
-                    setModel.persistInDatabase(App.db);
+                    if(!SessionVars.getReplayMode()) {
+                        setModel.persistInDatabase(App.db);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
-                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
+                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
                     endGame();
                 } else {
                     endSet();
                 }
 
                 // TODO do something nicer here
-                System.out.println("a draw");
+                Logger.event("a draw");
             }
 
-            Platform.runLater(() -> cleanBoardImages());
+            Platform.runLater(this::cleanBoardImages);
         }
 
     }
@@ -781,7 +878,7 @@ public class MainController implements Initializable, ControlledScreen {
         }
 
 
-        if(winCircleArray.size() > 0) {
+        if(winCircleArray != null) {
             for (ImageView winCircle : winCircleArray) {
                 bg.getChildren().remove(winCircle);
             }
@@ -790,8 +887,17 @@ public class MainController implements Initializable, ControlledScreen {
         chipArray = new ArrayList<>();
 
         // end set disables all the button, if needed we enable them here again
-        if(!(SessionVars.usePusherInterface || SessionVars.useFileInterface || (activePlayer != ourPlayer && SessionVars.soloVsAI))) {
+        if(!(SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface() || (activePlayer != ourPlayer && SessionVars.getSoloVsAI()) || SessionVars.getReplayMode())) {
             disableAllButtons(false);
+        }
+
+        if(SessionVars.getSoloVsAI()) {
+            // if ai starts, put next drop for AI
+            if (activePlayer == opponentPlayer) {
+                dropForAI();
+            }
+            // needed to verify that new moves can be done by the player
+            setDone = false;
         }
     }
 
@@ -836,7 +942,7 @@ public class MainController implements Initializable, ControlledScreen {
 
             disableAllButtons(true);
 
-            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
                 // online games do it in the playSet method, since there is decided who starts
             }
@@ -853,6 +959,11 @@ public class MainController implements Initializable, ControlledScreen {
      * is called when a game is over. Closes the scene.
      */
     public static void endGame() {
+        if (gameDone) {
+            // this method is called twice with file interface (1st: enemies winning move, second: notifiny of win) (at least I think so)
+            // thats why we avoid the second call (so no PK violations)
+            return;
+        }
         gameDone = true;
         //acknowledge player of his victory
         boolean weWon = false;
@@ -860,35 +971,28 @@ public class MainController implements Initializable, ControlledScreen {
             weWon = true;
         }
 
-        //Todo, might be wise to have a global opponent reference like ourplayer
-        Player opponent;
-        if (ourPlayer == p1) {
-            opponent = p2;
-        } else {
-            opponent = p1;
-        }
-
-        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponent.getScore(), weWon);
+        GameModel gameModel = new GameModel(SessionVars.currentGameUUID, SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponentPlayer.getScore(), weWon);
         try {
-            gameModel.persistInDatabase(db);
+            if(!SessionVars.getReplayMode()) {
+                gameModel.persistInDatabase(db);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         //TODO: Change this to something that looks better
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initOwner(App.stage);
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
         alert.setContentText("Player " + activePlayer.getName() + " wins the game");
 
-        alert.showAndWait();
+        alert.show();
 
-        Platform.exit();
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
     }
 
     public static void redrawScore() {
         _player1Score.setText(String.valueOf(p1.getScore()));
         _player2Score.setText(String.valueOf(p2.getScore()));
     }
-
-
 }

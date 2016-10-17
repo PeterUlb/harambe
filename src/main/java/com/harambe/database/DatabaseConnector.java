@@ -2,9 +2,6 @@ package com.harambe.database;
 
 import java.sql.*;
 
-/**
- * Created by Peter on 16.09.2016.
- */
 public class DatabaseConnector {
     public static final String GAMETABLE = "game";
     public static final String SETTABLE = "game_set";

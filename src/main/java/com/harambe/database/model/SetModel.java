@@ -13,8 +13,8 @@ import java.util.ArrayList;
 public class SetModel implements Persistable {
     private String gameUUID;
     private int setNumber;
-    private boolean weStarted;
-    private boolean weWon;
+    private Boolean weStarted;
+    private Boolean weWon;
 
     /**
      *
@@ -23,26 +23,33 @@ public class SetModel implements Persistable {
      * @param weStarted
      * @param weWon
      */
-    public SetModel(String gameUUID, int setNumber, boolean weStarted, boolean weWon) {
+    public SetModel(String gameUUID, int setNumber, Boolean weStarted, Boolean weWon) {
         this.gameUUID = gameUUID;
         this.setNumber = setNumber;
         this.weStarted = weStarted;
         this.weWon = weWon;
     }
 
-    public static ArrayList<SetModel> getSets(DatabaseConnector db) throws SQLException {
+    public static ArrayList<SetModel> getSets(DatabaseConnector db, String dbGameUUID) throws SQLException {
         ArrayList<SetModel> setModels = new ArrayList<>();
-        ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.SETTABLE);
+        ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.SETTABLE + " WHERE game_uuid = '" + dbGameUUID + "'");
 
         String gameUUID;
         int setNumber;
-        boolean weStarted, weWon;
+        Boolean weStarted, weWon;
 
         while (rs.next()) {
             gameUUID = rs.getString(1);
             setNumber = rs.getInt(2);
             weStarted = rs.getBoolean(3);
-            weWon = rs.getBoolean(4);
+            String tmpWeWon = rs.getString(4); //rs.getBoolean returns false for null value, which is not what we want...
+            if (tmpWeWon == null) {
+                weWon = null;
+            } else if (tmpWeWon.equals("TRUE")) {
+                weWon = true;
+            } else {
+                weWon = false;
+            }
             setModels.add(new SetModel(gameUUID, setNumber, weStarted, weWon));
         }
 
@@ -61,13 +68,17 @@ public class SetModel implements Persistable {
         return weStarted;
     }
 
-    public boolean isWeWon() {
-        return weWon;
+    public String getWeWon() {
+        if (weWon == null) {
+            return "draw";
+        } else {
+            return weWon.toString();
+        }
     }
 
     @Override
     public void persistInDatabase(DatabaseConnector db) throws SQLException {
         db.update(
-                "INSERT INTO " + DatabaseConnector.SETTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", '" + weStarted + "', '" + weWon + "')");
+                "INSERT INTO " + DatabaseConnector.SETTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + weStarted + ", " + weWon + ")");
     }
 }
