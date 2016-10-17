@@ -5,10 +5,11 @@
     -fx-background-position: center center;
 }
 .buttonL {
-    -fx-image: url("/img/ButtonLayoutLeft.png");
+    -fx-image: url("/img/btnLocal.png");
     -fx-cursor: hand;
 }
 .buttonL:hover{
+    -fx-image: url("/img/btnLocalHover.png");
     }
 .buttonR {
     -fx-image: url("/img/btnOnline.png");
