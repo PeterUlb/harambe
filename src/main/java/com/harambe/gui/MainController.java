@@ -130,15 +130,14 @@ public class MainController implements Initializable, ControlledScreen {
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
-
         stage = new Stage("coast_2");
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
+
         //take static music player and play mainTheme
         MenuController.themePlayer.stop();
         final URL resource = getClass().getResource("/audio/mainTheme.mp3");
         MenuController.themePlayer = new MediaPlayer(new Media(resource.toString()));
         MenuController.themePlayer.play();
-
 
         //init extra images
         Image asset1Img = new Image(stage.getRandomAssetImg());
@@ -148,7 +147,6 @@ public class MainController implements Initializable, ControlledScreen {
         Image asset2Img = new Image(stage.getRandomAssetImg());
         asset2.setImage(asset2Img);
 
-
         playBgAnimation(stage);
         timerStart();
 
@@ -156,137 +154,156 @@ public class MainController implements Initializable, ControlledScreen {
         winLocation = null;
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
+        winCircleImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/wincircle.png")));
 
         if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
-            // we play "online"
-            if (SessionVars.ourSymbol == 'X') {
-                // we are 'X', so right side on the UI
-                p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
-                p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
-                player2Name.setStyle("-fx-fill: green");
-                player1Name.setStyle("-fx-fill: red");
-                ourPlayer = p2; // keep track who we are :)
-                opponentPlayer = p1;
-                miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-                Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
-                if (SessionVars.getUseFileInterface()) {
-                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false, this);
-                } else if (SessionVars.getUsePusherInterface()) {
-                    App.sC = new PusherCommunicator(this);
-                }
-                SessionVars.initializeNewGame(p2.getName(), p1.getName());
-            } else {
-                // we are 'O', so left side on the UI
-                p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
-                p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
-                player1Name.setStyle("-fx-fill: green");
-                player2Name.setStyle("-fx-fill: red");
-                ourPlayer = p1; // keep track who we are :)
-                opponentPlayer = p2;
-                miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-                Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
-                if (SessionVars.getUseFileInterface()) {
-                    App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true, this);
-                } else if (SessionVars.getUsePusherInterface()) {
-                    App.sC = new PusherCommunicator(this);
-                }
-                SessionVars.initializeNewGame(p1.getName(), p2.getName());
-            }
+            initOnlineGame();
         } else if (SessionVars.getReplayMode()) {
-            // should be a replay
-            Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
-            Logger.debug("ReplaySet: " + SessionVars.setNumber);
-            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
-            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
-            if (SessionVars.weStartSet) {
-                activePlayer = p1;
-            } else {
-                activePlayer = p2;
-            }
+            initReplayGame();
         } else {
-            // we play offline
-            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
-            if (SessionVars.getSoloVsAI()) {
-                p2 = new Player(true, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
-            } else {
-                p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
-            }
-
-            SessionVars.initializeNewGame(p1.getName(), p2.getName());
-            if (Math.round(Math.random()) == 1) {
-                activePlayer = p1;
-                SessionVars.initializeNewSet(true);
-
-            } else {
-                activePlayer = p2;
-                SessionVars.initializeNewSet(false);
-            }
-            ourPlayer = p1;
-            opponentPlayer = p2;
+            initOfflineGame();
         }
 
         Logger.event("Create game " + SessionVars.currentGameUUID);
-
-        winCircleImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/wincircle.png")));
-
-
-        initPlayers(p1, p2);
+        initPlayerVisuals(p1, p2);
 
         if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
-            // disable user input
-            disableAllButtons(true);
-            // we do not play offline, so run the server communication thread
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (!gameDone) {
-                        try {
-                            playSet(App.sC);
-                            setDone = false;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            ThreadManager.threads.add(thread);
-            thread.setDaemon(true);
-            thread.start();
+            playOnlineGame();
         } else if (SessionVars.getSoloVsAI()) {
-            miniMax = new MiniMax(opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-            if (activePlayer != ourPlayer) {
-                // AI starts, so first turn is AI
-                // initialize MiniMax in offline mode
-                Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
-                long start = System.nanoTime();
-                fireButton(miniMax.getBestMove(board));
-                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");
-            }
+            playVsAIGame();
         } else if (SessionVars.getReplayMode()) {
-            // disable user input
-            disableAllButtons(true);
-            Thread thread = new Thread(this::playReplay);
-            ThreadManager.threads.add(thread);
-            thread.setDaemon(true);
-            thread.start();
+            playReplayGame();
         }
     }
 
-    private void playReplay() {
-        ArrayList<TurnModel> turns = null;
-        try {
-            turns = TurnModel.getTurns(App.db, SessionVars.currentGameUUID, SessionVars.setNumber);
-            for (TurnModel turn :
-                    turns) {
-                Thread.sleep(1000);
-                Platform.runLater(() -> fireDisabledButton(turn.getColumn()));
-            }
-            disableAllButtons(true);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    private void initOfflineGame() {
+        // we play offline
+        p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+        if (SessionVars.getSoloVsAI()) {
+            p2 = new Player(true, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+        } else {
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
         }
+
+        SessionVars.initializeNewGame(p1.getName(), p2.getName());
+        if (Math.round(Math.random()) == 1) {
+            activePlayer = p1;
+            SessionVars.initializeNewSet(true);
+
+        } else {
+            activePlayer = p2;
+            SessionVars.initializeNewSet(false);
+        }
+        ourPlayer = p1;
+        opponentPlayer = p2;
+    }
+
+    private void initReplayGame() {
+        // should be a replay
+        Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
+        Logger.debug("ReplaySet: " + SessionVars.setNumber);
+        p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+        p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+        if (SessionVars.weStartSet) {
+            activePlayer = p1;
+        } else {
+            activePlayer = p2;
+        }
+    }
+
+    private void initOnlineGame() {
+        // we play "online"
+        if (SessionVars.ourSymbol == 'X') {
+            // we are 'X', so right side on the UI
+            p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+            p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+            player2Name.setStyle("-fx-fill: green");
+            player1Name.setStyle("-fx-fill: red");
+            ourPlayer = p2; // keep track who we are :)
+            opponentPlayer = p1;
+            miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            if (SessionVars.getUseFileInterface()) {
+                App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false, this);
+            } else if (SessionVars.getUsePusherInterface()) {
+                App.sC = new PusherCommunicator(this);
+            }
+            SessionVars.initializeNewGame(p2.getName(), p1.getName());
+        } else {
+            // we are 'O', so left side on the UI
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
+            player1Name.setStyle("-fx-fill: green");
+            player2Name.setStyle("-fx-fill: red");
+            ourPlayer = p1; // keep track who we are :)
+            opponentPlayer = p2;
+            miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            if (SessionVars.getUseFileInterface()) {
+                App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true, this);
+            } else if (SessionVars.getUsePusherInterface()) {
+                App.sC = new PusherCommunicator(this);
+            }
+            SessionVars.initializeNewGame(p1.getName(), p2.getName());
+        }
+    }
+
+    private void playReplayGame() {
+        // disable user input
+        disableAllButtons(true);
+        Thread thread = new Thread(() -> {
+            ArrayList<TurnModel> turns = null;
+            try {
+                turns = TurnModel.getTurns(App.db, SessionVars.currentGameUUID, SessionVars.setNumber);
+                for (TurnModel turn :
+                        turns) {
+                    Thread.sleep(1000);
+                    Platform.runLater(() -> fireDisabledButton(turn.getColumn()));
+                }
+                disableAllButtons(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        ThreadManager.threads.add(thread);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void playVsAIGame() {
+        miniMax = new MiniMax(opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+        if (activePlayer != ourPlayer) {
+            // AI starts, so first turn is AI
+            // initialize MiniMax in offline mode
+            Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
+            long start = System.nanoTime();
+            fireButton(miniMax.getBestMove(board));
+            Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");
+        }
+    }
+
+    private void playOnlineGame() {
+        // disable user input
+        disableAllButtons(true);
+        // we do not play offline, so run the server communication thread
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!gameDone) {
+                    try {
+                        playOnlineSet(App.sC);
+                        setDone = false;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        ThreadManager.threads.add(thread);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
@@ -326,7 +343,7 @@ public class MainController implements Initializable, ControlledScreen {
      * @param sC a way to reach the server
      * @throws Exception
      */
-    private void playSet(ServerCommunication sC) throws Exception {
+    private void playOnlineSet(ServerCommunication sC) throws Exception {
         boolean flag = false; // marks the first run of the while loop (for setting start player)
         if (ourPlayer == p1) { // assume that the enemy starts as default, until proven otherwise below
             activePlayer = p2;
@@ -503,11 +520,11 @@ public class MainController implements Initializable, ControlledScreen {
     }
 
     /**
-     * initializes player information (e.g. names, images, chips, etc)
+     * initializes player visuals (e.g.images, chips, etc)
      * @param p1
      * @param p2
      */
-    private void initPlayers(Player p1, Player p2) {
+    private void initPlayerVisuals(Player p1, Player p2) {
 
         //load image in ImageViewContainer for player 1
         Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
@@ -940,7 +957,7 @@ public class MainController implements Initializable, ControlledScreen {
 
             if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
-                // online games do it in the playSet method, since there is decided who starts
+                // online games do it in the playOnlineSet method, since there is decided who starts
             }
 
         }
