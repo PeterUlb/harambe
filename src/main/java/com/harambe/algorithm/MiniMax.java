@@ -73,11 +73,11 @@ public class MiniMax {
                 }
             }
             ResultSet rs = App.db.query("SELECT * FROM " + DatabaseConnector.BOARDEVALTABLE + " WHERE board_uuid = '" + boardUUID + "' OR board_uuid = '" + mirroredBoardUUID+"'");
-            rs.next();
+            if(rs.next()){
             String key = rs.getString(1);
             int column = rs.getInt(2)-1;
 
-            if (column != -1) {
+            if (column != -1 && key != null) {
                 System.out.println("Value is from Database!");
                 if (key.equals(boardUUID)) {
                     return column;
@@ -100,6 +100,7 @@ public class MiniMax {
                     }
 
                 }
+            }
             }
             }catch(SQLException e){
                 e.printStackTrace();

@@ -21,7 +21,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import com.harambe.database.model.BoardEvalModel;
 
 import java.awt.*;
 import java.net.URL;
