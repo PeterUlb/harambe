@@ -2,6 +2,7 @@ package com.harambe.gui;
 
 import com.harambe.App;
 import com.harambe.game.SessionVars;
+import com.harambe.tools.I18N;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -47,6 +48,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private Button player2Remove;
     @FXML
     private Button playBtn;
+    @FXML
+    private Button backBtn;
 
     private MasterController myController;
     private Image p1ImgDefault = new Image(("img/select_1.png"));
@@ -58,7 +61,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        playBtn.setText(I18N.getString("play"));
+        backBtn.setText(I18N.getString("back"));
         //initialize array
         squareArray = new ArrayList<>();
 
@@ -134,7 +138,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             square.addEventHandler(MouseEvent.MOUSE_EXITED, mouseOutHandler);
 
 
-            Text t = new Text(Character.characters[i]);
+            Text t = new Text(Character.getLocalizedCharacterName(i));
             t.getStyleClass().add("characterText");
             GridPane.setHalignment(t, HPos.CENTER);
             t.setTranslateY(100);

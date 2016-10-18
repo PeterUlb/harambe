@@ -4,6 +4,7 @@ import com.harambe.App;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
+import com.harambe.tools.I18N;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -80,14 +81,14 @@ public class StatisticsController implements Initializable, ControlledScreen {
         }
         ObservableList<PieChart.Data> gamesData =
                 FXCollections.observableArrayList(
-                        new PieChart.Data("Won", wonGames),
-                        new PieChart.Data("Lost", lostGames)
+                        new PieChart.Data(I18N.getString("won"), wonGames),
+                        new PieChart.Data(I18N.getString("lost"), lostGames)
                 );
 
         gamesData.forEach(data ->
                 data.nameProperty().bind(
                         Bindings.concat(
-                                data.getName(), " ", (int) data.pieValueProperty().get(), " Game(s)"
+                                data.getName(), " ", (int) data.pieValueProperty().get(), I18N.getString("game.s")
                         )
                 )
         );
@@ -97,15 +98,15 @@ public class StatisticsController implements Initializable, ControlledScreen {
 
         ObservableList<PieChart.Data> setsData =
                 FXCollections.observableArrayList(
-                        new PieChart.Data("Won", wonSets),
-                        new PieChart.Data("Lost", lostSets),
-                        new PieChart.Data("Draw: ", drawSets)
+                        new PieChart.Data(I18N.getString("won"), wonSets),
+                        new PieChart.Data(I18N.getString("lost"), lostSets),
+                        new PieChart.Data(I18N.getString("draw"), drawSets)
                 );
 
         setsData.forEach(data ->
                 data.nameProperty().bind(
                         Bindings.concat(
-                                data.getName(), " ", (int) data.pieValueProperty().get(), " Set(s)"
+                                data.getName(), " ", (int) data.pieValueProperty().get(), I18N.getString("set.s")
                         )
                 )
         );
@@ -120,14 +121,14 @@ public class StatisticsController implements Initializable, ControlledScreen {
         turnsPerSetChartxAxis.setTickUnit(1);
         turnsPerSetChartxAxis.setAutoRanging(false);
         turnsPerSetChartxAxis.setMinorTickVisible(false);
-        turnsPerSetChartxAxis.setLabel("Set Number");
+        turnsPerSetChartxAxis.setLabel(I18N.getString("set.number"));
 
         turnsPerSetChartyAxis.setLowerBound(0);
         turnsPerSetChartyAxis.setUpperBound(Collections.max(turnNumbers)); // max turns played in all sets
         turnsPerSetChartyAxis.setTickUnit(1);
         turnsPerSetChartyAxis.setAutoRanging(false);
         turnsPerSetChartyAxis.setMinorTickVisible(false);
-        turnsPerSetChartyAxis.setLabel("Turns");
+        turnsPerSetChartyAxis.setLabel(I18N.getString("turns"));
 
         XYChart.Series<Number, Number> turnSeries = new XYChart.Series<>();
         for (int i = 0; i < turnNumbers.size(); i++) {

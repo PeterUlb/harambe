@@ -2,22 +2,19 @@ package com.harambe.gui;
 
 import com.harambe.App;
 import com.harambe.game.SessionVars;
-import com.harambe.tools.Logger;
-import javafx.application.Platform;
+import com.harambe.tools.I18N;
 import javafx.fxml.FXML;
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 
-import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.util.Optional;
@@ -34,6 +31,12 @@ public class MenuController implements Initializable, ControlledScreen {
     private ImageView btnImgLocal;
     @FXML
     private ImageView btnImgOnline;
+    @FXML
+    private Label harambeLabel;
+    @FXML
+    private ImageView btnImgEnglish;
+    @FXML
+    private ImageView btnImgGerman;
 
     public static MediaPlayer themePlayer;
 
@@ -45,6 +48,14 @@ public class MenuController implements Initializable, ControlledScreen {
         themePlayer = new MediaPlayer(theme);
         themePlayer.setVolume(0.1);
         themePlayer.play();
+        if (I18N.currentLang.equals(I18N.ENGLISH)) {
+            btnImgEnglish.setStyle("-fx-image: url('/img/uk.png')");
+            btnImgEnglish.setDisable(true);
+        } else if (I18N.currentLang.equals(I18N.GERMAN)) {
+            btnImgGerman.setStyle("-fx-image: url('/img/germany.png')");
+            btnImgGerman.setDisable(true);
+        }
+        harambeLabel.setText(I18N.getString("harambes.connect.4"));
     }
 
     public void setScreenParent(MasterController screenParent) {
@@ -58,13 +69,13 @@ public class MenuController implements Initializable, ControlledScreen {
         btnImgLocal.setDisable(true);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initOwner(App.stage);
-        alert.setTitle("Selection");
-        alert.setHeaderText("Offline Mode");
-        alert.setContentText("Choose your option.");
+        alert.setTitle(I18N.getString("selection"));
+        alert.setHeaderText(I18N.getString("offline.mode"));
+        alert.setContentText(I18N.getString("choose.your.option"));
 
-        ButtonType buttonTypeAI = new ButtonType("Human vs AI");
-        ButtonType buttonTypeVersus = new ButtonType("Human vs Human");
-        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType buttonTypeAI = new ButtonType(I18N.getString("human.vs.ai"));
+        ButtonType buttonTypeVersus = new ButtonType(I18N.getString("human.vs.human"));
+        ButtonType buttonTypeCancel = new ButtonType(I18N.getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
         alert.getButtonTypes().setAll(buttonTypeAI, buttonTypeVersus, buttonTypeCancel);
 
@@ -95,13 +106,13 @@ public class MenuController implements Initializable, ControlledScreen {
         btnImgOnline.setDisable(true);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initOwner(App.stage);
-        alert.setTitle("Selection");
-        alert.setHeaderText("Online Mode");
-        alert.setContentText("Choose your option.");
+        alert.setTitle(I18N.getString("selection"));
+        alert.setHeaderText(I18N.getString("online.mode"));
+        alert.setContentText(I18N.getString("choose.your.option"));
 
-        ButtonType buttonTypeFile = new ButtonType("File Interface");
-        ButtonType buttonTypePusher = new ButtonType("Pusher Interface");
-        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType buttonTypeFile = new ButtonType(I18N.getString("file.interface"));
+        ButtonType buttonTypePusher = new ButtonType(I18N.getString("pusher.interface"));
+        ButtonType buttonTypeCancel = new ButtonType(I18N.getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
         ButtonType buttonTypeO = new ButtonType("O");
         ButtonType buttonTypeX = new ButtonType("X");
@@ -114,9 +125,9 @@ public class MenuController implements Initializable, ControlledScreen {
         if (result.get() == buttonTypeFile) {
             Alert alertXO = new Alert(Alert.AlertType.CONFIRMATION);
             alertXO.initOwner(App.stage);
-            alertXO.setTitle("Selection");
-            alertXO.setHeaderText("Player symbol");
-            alertXO.setContentText("Choose your symbol.");
+            alertXO.setTitle(I18N.getString("selection"));
+            alertXO.setHeaderText(I18N.getString("player.symbol"));
+            alertXO.setContentText(I18N.getString("choose.your.symbol"));
             alertXO.getButtonTypes().setAll(buttonTypeO, buttonTypeX, buttonTypeCancel);
             Optional<ButtonType> resultXO = alertXO.showAndWait();
             if (resultXO.get() == buttonTypeO) {
@@ -143,9 +154,9 @@ public class MenuController implements Initializable, ControlledScreen {
 
             Alert alertXO = new Alert(Alert.AlertType.CONFIRMATION);
             alertXO.initOwner(App.stage);
-            alertXO.setTitle("Selection");
-            alertXO.setHeaderText("Player symbol");
-            alertXO.setContentText("Choose your symbol.");
+            alertXO.setTitle(I18N.getString("selection"));
+            alertXO.setHeaderText(I18N.getString("player.symbol"));
+            alertXO.setContentText(I18N.getString("choose.your.symbol"));
             alertXO.getButtonTypes().setAll(buttonTypeO, buttonTypeX, buttonTypeCancel);
             Optional<ButtonType> resultXO = alertXO.showAndWait();
             if (resultXO.get() == buttonTypeO) {
@@ -165,6 +176,20 @@ public class MenuController implements Initializable, ControlledScreen {
         }
         btnImgOnline.setDisable(false);
         myController.loadAndSetScreen(App.CHARACTER_SELECTION_SCREEN, App.CHARACTER_SELECTION_SCREEN_FILE, true);
+    }
+
+    @FXML
+    private void changeToGerman() {
+        I18N.setLocale("de");
+        themePlayer.setMute(true);
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
+    }
+
+    @FXML
+    private void changeToEnglish() {
+        I18N.setLocale("en");
+        themePlayer.setMute(true);
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
 

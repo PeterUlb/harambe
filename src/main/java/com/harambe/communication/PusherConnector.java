@@ -97,7 +97,7 @@ public class PusherConnector implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        };
+        }
 
 
         //System.out.println("End");

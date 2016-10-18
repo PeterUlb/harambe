@@ -45,10 +45,8 @@ public class SetModel implements Persistable {
             String tmpWeWon = rs.getString(4); //rs.getBoolean returns false for null value, which is not what we want...
             if (tmpWeWon == null) {
                 weWon = null;
-            } else if (tmpWeWon.equals("TRUE")) {
-                weWon = true;
             } else {
-                weWon = false;
+                weWon = tmpWeWon.equals("TRUE");
             }
             setModels.add(new SetModel(gameUUID, setNumber, weStarted, weWon));
         }
