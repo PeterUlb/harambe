@@ -50,10 +50,12 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private Button playBtn;
     @FXML
     private Button backBtn;
+    @FXML
+    private Text player1Text;
+    @FXML
+    private Text player2Text;
 
     private MasterController myController;
-    private Image p1ImgDefault = new Image(("img/select_1.png"));
-    private Image p2ImgDefault = new Image(("img/select_2.png"));
     private String player1Character;
     private String player2Character;
     private ArrayList<Rectangle> squareArray;
@@ -79,8 +81,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         }
 
         //init player default images & buttons
-        player1.setImage(p1ImgDefault);
-        player2.setImage(p2ImgDefault);
+        player1Text.setText(I18N.getString("select.player.1"));
+        player2Text.setText(I18N.getString("select.player.2"));
     }
 
 
@@ -178,19 +180,21 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         Image pImg = new Image(("img/"+selectedCharacter.toLowerCase()+".png"));
 
-        if (player1.getImage() == p1ImgDefault && !Objects.equals(selectedCharacter, player2Character)) {
+        if (player1Text.isVisible() && !Objects.equals(selectedCharacter, player2Character)) {
             player1.setImage(pImg);
             player1Remove.setVisible(true);
             player1Remove.setDisable(false);
             player1Character = selectedCharacter;
             playSelectSound(selectedCharacter);
+            player1Text.setVisible(false);
         } else {
-            if (player2.getImage() == p2ImgDefault && !Objects.equals(selectedCharacter, player1Character)) {
+            if (player2Text.isVisible() && !Objects.equals(selectedCharacter, player1Character)) {
                 player2.setImage(pImg);
                 player2Remove.setVisible(true);
                 player2Remove.setDisable(false);
                 player2Character = selectedCharacter;
                 playSelectSound(selectedCharacter);
+                player2Text.setVisible(false);
             }
         }
 
@@ -202,10 +206,12 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private void deletePlayer(ActionEvent event) {
         Button source = (Button)event.getSource();
         if (source.getTranslateX() > 0) {
-            player2.setImage(p2ImgDefault);
+            player2Text.setVisible(true);
+            player2.setImage(null);
             player2Character=null;
         } else {
-            player1.setImage(p1ImgDefault);
+            player1Text.setVisible(true);
+            player1.setImage(null);
             player1Character=null;
         }
         source.setVisible(false);

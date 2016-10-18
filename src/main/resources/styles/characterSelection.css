@@ -33,3 +33,11 @@
 .select {
     -fx-cursor: hand;
 }
+
+.selectText {
+    -fx-font-size: 50px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
