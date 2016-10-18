@@ -20,8 +20,8 @@
         <Button fx:id="player2Remove" visible="false" disable="true" onAction="#deletePlayer" text="X" styleClass="remove" translateX="550" translateY="220"/>
 
 
-        <Button fx:id="playBtn" onAction="#play" text="play" translateX="700" translateY="400" />
-        <Button fx:id="backBtn" onAction="#back" text="back" translateX="-700" translateY="-400" />
+        <ImageView fx:id="playBtn" styleClass="playBtn" onMouseClicked="#play" translateX="700" translateY="400" />
+        <ImageView fx:id="backBtn" styleClass="backBtn" onMouseClicked="#back" translateX="-700" translateY="-400" />
 
     </StackPane>
 

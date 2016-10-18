@@ -47,9 +47,9 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     @FXML
     private Button player2Remove;
     @FXML
-    private Button playBtn;
+    private ImageView playBtn;
     @FXML
-    private Button backBtn;
+    private ImageView backBtn;
 
     private MasterController myController;
     private Image p1ImgDefault = new Image(("img/select_1.png"));
@@ -61,8 +61,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        playBtn.setText(I18N.getString("play"));
-        backBtn.setText(I18N.getString("back"));
+        //playBtn.setText(I18N.getString("play"));
+        //backBtn.setText(I18N.getString("back"));
         //initialize array
         squareArray = new ArrayList<>();
 
@@ -232,7 +232,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
      * sets variables for maincontroller and loads the fxml
      */
     @FXML
-    private void play(ActionEvent event)/*throws IOException*/ {
+    private void play(MouseEvent event)/*throws IOException*/ {
 
         if (player1Character!=null && player2Character!=null) {
 
@@ -246,7 +246,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     }
 
     @FXML
-    private void back(ActionEvent event)/*throws IOException*/ {
+    private void back(MouseEvent event)/*throws IOException*/ {
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
 
     }
