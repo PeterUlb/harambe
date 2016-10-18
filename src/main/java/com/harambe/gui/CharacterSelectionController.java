@@ -56,8 +56,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private Text player2Text;
 
     private MasterController myController;
-    private String player1Character;
-    private String player2Character;
+    private Character player1Character;
+    private Character player2Character;
     private ArrayList<Rectangle> squareArray;
 
 
@@ -70,7 +70,13 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         playBtn.setDisable(true);
 
-
+        if (I18N.currentLang.equals(I18N.GERMAN)) {
+            backBtn.getStyleClass().add("zurueckBtn");
+            playBtn.getStyleClass().add("startBtn");
+        } else {
+            backBtn.getStyleClass().add("backBtn");
+            playBtn.getStyleClass().add("playBtn");
+            }
 
         //setup windows
         final int characterSize = 200;
@@ -87,8 +93,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
 
-    private void playSelectSound(String character) {
-        URL resource = getClass().getResource("/audio/"+character.toLowerCase()+"_select.mp3");
+    private void playSelectSound(Character character) {
+        URL resource = getClass().getResource("/audio/"+character.name().toLowerCase()+"_select.mp3");
         Media select = new Media(resource.toString());
         MediaPlayer player = new MediaPlayer(select);
         player.play();
@@ -111,7 +117,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             characterBgImg.setCache(true);
 
             //character image
-            Image characterSrc = new Image("img/"+Character.characters[i].toLowerCase()+".png");
+            Image characterSrc = new Image("img/"+Character.characters[i].toString().toLowerCase()+".png");
             ImageView characterImg= new ImageView(characterSrc);
             characterImg.setPreserveRatio(true);
             characterImg.setFitWidth(characterSize);
@@ -174,11 +180,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         Node source = (Node)event.getSource() ;
         int colIndex = GridPane.getColumnIndex(source);
         int rowIndex = GridPane.getRowIndex(source);
-        String selectedCharacter = Character.characters[colIndex];
+        Character selectedCharacter = Character.characters[colIndex];
 
         event.consume();
 
-        Image pImg = new Image(("img/"+selectedCharacter.toLowerCase()+".png"));
+        Image pImg = new Image(("img/"+selectedCharacter.name().toLowerCase()+".png"));
 
         if (player1Text.isVisible() && !Objects.equals(selectedCharacter, player2Character)) {
             player1.setImage(pImg);

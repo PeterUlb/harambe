@@ -7,6 +7,8 @@ public class DatabaseConnector {
     public static final String SETTABLE = "game_set";
     public static final String TURNTABLE = "turn";
     public static final String BOARDEVALTABLE = "boardeval";
+    public static final String CHARACTERTABLE = "character";
+
 
     Connection conn;
 
@@ -60,6 +62,15 @@ public class DatabaseConnector {
                             "is_opponent BOOLEAN," +
                             "column INTEGER," +
                             "PRIMARY KEY (game_uuid, set_number, turn_number)" +
+                            ")"
+            );
+
+            update(
+                    "CREATE TABLE IF NOT EXISTS " + CHARACTERTABLE + " ( " +
+                            "game_uuid VARCHAR(36), " +
+                            "our_player VARCHAR(256)," +
+                            "opponent_player VARCHAR(256)," +
+                            "PRIMARY KEY (game_uuid)" +
                             ")"
             );
         } catch (SQLException e) {

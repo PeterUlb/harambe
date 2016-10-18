@@ -5,6 +5,7 @@ import com.harambe.algorithm.MiniMax;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.communication.communicator.FileCommunicator;
 import com.harambe.communication.communicator.PusherCommunicator;
+import com.harambe.database.model.CharacterModel;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
@@ -116,8 +117,8 @@ public class MainController implements Initializable, ControlledScreen {
 
     MasterController myController;
 
-    static String p1Character = Character.characters[0];
-    static String p2Character = Character.characters[1];
+    static Character p1Character = Character.characters[0];
+    static Character p2Character = Character.characters[1];
 
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -198,12 +199,26 @@ public class MainController implements Initializable, ControlledScreen {
         }
         ourPlayer = p1;
         opponentPlayer = p2;
+
+        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character.name(), p2Character.name());
+        try {
+            characterModel.persistInDatabase(App.db);
+        } catch (SQLException e) {
+            Logger.error("Could not persist characterModel");
+        }
     }
 
     private void initReplayGame() {
         // should be a replay
         Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
         Logger.debug("ReplaySet: " + SessionVars.setNumber);
+        try {
+            CharacterModel characterModel = CharacterModel.getCharacter(App.db, SessionVars.currentGameUUID);
+            p1Character = Character.valueOf(characterModel.getOurCharacter());
+            p2Character = Character.valueOf(characterModel.getOpponentCharacter());
+        } catch (SQLException e) {
+            Logger.debug("Couldn't load characters for game " + SessionVars.currentGameUUID);
+        }
         p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
         p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
         if (SessionVars.weStartSet) {
@@ -247,6 +262,12 @@ public class MainController implements Initializable, ControlledScreen {
                 App.sC = new PusherCommunicator(this);
             }
             SessionVars.initializeNewGame(p1.getName(), p2.getName());
+        }
+        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character.name(), p2Character.name());
+        try {
+            characterModel.persistInDatabase(App.db);
+        } catch (SQLException e) {
+            Logger.error("Could not persist characterModel");
         }
     }
 
