@@ -863,11 +863,7 @@ public class MainController implements Initializable, ControlledScreen {
             });
             thread.start();
 
-            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
-                endGame();
-            } else {
-                endSet();
-            }
+            endGameReplayOrSet();
 
             //endGame or endSet for offline games
 
@@ -892,11 +888,7 @@ public class MainController implements Initializable, ControlledScreen {
                     e.printStackTrace();
                 }
 
-                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
-                    endGame();
-                } else {
-                    endSet();
-                }
+                endGameReplayOrSet();
 
                 // TODO do something nicer here
                 Logger.event("a draw");
@@ -905,6 +897,18 @@ public class MainController implements Initializable, ControlledScreen {
             Platform.runLater(this::cleanBoardImages);
         }
 
+    }
+
+    private void endGameReplayOrSet() {
+        if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
+            endGame();
+        } else if (SessionVars.getReplayMode()) {
+            MenuController.themePlayer.stop();
+            myController.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE); //to start the main music again
+            myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);
+        } else {
+            endSet();
+        }
     }
 
     // TODO maybe rename
