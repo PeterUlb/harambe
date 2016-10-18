@@ -78,7 +78,7 @@ public class MiniMax {
             int column = rs.getInt(2)-1;
 
             if (column != -1 && key != null) {
-                System.out.println("Value is from Database!");
+                Logger.debug("Value is from Database!");
                 if (key.equals(boardUUID)) {
                     return column;
                 } else {
@@ -104,7 +104,9 @@ public class MiniMax {
             }
             }catch(SQLException e){
                 e.printStackTrace();
-            }
+            }catch(NullPointerException e){
+                e.printStackTrace();
+        }
 
         //Board is not in Table, use algorithm to find best move
         this.start = System.nanoTime();
