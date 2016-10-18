@@ -19,11 +19,11 @@
     -fx-image: url("/img/btnOnlineHover.png");
 }
 .buttonReplay {
-    -fx-image: url("/img/replay_button.png");
+    -fx-image: url("/img/btnReplay.png");
     -fx-cursor: hand;
 }
 .buttonReplay:hover {
-    -fx-image: url("/img/replay_button_hover.png");
+    -fx-image: url("/img/btnReplayH.png");
 }
 .paneButton{
     -fx-background-color: aqua;
