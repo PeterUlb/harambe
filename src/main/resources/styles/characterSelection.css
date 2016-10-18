@@ -42,13 +42,15 @@
 .playBtn:hover{
     -fx-image: url("/img/btnPlayH.png");
 }
+
 .backBtn {
     -fx-image: url("/img/btnBack.png");
     -fx-cursor: hand;
 }
 
-.backBtn:hover{
+.backBtn:hover {
     -fx-image: url("/img/btnBackH.png");
+}
 
 .selectText {
     -fx-font-size: 50px;
