@@ -1,9 +1,9 @@
 package com.harambe.database.model;
 
 import com.harambe.database.DatabaseConnector;
+import com.harambe.tools.I18N;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -62,15 +62,19 @@ public class SetModel implements Persistable {
         return setNumber;
     }
 
+    public String getWeStarted() {
+        return I18N.getString(weStarted.toString());
+    }
+
     public boolean isWeStarted() {
         return weStarted;
     }
 
     public String getWeWon() {
         if (weWon == null) {
-            return "draw";
+            return I18N.getString("draw");
         } else {
-            return weWon.toString();
+            return I18N.getString(weWon.toString());
         }
     }
 
