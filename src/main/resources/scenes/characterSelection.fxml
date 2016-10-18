@@ -24,7 +24,7 @@
 
 
         <ImageView fx:id="playBtn" styleClass="playBtn" onMouseClicked="#play" translateX="700" translateY="400" />
-        <ImageView fx:id="backBtn" styleClass="backBtn" onMouseClicked="#back" translateX="-850" translateY="-450" />
+        <ImageView fx:id="backBtn" onMouseClicked="#back" translateX="-850" translateY="-450" />
 
     </StackPane>
 

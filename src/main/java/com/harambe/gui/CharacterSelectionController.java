@@ -70,7 +70,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         playBtn.setDisable(true);
 
-
+        if (I18N.currentLang.equals(I18N.GERMAN)) {
+            backBtn.getStyleClass().add("zurueckBtn");
+        } else {
+            backBtn.getStyleClass().add("backBtn");
+            }
 
         //setup windows
         final int characterSize = 200;

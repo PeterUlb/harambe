@@ -52,6 +52,14 @@
 .backBtn:hover {
     -fx-image: url("/img/btnBackH.png");
 }
+.zurueckBtn {
+    -fx-image: url("/img/btnZurueck.png");
+    -fx-cursor: hand;
+}
+
+.zurueckBtn:hover {
+    -fx-image: url("/img/btnZurueckH.png");
+}
 
 .selectText {
     -fx-font-size: 50px;
