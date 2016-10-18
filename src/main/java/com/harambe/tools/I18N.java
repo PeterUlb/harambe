@@ -1,6 +1,7 @@
 package com.harambe.tools;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class I18N {
@@ -14,7 +15,11 @@ public class I18N {
     }
 
     public static String getString(String key) {
-        return instance.getString(key);
+        try {
+            return instance.getString(key);
+        } catch (MissingResourceException e) {
+            return "?<" + key + ">-" + currentLang;
+        }
     }
 
     public static void setLocale(String language) {

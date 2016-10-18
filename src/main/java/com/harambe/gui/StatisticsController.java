@@ -81,8 +81,8 @@ public class StatisticsController implements Initializable, ControlledScreen {
         }
         ObservableList<PieChart.Data> gamesData =
                 FXCollections.observableArrayList(
-                        new PieChart.Data(I18N.getString("won"), wonGames),
-                        new PieChart.Data(I18N.getString("lost"), lostGames)
+                        new PieChart.Data(I18N.getString("won.colon"), wonGames),
+                        new PieChart.Data(I18N.getString("lost.colon"), lostGames)
                 );
 
         gamesData.forEach(data ->
@@ -98,9 +98,9 @@ public class StatisticsController implements Initializable, ControlledScreen {
 
         ObservableList<PieChart.Data> setsData =
                 FXCollections.observableArrayList(
-                        new PieChart.Data(I18N.getString("won"), wonSets),
-                        new PieChart.Data(I18N.getString("lost"), lostSets),
-                        new PieChart.Data(I18N.getString("draw"), drawSets)
+                        new PieChart.Data(I18N.getString("won.colon"), wonSets),
+                        new PieChart.Data(I18N.getString("lost.colon"), lostSets),
+                        new PieChart.Data(I18N.getString("draw.colon"), drawSets)
                 );
 
         setsData.forEach(data ->
