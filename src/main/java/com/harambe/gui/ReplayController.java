@@ -42,7 +42,7 @@ public class ReplayController implements Initializable, ControlledScreen {
     @FXML
     private TableColumn<SetModel, Integer> SetNumber;
     @FXML
-    private TableColumn<SetModel, Boolean> WeStarted;
+    private TableColumn<SetModel, String> WeStarted;
     @FXML
     private TableColumn<SetModel, String> WeWon;
 
@@ -124,7 +124,7 @@ public class ReplayController implements Initializable, ControlledScreen {
             }
             SetNumber.setCellValueFactory(new PropertyValueFactory<SetModel, Integer>("setNumber"));
             SetNumber.setText(I18N.getString("set"));
-            WeStarted.setCellValueFactory(new PropertyValueFactory<SetModel, Boolean>("weStarted"));
+            WeStarted.setCellValueFactory(new PropertyValueFactory<SetModel, String>("weStarted"));
             WeStarted.setText(I18N.getString("we.started"));
             WeWon.setCellValueFactory(new PropertyValueFactory<SetModel, String>("weWon"));
             WeWon.setText(I18N.getString("we.won"));
