@@ -26,15 +26,16 @@ public class Player {
 
     /**
      * constructor for the player
-     * @param ai boolean value for human or artificial intelligence player
-     * @param name player name
+     *
+     * @param ai        boolean value for human or artificial intelligence player
+     * @param name      player name
      * @param character character the player chose to play with (e.g. Harambe)
-     * @param symbol internal representation of the player chip
+     * @param symbol    internal representation of the player chip
      */
-    public Player(boolean ai, String name, String character, char symbol) {
+    public Player(boolean ai, String name, Character character, char symbol) {
         this.ai = ai;
         this.name = name;
-        this.character = character;
+        this.character = character.name();
         this.symbol = symbol;
         this.score = 0;
 
@@ -45,36 +46,48 @@ public class Player {
 
     /**
      * overloads constructor to make variable name optional
-     * @param ai boolean value for human or artificial intelligence player
+     *
+     * @param ai        boolean value for human or artificial intelligence player
      * @param character character the player chose to play with (e.g. Harambe)
-     * @param symbol internal representation of the player chip
+     * @param symbol    internal representation of the player chip
      */
-    public Player(boolean ai, String character, char symbol) {
-        this(ai, character, character, symbol);
+    public Player(boolean ai, Character character, char symbol) {
+        this(ai, character.name(), character, symbol);
     }
-
 
 
     //methods for playerImg
-    private void setImg(String character) {
-        this.imgLocation = "img/"+character.toLowerCase()+".png";
+    private void setImg(Character character) {
+        this.imgLocation = "img/" + character.name().toLowerCase() + ".png";
     }
 
-    public String  getImgLocation() {
+    public String getImgLocation() {
         return this.imgLocation;
     }
 
 
     /**
      * sets chip depending on character
+     *
      * @param character character the player chose to play with (e.g. Harambe)
      */
-    private void setChip(String character) {
-        switch(character) {
-            case "Harambe":     this.chip = "banana";break;
-            case "Poacher":   this.chip = "shotgun_shells";break;
-            case "Hunter":   this.chip = "bullets";break;
-            case "DatBoi":   this.chip = "unicycle";break;
+    private void setChip(Character character) {
+        switch (character) {
+            case Harambe:
+                this.chip = "banana";
+                break;
+            case Poacher:
+                this.chip = "shotgun_shells";
+                break;
+            case Hunter:
+                this.chip = "bullets";
+                break;
+            case DatBoi:
+                this.chip = "unicycle";
+                break;
+            case TheDonald:
+                this.chip = "murica";
+                break;
         }
     }
 
@@ -102,11 +115,12 @@ public class Player {
 
     /**
      * sets the 3 sounds for the chosen character
+     *
      * @param character character the player chose to play with (e.g. Harambe)
      */
-    private void setSounds(String character) {
-        this.dropSoundLocation = "/audio/"+character.toLowerCase()+"_drop.mp3";
-        this.winSoundLocation = "/audio/"+character.toLowerCase()+"_win.mp3";
+    private void setSounds(Character character) {
+        this.dropSoundLocation = "/audio/" + character.name().toLowerCase() + "_drop.mp3";
+        this.winSoundLocation = "/audio/" + character.name().toLowerCase() + "_win.mp3";
     }
 
     public void playDropSound() {
@@ -117,17 +131,17 @@ public class Player {
     }
 
     public void playWinSound() {
-            final URL resource = getClass().getResource(winSoundLocation);
-            final Media drop = new Media(resource.toString());
-            MediaPlayer player = new MediaPlayer(drop);
-            player.play();
+        final URL resource = getClass().getResource(winSoundLocation);
+        final Media drop = new Media(resource.toString());
+        MediaPlayer player = new MediaPlayer(drop);
+        player.play();
     }
 
     public void playSelectSound() {
-            final URL resource = getClass().getResource(selectSoundLocation);
-            final Media drop = new Media(resource.toString());
-            MediaPlayer player = new MediaPlayer(drop);
-            player.play();
+        final URL resource = getClass().getResource(selectSoundLocation);
+        final Media drop = new Media(resource.toString());
+        MediaPlayer player = new MediaPlayer(drop);
+        player.play();
     }
 
 

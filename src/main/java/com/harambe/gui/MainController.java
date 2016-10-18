@@ -116,8 +116,8 @@ public class MainController implements Initializable, ControlledScreen {
 
     MasterController myController;
 
-    static String p1Character = Character.characters[0];
-    static String p2Character = Character.characters[1];
+    static Character p1Character = Character.characters[0];
+    static Character p2Character = Character.characters[1];
 
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
