@@ -2,10 +2,10 @@ package com.harambe.algorithm;
 
 import com.harambe.App;
 import com.harambe.database.DatabaseConnector;
-import com.harambe.database.model.BoardEvalModel;
 import com.harambe.game.Board;
 import com.harambe.tools.Logger;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -55,16 +55,57 @@ public class MiniMax {
      * -1 indicates a finished game state
      */
     public int getBestMove(Board board) {
+        //check for board in board evaluation table
         try {
-            int column = BoardEvalModel.findBoardinDB(App.db, board);
+            String boardUUID,mirroredBoardUUID;
+            char[][] grid = board.getGrid();
+            boardUUID = "";
+            mirroredBoardUUID = "";
+
+            //turn board grid into database key format
+            for (int i = 0; i < grid.length; i++) {
+                boardUUID += String.valueOf(grid[i]);
+            }
+            //get a mirrored board key
+            for (int i = 0; i < 6; i++) {
+                for (int j = 6; j >= 0; j--) {
+                    mirroredBoardUUID += boardUUID.charAt(i*7+j);
+                }
+            }
+            ResultSet rs = App.db.query("SELECT * FROM " + DatabaseConnector.BOARDEVALTABLE + " WHERE board_uuid = '" + boardUUID + "' OR board_uuid = '" + mirroredBoardUUID+"'");
+            rs.next();
+            String key = rs.getString(1);
+            int column = rs.getInt(2)-1;
+
             if (column != -1) {
                 System.out.println("Value is from Database!");
-                return column;
-            }
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
+                if (key.equals(boardUUID)) {
+                    return column;
+                } else {
+                    switch (column) {
+                        case 0:
+                            return 6;
+                        case 1:
+                            return 5;
+                        case 2:
+                            return 4;
+                        case 3:
+                            return 3;
+                        case 4:
+                            return 2;
+                        case 5:
+                            return 1;
+                        case 6:
+                            return 0;
+                    }
 
+                }
+            }
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+
+        //Board is not in Table, use algorithm to find best move
         this.start = System.nanoTime();
         tempSavedMove = -1;
         int j = 1; // debug variable
