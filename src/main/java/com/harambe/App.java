@@ -21,6 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import com.harambe.database.model.BoardEvalModel;
 
 import java.awt.*;
 import java.net.URL;
@@ -117,6 +118,7 @@ public class App extends Application {
         if (screenSize.getHeight() == 1080 && screenSize.getWidth() == 1920) {
             stage.setFullScreen(true);
         }
+
     }
 
     @Override

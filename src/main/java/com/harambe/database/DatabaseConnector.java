@@ -6,6 +6,7 @@ public class DatabaseConnector {
     public static final String GAMETABLE = "game";
     public static final String SETTABLE = "game_set";
     public static final String TURNTABLE = "turn";
+    public static final String BOARDEVALTABLE = "boardeval";
 
     Connection conn;
 
@@ -30,6 +31,14 @@ public class DatabaseConnector {
                             "we_won BOOLEAN," +
                             "time TIMESTAMP, " +
                             "PRIMARY KEY (game_uuid)" +
+                            ")"
+            );
+
+            update(
+                    "CREATE TABLE IF NOT EXISTS " + BOARDEVALTABLE + " ( " +
+                            "board_uuid VARCHAR(42), " +
+                            "recommendedMove INTEGER," +
+                            "PRIMARY KEY (board_uuid)" +
                             ")"
             );
 

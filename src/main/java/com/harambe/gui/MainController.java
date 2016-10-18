@@ -5,6 +5,7 @@ import com.harambe.algorithm.MiniMax;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.communication.communicator.FileCommunicator;
 import com.harambe.communication.communicator.PusherCommunicator;
+import com.harambe.database.model.BoardEvalModel;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;

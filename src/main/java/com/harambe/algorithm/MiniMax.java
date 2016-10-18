@@ -1,8 +1,12 @@
 package com.harambe.algorithm;
 
+import com.harambe.App;
+import com.harambe.database.DatabaseConnector;
+import com.harambe.database.model.BoardEvalModel;
 import com.harambe.game.Board;
 import com.harambe.tools.Logger;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -51,6 +55,16 @@ public class MiniMax {
      * -1 indicates a finished game state
      */
     public int getBestMove(Board board) {
+        try {
+            int column = BoardEvalModel.findBoardinDB(App.db, board);
+            if (column != -1) {
+                System.out.println("Value is from Database!");
+                return column;
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
         this.start = System.nanoTime();
         tempSavedMove = -1;
         int j = 1; // debug variable
