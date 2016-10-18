@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Created by Peter on 06.09.2016.
- * <p>
  * Internal representation of the connect 4 grid as a 2d char array & logic
  */
 public class Board {
@@ -141,13 +139,7 @@ public class Board {
             }
         }
 
-        if (checkWin(PLAYER1) || checkWin(PLAYER2)) {
-            return true;
-        } else if (y == COLUMNS) {
-            return true;
-        } else {
-            return false;
-        }
+        return checkWin(PLAYER1) || checkWin(PLAYER2) || y == COLUMNS;
     }
 
     /**
@@ -289,12 +281,7 @@ public class Board {
     }
 
     public boolean isFull(int column) {
-        if (getFirstAvailableRow()[column]<0) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return getFirstAvailableRow()[column] < 0;
     }
 
 

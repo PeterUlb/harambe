@@ -5,7 +5,7 @@ import com.harambe.database.DatabaseConnector;
 import java.sql.SQLException;
 
 /**
- * Created by Peter on 19.09.2016.
+ * TODO: insert documentation here
  */
 public interface Persistable {
     public void persistInDatabase(DatabaseConnector db) throws SQLException;

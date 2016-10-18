@@ -3,20 +3,24 @@ package com.harambe.game;
 import java.util.UUID;
 
 /**
- * Created by Peter on 16.09.2016.
+ * TODO: insert documentation here
  */
 public class SessionVars {
     //TODO ALL of them must be UI configurable
-    public static boolean useFileInterface = false;
-    public static boolean usePusherInterface = false;
-    public static boolean soloVsAI = false;
+    // access via corrosponding method (makes sure that other flags are resetted)
+    public static String app_id = "249870";
+    public static String key = "082f8d2ee2e06acd7c98";
+    public static String secret = "fc29424e4ab1e692a42b";
+    private static boolean useFileInterface = false;
+    private static String fileInterfacePath = null;
+    private static boolean usePusherInterface = false;
+    private static boolean soloVsAI = false;
+    private static boolean replayMode = false;
+
     public static char ourSymbol = '?';  // can be 'X' or 'O', non-offline games only
-    public static String fileInterfacePath = null;
-    public static int searchDepth = 10;
-    public static long timeoutThresholdInMillis = 1800; // after this time, a new search with outOfTimeDepth is started
-    public static int outOfTimeDepth = 4; // depth of alternative alphabeta on timeout
+    public static long timeoutThresholdInMillis = 1000; // time the algorithm has to finish
     // -------------------
-    public static UUID currentGameUUID = null;
+    public static String currentGameUUID = null;
     public static String ourPlayerName = null;
     public static String opponentPlayerName = null;
     public static int setNumber = -1; // current set: #0, #1 or #2?
@@ -25,7 +29,7 @@ public class SessionVars {
     public static int turnNumber = 0;
 
     public static void initializeNewGame(String ourPlayerName, String opponentPlayerName) {
-        SessionVars.currentGameUUID = UUID.randomUUID();
+        SessionVars.currentGameUUID = UUID.randomUUID().toString();
         SessionVars.ourPlayerName = ourPlayerName;
         SessionVars.opponentPlayerName = opponentPlayerName;
         SessionVars.setNumber = -1;
@@ -38,5 +42,65 @@ public class SessionVars {
         SessionVars.setNumber++;
         SessionVars.weStartSet = weStartSet;
         SessionVars.turnNumber = 0;
+    }
+
+    public static void resetFlags() {
+        SessionVars.useFileInterface = false;
+        SessionVars.usePusherInterface = false;
+        SessionVars.soloVsAI = false;
+        SessionVars.replayMode = false;
+    }
+
+    public static void setupReplay(String gameUUID, int setNumber, boolean weStartSet, String ourPlayerName, String opponentPlayerName) {
+        // reset all flags
+        SessionVars.resetFlags();
+
+        SessionVars.replayMode(true);
+        SessionVars.currentGameUUID = gameUUID;
+        SessionVars.setNumber = setNumber;
+        SessionVars.weStartSet = weStartSet;
+        SessionVars.ourPlayerName = ourPlayerName;
+        SessionVars.opponentPlayerName = opponentPlayerName;
+    }
+
+    public static boolean getUseFileInterface() {
+        return useFileInterface;
+    }
+
+    public static void useFileInterface(boolean useFileInterface, String fileInterfacePath) {
+        SessionVars.resetFlags();
+        SessionVars.useFileInterface = useFileInterface;
+        SessionVars.fileInterfacePath = fileInterfacePath;
+    }
+
+    public static boolean getUsePusherInterface() {
+        return usePusherInterface;
+    }
+
+    public static void usePusherInterface(boolean usePusherInterface) {
+        SessionVars.resetFlags();
+        SessionVars.usePusherInterface = usePusherInterface;
+    }
+
+    public static boolean getSoloVsAI() {
+        return soloVsAI;
+    }
+
+    public static void soloVsAI(boolean soloVsAI) {
+        SessionVars.resetFlags();
+        SessionVars.soloVsAI = soloVsAI;
+    }
+
+    public static boolean getReplayMode() {
+        return replayMode;
+    }
+
+    private static void replayMode(boolean replayMode) {
+        SessionVars.resetFlags();
+        SessionVars.replayMode = replayMode;
+    }
+
+    public static String getFileInterfacePath() {
+        return fileInterfacePath;
     }
 }

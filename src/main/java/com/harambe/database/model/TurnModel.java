@@ -3,13 +3,11 @@ package com.harambe.database.model;
 import com.harambe.database.DatabaseConnector;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Peter on 19.09.2016.
+ * TODO: insert documentation here
  */
 public class TurnModel implements Persistable {
     private String gameUUID;
@@ -34,9 +32,9 @@ public class TurnModel implements Persistable {
         this.column = column;
     }
 
-    public static ArrayList<TurnModel> getSets(DatabaseConnector db) throws SQLException {
+    public static ArrayList<TurnModel> getTurns(DatabaseConnector db, String dbGameUUID, int dbSetNumber) throws SQLException {
         ArrayList<TurnModel> turnModels = new ArrayList<>();
-        ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.TURNTABLE);
+        ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.TURNTABLE + " WHERE game_uuid = '" + dbGameUUID + "' AND set_number = " + dbSetNumber);
 
         String gameUUID;
         int setNumber, turnNumber;
@@ -77,7 +75,6 @@ public class TurnModel implements Persistable {
 
     @Override
     public void persistInDatabase(DatabaseConnector db) throws SQLException {
-        db.update(
-                "INSERT INTO " + DatabaseConnector.TURNTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + turnNumber + ", '" + isOpponent + "', " + column +  ")");
+        db.update("INSERT INTO " + DatabaseConnector.TURNTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + turnNumber + ", " + isOpponent + ", " + column +  ")");
     }
 }

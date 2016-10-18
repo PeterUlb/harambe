@@ -4,11 +4,15 @@ import com.harambe.App;
 import com.harambe.algorithm.MiniMax;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.communication.communicator.FileCommunicator;
+import com.harambe.communication.communicator.PusherCommunicator;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
+import com.harambe.game.ThreadManager;
+import com.harambe.tools.I18N;
+import com.harambe.tools.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,11 +28,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.FutureTask;
@@ -36,12 +43,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static com.harambe.App.db;
-import static com.harambe.App.root;
 
 /**
  * Controller of the main game. Contains mostly the chip dropping and logic behind the visual representation of the board.
  */
-public class MainController implements Initializable {
+public class MainController implements Initializable, ControlledScreen {
 
     //fxml views
     @FXML
@@ -60,10 +66,6 @@ public class MainController implements Initializable {
     private Text player1Score;
     @FXML
     private Text player2Score;
-    @FXML
-    private static Text _player1Score;
-    @FXML
-    private static Text _player2Score;
     @FXML
     private StackPane field;
     @FXML
@@ -97,18 +99,29 @@ public class MainController implements Initializable {
     //other variables
     private Board board;
     private int[] freeSpace;
-    public static Player p1;
-    public static Player p2;
-    private static Player activePlayer;
-    public static Player ourPlayer; // reference whether we are p1 or p2
+    public Player p1;
+    public Player p2;
+    private Player activePlayer;
+    public Player ourPlayer; // reference whether we are p1 or p2
+    public Player opponentPlayer;
     private Image winCircleImg;
     private ArrayList<ImageView> chipArray;
     private ArrayList<ImageView> winCircleArray;
     private int[][] winLocation;
+    private MiniMax miniMax;
+    private Stage stage;
 
-    public static boolean setDone = false; // marks a set as done for the server-comm thread
-    private static boolean gameDone = false; // marks a game as done for the server-comm thread
+    public boolean setDone = false; // marks a set as done for the server-comm thread
+    boolean gameDone = false; // marks a game as done for the server-comm thread
 
+    MasterController myController;
+
+    static Character p1Character = Character.characters[0];
+    static Character p2Character = Character.characters[1];
+
+    public void setScreenParent(MasterController screenParent){
+        myController = screenParent;
+    }
 
     /**
      * initialization method. Is being called when FXMLLoader loads main.fxml.
@@ -116,11 +129,17 @@ public class MainController implements Initializable {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-
+        setDone = false; // reset the setDone flag when the screen is loaded a second time
+        gameDone = false; // same here
         board = new Board();
-
-        Stage stage = new Stage("coast_2");
+        stage = new Stage("coast_2");
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
+
+        //take static music player and play mainTheme
+        MenuController.themePlayer.stop();
+        final URL resource = getClass().getResource("/audio/mainTheme.mp3");
+        MenuController.themePlayer = new MediaPlayer(new Media(resource.toString()));
+        MenuController.themePlayer.play();
 
         //init extra images
         Image asset1Img = new Image(stage.getRandomAssetImg());
@@ -130,8 +149,6 @@ public class MainController implements Initializable {
         Image asset2Img = new Image(stage.getRandomAssetImg());
         asset2.setImage(asset2Img);
 
-
-
         playBgAnimation(stage);
         timerStart();
 
@@ -139,93 +156,156 @@ public class MainController implements Initializable {
         winLocation = null;
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
-
-        _player1Score = player1Score;
-        _player2Score = player2Score;
-
-
-        if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
-            // we play "online"
-            if (SessionVars.ourSymbol == 'X') {
-                // we are 'X', so right side on the UI
-                p2 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
-                p1 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
-                player2Name.setStyle("-fx-fill: green");
-                player1Name.setStyle("-fx-fill: red");
-                ourPlayer = p2; // keep track who we are :)
-                if (SessionVars.useFileInterface) {
-                    App.sC = new FileCommunicator(SessionVars.fileInterfacePath, false);
-                } else if (SessionVars.usePusherInterface) {
-                    // TODO when done instantiate here
-//                App.sC = new PusherCommunicator();
-                }
-                SessionVars.initializeNewGame(p2.getName(), p1.getName());
-            } else {
-                // we are 'O', so left side on the UI
-                p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER2);
-                p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER1);
-                player1Name.setStyle("-fx-fill: green");
-                player2Name.setStyle("-fx-fill: red");
-                ourPlayer = p1; // keep track who we are :)
-                if (SessionVars.useFileInterface) {
-                    App.sC = new FileCommunicator(SessionVars.fileInterfacePath, true);
-                } else if (SessionVars.usePusherInterface) {
-                    // TODO when done instantiate here
-//                App.sC = new PusherCommunicator();
-                }
-                SessionVars.initializeNewGame(p1.getName(), p2.getName());
-            }
-        } else {
-            // we play offline
-            p1 = new Player(false, System.getProperty("user.name"), "harambe", Board.PLAYER1);
-            p2 = new Player(false, "Player2", "poacher_2", Board.PLAYER2);
-            SessionVars.initializeNewGame(p1.getName(), p2.getName());
-            if (Math.round(Math.random())==1) {
-                activePlayer = p1;
-                SessionVars.initializeNewSet(true);
-
-            } else {
-                activePlayer = p2;
-                SessionVars.initializeNewSet(false);
-            }
-            ourPlayer = p1;
-        }
-
-
         winCircleImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/wincircle.png")));
 
-
-        initPlayers(p1, p2);
-
-        if(SessionVars.usePusherInterface || SessionVars.useFileInterface) {
-            // disable user input
-            disableAllButtons(true);
-            // we do not play offline, so run the server communication thread
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (!gameDone) {
-                        try {
-                            playSet(App.sC);
-                            setDone = false;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            thread.setDaemon(true);
-            thread.start();
-        } else if (SessionVars.soloVsAI) {
-            if(activePlayer != ourPlayer) {
-                // AI starts, so first turn is AI
-                // TODO maybe use one global minimax object
-                long start = System.nanoTime();
-                fireButton(new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board));
-                System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
-            }
+        if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
+            initOnlineGame();
+        } else if (SessionVars.getReplayMode()) {
+            initReplayGame();
+        } else {
+            initOfflineGame();
         }
 
+        Logger.event("Create game " + SessionVars.currentGameUUID);
+        initPlayerVisuals(p1, p2);
+
+        if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
+            playOnlineGame();
+        } else if (SessionVars.getSoloVsAI()) {
+            playVsAIGame();
+        } else if (SessionVars.getReplayMode()) {
+            playReplayGame();
+        }
+    }
+
+    private void initOfflineGame() {
+        // we play offline
+        p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+        if (SessionVars.getSoloVsAI()) {
+            p2 = new Player(true, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+        } else {
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+        }
+
+        SessionVars.initializeNewGame(p1.getName(), p2.getName());
+        if (Math.round(Math.random()) == 1) {
+            activePlayer = p1;
+            SessionVars.initializeNewSet(true);
+
+        } else {
+            activePlayer = p2;
+            SessionVars.initializeNewSet(false);
+        }
+        ourPlayer = p1;
+        opponentPlayer = p2;
+    }
+
+    private void initReplayGame() {
+        // should be a replay
+        Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
+        Logger.debug("ReplaySet: " + SessionVars.setNumber);
+        p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+        p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+        if (SessionVars.weStartSet) {
+            activePlayer = p1;
+        } else {
+            activePlayer = p2;
+        }
+    }
+
+    private void initOnlineGame() {
+        // we play "online"
+        if (SessionVars.ourSymbol == 'X') {
+            // we are 'X', so right side on the UI
+            p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+            p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+            player2Name.setStyle("-fx-fill: green");
+            player1Name.setStyle("-fx-fill: red");
+            ourPlayer = p2; // keep track who we are :)
+            opponentPlayer = p1;
+            miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            if (SessionVars.getUseFileInterface()) {
+                App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false, this);
+            } else if (SessionVars.getUsePusherInterface()) {
+                App.sC = new PusherCommunicator(this);
+            }
+            SessionVars.initializeNewGame(p2.getName(), p1.getName());
+        } else {
+            // we are 'O', so left side on the UI
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
+            player1Name.setStyle("-fx-fill: green");
+            player2Name.setStyle("-fx-fill: red");
+            ourPlayer = p1; // keep track who we are :)
+            opponentPlayer = p2;
+            miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            if (SessionVars.getUseFileInterface()) {
+                App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true, this);
+            } else if (SessionVars.getUsePusherInterface()) {
+                App.sC = new PusherCommunicator(this);
+            }
+            SessionVars.initializeNewGame(p1.getName(), p2.getName());
+        }
+    }
+
+    private void playReplayGame() {
+        // disable user input
+        disableAllButtons(true);
+        Thread thread = new Thread(() -> {
+            ArrayList<TurnModel> turns = null;
+            try {
+                turns = TurnModel.getTurns(App.db, SessionVars.currentGameUUID, SessionVars.setNumber);
+                for (TurnModel turn :
+                        turns) {
+                    Thread.sleep(1000);
+                    Platform.runLater(() -> fireDisabledButton(turn.getColumn()));
+                }
+                disableAllButtons(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        ThreadManager.threads.add(thread);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void playVsAIGame() {
+        miniMax = new MiniMax(opponentPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
+        if (activePlayer != ourPlayer) {
+            // AI starts, so first turn is AI
+            // initialize MiniMax in offline mode
+            Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
+            long start = System.nanoTime();
+            fireButton(miniMax.getBestMove(board));
+            Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");
+        }
+    }
+
+    private void playOnlineGame() {
+        // disable user input
+        disableAllButtons(true);
+        // we do not play offline, so run the server communication thread
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!gameDone) {
+                    try {
+                        playOnlineSet(App.sC);
+                        setDone = false;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        ThreadManager.threads.add(thread);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
@@ -237,7 +317,7 @@ public class MainController implements Initializable {
 
         bgAnim.setImage(bgAnimImg);
         bgAnim.setCache(true);
-        bgAnim.setCacheHint(CacheHint.QUALITY);
+        bgAnim.setCacheHint(CacheHint.SPEED);
         bgAnim.setPreserveRatio(true);
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(bgAnim);
@@ -247,7 +327,13 @@ public class MainController implements Initializable {
         trans.setOnFinished(event -> {
             bgAnim.setScaleX(bgAnim.getScaleX() * -1);
             bgAnim.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
-            trans.setByX(trans.getByX() * -1);
+            if (trans.getByX() > 0) {
+                // now to the left
+                trans.setByX(trans.getByX() * -1 - 1000);
+            } else {
+                trans.setByX(4000);
+            }
+            trans.setByY(trans.getByY() * -1);
             trans.play();
         });
         trans.play();
@@ -259,7 +345,7 @@ public class MainController implements Initializable {
      * @param sC a way to reach the server
      * @throws Exception
      */
-    private void playSet(ServerCommunication sC) throws Exception {
+    private void playOnlineSet(ServerCommunication sC) throws Exception {
         boolean flag = false; // marks the first run of the while loop (for setting start player)
         if (ourPlayer == p1) { // assume that the enemy starts as default, until proven otherwise below
             activePlayer = p2;
@@ -268,6 +354,7 @@ public class MainController implements Initializable {
         }
             while(!setDone) {
                 int col = sC.getTurnFromServer();
+                long start = System.nanoTime();
                 if(col == -2) {
                     // indicates that set has ended, and not that we have to start (server sends -1 in both cases :/
                     // so just get the next turn
@@ -278,11 +365,10 @@ public class MainController implements Initializable {
                     flag = true;
                     activePlayer = ourPlayer;
                     SessionVars.initializeNewSet(true);
-                    long start = System.nanoTime();
-                    int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                    int column = 3; // first drop in the middle :)
                     final FutureTask<Boolean> query = new FutureTask<>(() -> {
                         dropForUs(sC, column);
-                        System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                        Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                         return true;
                     });
                     Platform.runLater(query); // drop logic can only be done in the UI Thread
@@ -301,11 +387,10 @@ public class MainController implements Initializable {
                 Platform.runLater(query); // drop logic can only be done in the UI Thread
                 query.get(); // wait for the logic top happen to avoid random magic
 
-                long start = System.nanoTime();
-                int column = new MiniMax(SessionVars.searchDepth, SessionVars.ourSymbol, SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
+                int column = miniMax.getBestMove(board);
                 final FutureTask<Boolean> query2 = new FutureTask<>(() -> {
                     dropForUs(App.sC, column);
-                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                    Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
                     return true;
                 });
                 Platform.runLater(query2); // drop logic can only be done in the UI Thread
@@ -432,15 +517,17 @@ public class MainController implements Initializable {
             }
         });
         thread.setDaemon(true);
+        ThreadManager.threads.add(thread);
         thread.start();
     }
 
     /**
-     * initializes player information (e.g. names, images, chips, etc)
+     * initializes player visuals (e.g.images, chips, etc)
      * @param p1
      * @param p2
      */
-    private void initPlayers(Player p1, Player p2) {
+    private void initPlayerVisuals(Player p1, Player p2) {
+
         //load image in ImageViewContainer for player 1
         Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
         p1ImgView.setImage(p1Img);
@@ -487,12 +574,12 @@ public class MainController implements Initializable {
         previewImg.setStyle("-fx-opacity: .5");
         previewImg.setTranslateY(-500);
         previewImg.setTranslateX(btn.getTranslateX());
-        root.getChildren().add(previewImg);
+        bg.getChildren().add(previewImg);
     }
 
     @FXML
     private void erasePreviewChip(MouseEvent event) {
-        root.getChildren().remove(previewImg);
+        bg.getChildren().remove(previewImg);
     }
 
     /**
@@ -504,7 +591,7 @@ public class MainController implements Initializable {
     private void dropChip(ActionEvent event) {
         //delete previewImg
         if(previewImg != null) {
-            root.getChildren().remove(previewImg);
+            bg.getChildren().remove(previewImg);
         }
 
         Button btn = (Button) event.getSource();
@@ -532,7 +619,7 @@ public class MainController implements Initializable {
             board.put(column, activePlayer.getSymbol());
         }
         catch (Exception e) {
-            System.out.println("column full");
+            System.err.println("column full");
             btn.setDisable(true);
         }
 
@@ -553,20 +640,27 @@ public class MainController implements Initializable {
         //end round
         switchPlayer();
 
-        if(SessionVars.soloVsAI && activePlayer != ourPlayer) {
+        if(SessionVars.getSoloVsAI() && activePlayer != ourPlayer && !setDone) {
             // user is playing against AI, so his turn is followed by an AI turn
-            disableAllButtons(true);
-            long start = System.nanoTime();
-            Thread thread = new Thread(() -> {
-                int column1 = new MiniMax(SessionVars.searchDepth, activePlayer.getSymbol(), SessionVars.timeoutThresholdInMillis, SessionVars.outOfTimeDepth).getBestMove(board);
-                Platform.runLater(() -> {
-                    fireDisabledButton(column1);
-                    System.out.println("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
-                    disableAllButtons(false);
-                });
-            });
-            thread.start();
+            dropForAI();
         }
+    }
+
+    private void dropForAI() {
+        disableAllButtons(true);
+        long start = System.nanoTime();
+        Thread thread = new Thread(() -> {
+            int column1 = miniMax.getBestMove(board);
+            Platform.runLater(() -> {
+                fireDisabledButton(column1);
+                Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start) + " ms");
+                if(!setDone) {
+                    // only renable buttons if the new set has started
+                    disableAllButtons(false);
+                }
+            });
+        });
+        thread.start();
     }
 
 
@@ -575,7 +669,37 @@ public class MainController implements Initializable {
      * @param disabled true = disabled/ false = enabled
      */
     private void disableAllButtons(boolean disabled) {
-        b0.setDisable(disabled);b1.setDisable(disabled);b2.setDisable(disabled);b3.setDisable(disabled);b4.setDisable(disabled);b5.setDisable(disabled);b6.setDisable(disabled);
+        if (disabled) {
+            b0.setDisable(true);
+            b1.setDisable(true);
+            b2.setDisable(true);
+            b3.setDisable(true);
+            b4.setDisable(true);
+            b5.setDisable(true);
+            b6.setDisable(true);
+        } else {
+            if (freeSpace[0] >= 0 ) {
+                b0.setDisable(false);
+            }
+            if (freeSpace[1] >= 0 ) {
+                b1.setDisable(false);
+            }
+            if (freeSpace[2] >= 0 ) {
+                b2.setDisable(false);
+            }
+            if (freeSpace[3] >= 0 ) {
+                b3.setDisable(false);
+            }
+            if (freeSpace[4] >= 0 ) {
+                b4.setDisable(false);
+            }
+            if (freeSpace[5] >= 0 ) {
+                b5.setDisable(false);
+            }
+            if (freeSpace[6] >= 0 ) {
+                b6.setDisable(false);
+            }
+        }
     }
 
     /**
@@ -585,13 +709,15 @@ public class MainController implements Initializable {
     private void persistDrop(int column) {
         TurnModel turnModel = null;
         if (activePlayer == ourPlayer) {
-            turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, false, column);
+            turnModel = new TurnModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.turnNumber, false, column);
         } else {
-            turnModel = new TurnModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.turnNumber, true, column);
+            turnModel = new TurnModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.turnNumber, true, column);
         }
 
         try {
-            turnModel.persistInDatabase(App.db);
+            if(!SessionVars.getReplayMode()) {
+                turnModel.persistInDatabase(App.db);
+            }
             SessionVars.turnNumber++;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -644,10 +770,10 @@ public class MainController implements Initializable {
     private void checkForWin() {
 
         if ((winLocation = board.getWinForUI(activePlayer.getSymbol())) != null) {
-            System.out.println(activePlayer.getName() + " wins");
+            Logger.event(activePlayer.getName() + " wins");
 
             //increment score and change score
-            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 // for online games the server decides who wins (e.g. on draws)
                 // for online games the score redraw is handled in the Communicator
                 activePlayer.incrementScore();
@@ -657,16 +783,18 @@ public class MainController implements Initializable {
 
                 SetModel setModel;
 
-                if (activePlayer == ourPlayer) {
-                    setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, true);
+                if (activePlayer == p1) {
+                    setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, true);
                     winAnim(p1ImgView);
                 } else {
-                    setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                    setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, false);
                     winAnim(p2ImgView);
                 }
 
                 try {
-                    setModel.persistInDatabase(App.db);
+                    if(!SessionVars.getReplayMode()) {
+                        setModel.persistInDatabase(App.db);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -697,23 +825,28 @@ public class MainController implements Initializable {
                 winCircle.setTranslateX(columnPos);
 
                 winCircleArray.add(winCircle);
-                root.getChildren().add(winCircle);
+                bg.getChildren().add(winCircle);
 
             }
+
             //wait for circles to be drawn
             Thread thread = new Thread(() -> {
                 try {
-                    disableAllButtons(true);
-                    root.setCursor(Cursor.WAIT);
+                    bg.setCursor(Cursor.WAIT);
                     Thread.sleep(2000);
-                    disableAllButtons(false);
-                    root.setCursor(Cursor.DEFAULT);
+                    bg.setCursor(Cursor.DEFAULT);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Platform.runLater(() -> doRest(false));
+                Platform.runLater(this::cleanBoardImages);
             });
             thread.start();
+
+            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
+                endGame();
+            } else {
+                endSet();
+            }
 
             //endGame or endSet for offline games
 
@@ -722,32 +855,64 @@ public class MainController implements Initializable {
             //should be a draw
 
             //increment score and change score
-            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 // for online games the score redraw is handled in the Communicator
-                activePlayer.incrementScore();
                 player1Score.setText(String.valueOf(p1.getScore()));
                 player2Score.setText(String.valueOf(p2.getScore()));
 
                 SetModel setModel;
-                // a draw isnt a win
-                setModel = new SetModel(SessionVars.currentGameUUID.toString(), SessionVars.setNumber, SessionVars.weStartSet, false);
+                // a draw is a null for our boolean value
+                setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, null);
                 try {
-                    setModel.persistInDatabase(App.db);
+                    if(!SessionVars.getReplayMode()) {
+                        setModel.persistInDatabase(App.db);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
+                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
+                    endGame();
+                } else {
+                    endSet();
+                }
+
+                // TODO do something nicer here
+                Logger.event("a draw");
             }
 
+            Platform.runLater(this::cleanBoardImages);
         }
 
     }
 
-    private void doRest(boolean draw) {
-        if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.useFileInterface && !SessionVars.usePusherInterface)) {
-            endGame();
-        } else {
-            endSet(draw);
+    // TODO maybe rename
+    private void cleanBoardImages() {
+        for (ImageView chip: chipArray) {
+            field.getChildren().remove(chip);
+        }
+
+
+        if(winCircleArray != null) {
+            for (ImageView winCircle : winCircleArray) {
+                bg.getChildren().remove(winCircle);
+            }
+        }
+
+        chipArray = new ArrayList<>();
+
+        // end set disables all the button, if needed we enable them here again
+        if(!(SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface() || (activePlayer != ourPlayer && SessionVars.getSoloVsAI()) || SessionVars.getReplayMode())) {
+            disableAllButtons(false);
+        }
+
+        if(SessionVars.getSoloVsAI()) {
+            // if ai starts, put next drop for AI
+            if (activePlayer == opponentPlayer) {
+                dropForAI();
+            }
+            // needed to verify that new moves can be done by the player
+            setDone = false;
         }
     }
 
@@ -783,29 +948,18 @@ public class MainController implements Initializable {
     /**
      * is called when a set is over. Reinitializes the board and the visual representation of it.
      */
-    private void endSet(boolean draw) {
+    private void endSet() {
         setDone = true;
 
         try {
             //reinitialize the board
             board.reset();
-            for (ImageView chip: chipArray) {
-                field.getChildren().remove(chip);
-            }
-            chipArray = new ArrayList<>();
 
+            disableAllButtons(true);
 
-            if(!draw) {
-                for (ImageView winCircle : winCircleArray) {
-                    root.getChildren().remove(winCircle);
-                }
-            }
-
-            disableAllButtons(false);
-
-            if(!SessionVars.useFileInterface && !SessionVars.usePusherInterface) {
+            if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                 SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
-                // online games do it in the playSet method, since there is decided who starts
+                // online games do it in the playOnlineSet method, since there is decided who starts
             }
 
         }
@@ -819,7 +973,12 @@ public class MainController implements Initializable {
     /**
      * is called when a game is over. Closes the scene.
      */
-    public static void endGame() {
+    public void endGame() {
+        if (gameDone) {
+            // this method is called twice with file interface (1st: enemies winning move, second: notifiny of win) (at least I think so)
+            // thats why we avoid the second call (so no PK violations)
+            return;
+        }
         gameDone = true;
         //acknowledge player of his victory
         boolean weWon = false;
@@ -827,33 +986,29 @@ public class MainController implements Initializable {
             weWon = true;
         }
 
-        //Todo, might be wise to have a global opponent reference like ourplayer
-        Player opponent;
-        if (ourPlayer == p1) {
-            opponent = p2;
-        } else {
-            opponent = p1;
-        }
-
-        GameModel gameModel = new GameModel(SessionVars.currentGameUUID.toString(), SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponent.getScore(), weWon);
+        GameModel gameModel = new GameModel(SessionVars.currentGameUUID, SessionVars.ourPlayerName, SessionVars.opponentPlayerName, ourPlayer.getScore(), opponentPlayer.getScore(), weWon);
         try {
-            gameModel.persistInDatabase(db);
+            if(!SessionVars.getReplayMode()) {
+                gameModel.persistInDatabase(db);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         //TODO: Change this to something that looks better
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information Dialog");
+        alert.initOwner(App.stage);
+        alert.setTitle(I18N.getString("information.dialog"));
         alert.setHeaderText(null);
-        alert.setContentText("Player " + activePlayer.getName() + " wins the game");
+        alert.setContentText(MessageFormat.format(I18N.getString("player.?.wins.the.game"), activePlayer.getName()));
 
-        alert.showAndWait();
+        alert.show();
 
-        Platform.exit();
+        MenuController.themePlayer.stop();
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
-    public static void redrawScore() {
-        _player1Score.setText(String.valueOf(p1.getScore()));
-        _player2Score.setText(String.valueOf(p2.getScore()));
+    public void redrawScore() {
+        player1Score.setText(String.valueOf(p1.getScore()));
+        player2Score.setText(String.valueOf(p2.getScore()));
     }
 }

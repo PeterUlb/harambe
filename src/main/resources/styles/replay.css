@@ -1,0 +1,17 @@
+.field{
+    -fx-background-image: url("/img/ocean_1.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.buttonStatistics {
+    -fx-graphic: url("/img/statistics_icon.png");
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+.buttonStatistics:hover{
+    -fx-graphic: url("/img/statistics_icon_hover.png");
+}
+
+
