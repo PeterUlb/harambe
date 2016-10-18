@@ -139,13 +139,7 @@ public class Board {
             }
         }
 
-        if (checkWin(PLAYER1) || checkWin(PLAYER2)) {
-            return true;
-        } else if (y == COLUMNS) {
-            return true;
-        } else {
-            return false;
-        }
+        return checkWin(PLAYER1) || checkWin(PLAYER2) || y == COLUMNS;
     }
 
     /**
@@ -287,12 +281,7 @@ public class Board {
     }
 
     public boolean isFull(int column) {
-        if (getFirstAvailableRow()[column]<0) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return getFirstAvailableRow()[column] < 0;
     }
 
 

@@ -4,6 +4,7 @@ import com.harambe.App;
 import com.harambe.database.model.GameModel;
 import com.harambe.database.model.SetModel;
 import com.harambe.game.SessionVars;
+import com.harambe.tools.I18N;
 import com.harambe.tools.Logger;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,29 +27,33 @@ public class ReplayController implements Initializable, ControlledScreen {
     @FXML
     TableView<GameModel> gameTableView;
     @FXML
-    public TableColumn<GameModel, String> GameUUID;
+    private TableColumn<GameModel, String> GameUUID;
     @FXML
-    public TableColumn<GameModel, String> OpponentName;
+    private TableColumn<GameModel, String> OpponentName;
     @FXML
-    public TableColumn<GameModel, Integer> OurScore;
+    private TableColumn<GameModel, Integer> OurScore;
     @FXML
-    public TableColumn<GameModel, Integer> OpponentScore;
+    private TableColumn<GameModel, Integer> OpponentScore;
     @FXML
-    public TableColumn<GameModel, String> GameDate;
+    private TableColumn<GameModel, String> GameDate;
 
     @FXML
     TableView<SetModel> setTableView;
     @FXML
-    public TableColumn<SetModel, Integer> SetNumber;
+    private TableColumn<SetModel, Integer> SetNumber;
     @FXML
-    public TableColumn<SetModel, Boolean> WeStarted;
+    private TableColumn<SetModel, Boolean> WeStarted;
     @FXML
-    public TableColumn<SetModel, String> WeWon;
+    private TableColumn<SetModel, String> WeWon;
 
     @FXML
-    public Button startReplayBtn;
+    private Button startReplayBtn;
     @FXML
-    public Button statisticsBtn;
+    private Button statisticsBtn;
+    @FXML
+    private Button backBtn;
+    @FXML
+    private Label pastGamesLabel;
 
     private MasterController myController;
 
@@ -56,7 +61,10 @@ public class ReplayController implements Initializable, ControlledScreen {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        tooltip = new Tooltip("Click here for statistics");
+        pastGamesLabel.setText(I18N.getString("past.games"));
+        backBtn.setText(I18N.getString("back"));
+        startReplayBtn.setText(I18N.getString("start.replay"));
+        tooltip = new Tooltip(I18N.getString("click.here.for.statistics"));
         statisticsBtn.setTooltip(tooltip);
         Thread thread = new Thread(() -> {
             try {
@@ -79,14 +87,19 @@ public class ReplayController implements Initializable, ControlledScreen {
             e.printStackTrace();
         }
         GameUUID.setCellValueFactory(new PropertyValueFactory<GameModel, String>("gameUUID"));
+        GameUUID.setText(I18N.getString("game.id"));
         OpponentName.setCellValueFactory(new PropertyValueFactory<GameModel, String>("opponentPlayer"));
+        OpponentName.setText(I18N.getString("opponent"));
         OurScore.setCellValueFactory(new PropertyValueFactory<GameModel, Integer>("ourPoints"));
+        OurScore.setText(I18N.getString("our.score.short"));
         OpponentScore.setCellValueFactory(new PropertyValueFactory<GameModel, Integer>("opponentPoints"));
+        OpponentScore.setText(I18N.getString("opponent.score.short"));
         GameDate.setCellValueFactory(new PropertyValueFactory<GameModel, String>("timestamp"));
+        GameDate.setText(I18N.getString("date"));
         gameTableView.getItems().setAll(gameModels);
         gameTableView.getSortOrder().add(GameDate);
 
-        setTableView.setPlaceholder(new Label("Select game..."));
+        setTableView.setPlaceholder(new Label(I18N.getString("select.game")));
     }
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -110,8 +123,11 @@ public class ReplayController implements Initializable, ControlledScreen {
                 e.printStackTrace();
             }
             SetNumber.setCellValueFactory(new PropertyValueFactory<SetModel, Integer>("setNumber"));
+            SetNumber.setText(I18N.getString("set"));
             WeStarted.setCellValueFactory(new PropertyValueFactory<SetModel, Boolean>("weStarted"));
+            WeStarted.setText(I18N.getString("we.started"));
             WeWon.setCellValueFactory(new PropertyValueFactory<SetModel, String>("weWon"));
+            WeWon.setText(I18N.getString("we.won"));
             setTableView.getItems().setAll(setModels);
             setTableView.getSortOrder().add(SetNumber);
         }

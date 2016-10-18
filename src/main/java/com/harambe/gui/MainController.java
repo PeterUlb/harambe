@@ -11,6 +11,7 @@ import com.harambe.database.model.TurnModel;
 import com.harambe.game.Board;
 import com.harambe.game.SessionVars;
 import com.harambe.game.ThreadManager;
+import com.harambe.tools.I18N;
 import com.harambe.tools.Logger;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -34,6 +35,7 @@ import javafx.util.Duration;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.FutureTask;
@@ -995,9 +997,9 @@ public class MainController implements Initializable, ControlledScreen {
         //TODO: Change this to something that looks better
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.initOwner(App.stage);
-        alert.setTitle("Information Dialog");
+        alert.setTitle(I18N.getString("information.dialog"));
         alert.setHeaderText(null);
-        alert.setContentText("Player " + activePlayer.getName() + " wins the game");
+        alert.setContentText(MessageFormat.format(I18N.getString("player.?.wins.the.game"), activePlayer.getName()));
 
         alert.show();
 

@@ -33,3 +33,20 @@
     -fx-overflow: hidden;
 }
 
+.buttonEnglish {
+    -fx-image: url("/img/uk_inactive.png");
+}
+
+.buttonEnglish:hover {
+    -fx-image: url("/img/uk_hover.png");
+    -fx-cursor: hand;
+}
+
+.buttonGerman {
+    -fx-image: url("/img/germany_inactive.png");
+}
+
+.buttonGerman:hover {
+    -fx-image: url("/img/germany_hover.png");
+    -fx-cursor: hand;
+}

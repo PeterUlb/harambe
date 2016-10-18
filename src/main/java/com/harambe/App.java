@@ -6,6 +6,7 @@ import com.harambe.database.DatabaseConnector;
 import com.harambe.gui.MainController;
 import com.harambe.gui.MasterController;
 import com.harambe.gui.MenuController;
+import com.harambe.tools.I18N;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -24,7 +25,9 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
  * TODO: insert documentation here
@@ -72,7 +75,7 @@ public class App extends Application {
         StackPane root = new StackPane();
         root.getChildren().addAll(mainContainer);
         Scene scene = new Scene(root, 1920, 1080);
-        stage.setTitle("Harambe Wins!");
+        stage.setTitle(I18N.getString("harambe_wins"));
         stage.setScene(scene);
         scene.addEventHandler(KeyEvent.KEY_RELEASED, t -> {
             if(t.getCode()== KeyCode.ESCAPE) {
@@ -81,15 +84,14 @@ public class App extends Application {
                 }
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initOwner(stage);
-                alert.setTitle("Confirmation Dialog");
-                alert.setHeaderText("Do you really want to exit?");
-                ButtonType toMenuScreen = new ButtonType("Menu Screen", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.setTitle(I18N.getString("confirmation.dialog"));
+                alert.setHeaderText(I18N.getString("alert.exit.question"));
+                ButtonType toMenuScreen = new ButtonType(I18N.getString("menu.screen"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 alert.getButtonTypes().setAll(ButtonType.YES, toMenuScreen ,ButtonType.CANCEL);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.YES){
                     Platform.exit();
                 } else if (result.get() == toMenuScreen) {
-                    System.out.println("stop");
                     MenuController.themePlayer.stop();
                     mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, true);
                 }
