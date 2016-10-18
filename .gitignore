@@ -30,5 +30,3 @@ src/main/java/META-INF
 # Maven
 log/
 target/
-
-database/
