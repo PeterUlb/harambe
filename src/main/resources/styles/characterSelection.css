@@ -15,6 +15,7 @@
 
 .fg {
     -fx-background-image: url("/img/characterSelectionBg.png");
+    -fx-opacity: 0.8;
     -fx-background-repeat: stretch;
     -fx-background-size: 1920 1080;
     -fx-background-position: center center;
