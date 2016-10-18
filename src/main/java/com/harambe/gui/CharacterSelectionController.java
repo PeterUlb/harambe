@@ -72,8 +72,10 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         if (I18N.currentLang.equals(I18N.GERMAN)) {
             backBtn.getStyleClass().add("zurueckBtn");
+            playBtn.getStyleClass().add("startBtn");
         } else {
             backBtn.getStyleClass().add("backBtn");
+            playBtn.getStyleClass().add("playBtn");
             }
 
         //setup windows

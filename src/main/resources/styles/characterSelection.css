@@ -44,6 +44,15 @@
     -fx-image: url("/img/btnPlayH.png");
 }
 
+.startBtn {
+    -fx-image: url("/img/btnStartC.png");
+    -fx-cursor: hand;
+}
+
+.startBtn:hover{
+    -fx-image: url("/img/btnStartH.png");
+}
+
 .backBtn {
     -fx-image: url("/img/btnBack.png");
     -fx-cursor: hand;
