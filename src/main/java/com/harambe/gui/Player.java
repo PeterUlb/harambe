@@ -13,7 +13,7 @@ public class Player {
     private boolean ai;
     private String name;
     private String character;
-    private String chip;
+    private String chipImgLocation;
     private String imgLocation;
 
     private String dropSoundLocation;
@@ -30,7 +30,7 @@ public class Player {
      * @param ai        boolean value for human or artificial intelligence player
      * @param name      player name
      * @param character character the player chose to play with (e.g. Harambe)
-     * @param symbol    internal representation of the player chip
+     * @param symbol    internal representation of the player chipImgLocation
      */
     public Player(boolean ai, String name, Character character, char symbol) {
         this.ai = ai;
@@ -40,7 +40,7 @@ public class Player {
         this.score = 0;
 
         this.setImg(character);
-        this.setChip(character);
+        this.setChipImgLocation(character);
         this.setSounds(character);
     }
 
@@ -49,7 +49,7 @@ public class Player {
      *
      * @param ai        boolean value for human or artificial intelligence player
      * @param character character the player chose to play with (e.g. Harambe)
-     * @param symbol    internal representation of the player chip
+     * @param symbol    internal representation of the player chipImgLocation
      */
     public Player(boolean ai, Character character, char symbol) {
         this(ai, character.name(), character, symbol);
@@ -58,7 +58,7 @@ public class Player {
 
     //methods for playerImg
     private void setImg(Character character) {
-        this.imgLocation = "img/" + character.name().toLowerCase() + ".png";
+        this.imgLocation = "characters/" + character.name().toLowerCase() + "/avatar.png";
     }
 
     public String getImgLocation() {
@@ -67,32 +67,16 @@ public class Player {
 
 
     /**
-     * sets chip depending on character
+     * sets chipImgLocation depending on character
      *
      * @param character character the player chose to play with (e.g. Harambe)
      */
-    private void setChip(Character character) {
-        switch (character) {
-            case Harambe:
-                this.chip = "banana";
-                break;
-            case Poacher:
-                this.chip = "shotgun_shells";
-                break;
-            case Hunter:
-                this.chip = "bullets";
-                break;
-            case DatBoi:
-                this.chip = "unicycle";
-                break;
-            case TheDonald:
-                this.chip = "murica";
-                break;
-        }
+    private void setChipImgLocation(Character character) {
+        this.chipImgLocation = "characters/" + character.name().toLowerCase() + "/chip.png";
     }
 
-    public String getChip() {
-        return this.chip;
+    public String getChipImgLocation() {
+        return this.chipImgLocation;
     }
 
 
@@ -119,8 +103,8 @@ public class Player {
      * @param character character the player chose to play with (e.g. Harambe)
      */
     private void setSounds(Character character) {
-        this.dropSoundLocation = "/audio/" + character.name().toLowerCase() + "_drop.mp3";
-        this.winSoundLocation = "/audio/" + character.name().toLowerCase() + "_win.mp3";
+        this.dropSoundLocation = "/characters/" + character.name().toLowerCase() + "/drop.mp3";
+        this.winSoundLocation = "/characters/" + character.name().toLowerCase() + "/win.mp3";
     }
 
     public void playDropSound() {
@@ -145,7 +129,7 @@ public class Player {
     }
 
 
-    public String getwinSound() {
+    public String getWinSound() {
         return winSoundLocation;
     }
 

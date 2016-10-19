@@ -66,7 +66,7 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         App.stage = stage;
         stage.getIcons().add(
-                new Image(getClass().getClassLoader().getResourceAsStream("img/harambe.png")));
+                new Image(getClass().getClassLoader().getResourceAsStream("img/appicon.png")));
 
         MasterController mainContainer = new MasterController();
         mainContainer.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);

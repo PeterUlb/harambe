@@ -550,6 +550,7 @@ public class MainController implements Initializable, ControlledScreen {
     private void initPlayerVisuals(Player p1, Player p2) {
 
         //load image in ImageViewContainer for player 1
+        System.out.println(p1.getImgLocation());
         Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
         p1ImgView.setImage(p1Img);
 
@@ -565,8 +566,7 @@ public class MainController implements Initializable, ControlledScreen {
         player2Name.setText(p2.getName() + " (" + p2.getSymbol() + ")");
 
         //init Player1 Chips
-        Chip c1 = new Chip(p1.getChip());
-        Image p1Chip = new Image(getClass().getClassLoader().getResourceAsStream((c1.getImg())));
+        Image p1Chip = new Image(getClass().getClassLoader().getResourceAsStream(p1.getChipImgLocation()));
         p1ChipView.setImage(p1Chip);
         p1ChipView.setFitWidth(64);
         p1ChipView.setPreserveRatio(true);
@@ -574,8 +574,7 @@ public class MainController implements Initializable, ControlledScreen {
         p1ChipView.setCache(true);
 
         //init Player2 Chips
-        Chip c2 = new Chip(p2.getChip());
-        Image p2Chip = new Image(getClass().getClassLoader().getResourceAsStream((c2.getImg())));
+        Image p2Chip = new Image(getClass().getClassLoader().getResourceAsStream(p2.getChipImgLocation()));
         p2ChipView.setImage(p2Chip);
         p2ChipView.setFitWidth(64);
         p2ChipView.setPreserveRatio(true);
@@ -588,8 +587,7 @@ public class MainController implements Initializable, ControlledScreen {
         Button btn = (Button) event.getSource();
 
         //spawn preview chip
-        Chip chip = new Chip(activePlayer.getChip());
-        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream((chip.getImg())));
+        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream(activePlayer.getChipImgLocation()));
         previewImg = new ImageView(chipImg);
         previewImg.setId("previewChip");
         previewImg.setStyle("-fx-opacity: .5");
@@ -626,8 +624,7 @@ public class MainController implements Initializable, ControlledScreen {
         double x = btn.getTranslateX();
 
         //spawn chip
-        Chip chip = new Chip(activePlayer.getChip());
-        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream((chip.getImg())));
+        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream(activePlayer.getChipImgLocation()));
         ImageView imgView = new ImageView(chipImg);
 
         //store chip img

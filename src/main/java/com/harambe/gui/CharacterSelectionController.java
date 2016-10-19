@@ -94,7 +94,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
     private void playSelectSound(Character character) {
-        URL resource = getClass().getResource("/audio/"+character.name().toLowerCase()+"_select.mp3");
+        URL resource = getClass().getResource("/characters/" + character.name().toLowerCase() + "/select.mp3");
         Media select = new Media(resource.toString());
         MediaPlayer player = new MediaPlayer(select);
         player.play();
@@ -104,7 +104,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
      * dynamically creates a list of characters depending on Character Class
      */
     private void createCharacterList(int characterSize) throws Exception{
-        Image characterBg = new Image("img/gradient_orange.png");
+        Image characterBg = new Image(getClass().getClassLoader().getResourceAsStream("img/gradient_orange.png"));
 
         //create the list of characters dynamically
         for (int i = 0; i < Character.characters.length; i++) {
@@ -117,7 +117,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             characterBgImg.setCache(true);
 
             //character image
-            Image characterSrc = new Image("img/"+Character.characters[i].toString().toLowerCase()+".png");
+            Image characterSrc = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + Character.characters[i].toString().toLowerCase() + "/avatar.png"));
             ImageView characterImg= new ImageView(characterSrc);
             characterImg.setPreserveRatio(true);
             characterImg.setFitWidth(characterSize);
@@ -184,7 +184,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         event.consume();
 
-        Image pImg = new Image(("img/"+selectedCharacter.name().toLowerCase()+".png"));
+        Image pImg = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + selectedCharacter.name().toLowerCase() + "/avatar.png"));
 
         if (player1Text.isVisible() && !Objects.equals(selectedCharacter, player2Character)) {
             player1.setImage(pImg);
