@@ -76,3 +76,26 @@
     -fx-stroke: black;
     -fx-stroke-width: 1;
 }
+
+.editText {
+    -fx-font-size: 20px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+}
+
+.editImg {
+    -fx-image: url("/img/pencil.png");
+    -fx-cursor: hand;
+}
+.editImg:hover {
+    -fx-image: url("/img/pencil_hover.png");
+}
+
+.editImgCheck {
+    -fx-image: url("/img/check.png");
+    -fx-cursor: hand;
+}
+.editImgCheck:hover {
+    -fx-image: url("/img/check_hover.png");
+}
+

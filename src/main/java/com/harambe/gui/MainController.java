@@ -561,8 +561,8 @@ public class MainController implements Initializable, ControlledScreen {
 
 
         //init Names
-        player1Name.setText(p1.getName() + " (" + p1.getSymbol() + ")");
-        player2Name.setText(p2.getName() + " (" + p2.getSymbol() + ")");
+        player1Name.setText(p1.getName());
+        player2Name.setText(p2.getName());
 
         //init Player1 Chips
         Image p1Chip = new Image(getClass().getClassLoader().getResourceAsStream(p1.getChipImgLocation()));
