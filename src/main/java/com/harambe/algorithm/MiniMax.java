@@ -49,6 +49,39 @@ public class MiniMax {
                     {4, 6, 8, 10, 8, 6, 4},
                     {3, 4, 5, 7, 5, 4, 3}};
 
+
+    //switches each Player tile to the other player
+    private String switchPlayerInKey(String key){
+        String result = "";
+        for (int i = 0; i < key.length(); i++){
+            char c = key.charAt(i);
+            switch (c){
+                case Board.UNMARKED: result+= c;break;
+                case Board.PLAYER1: result += Board.PLAYER2;break;
+                case Board.PLAYER2: result += Board.PLAYER1;break;
+            }
+        }
+        return result;
+    }
+    //flips the board along the central column
+    private String mirrorKey(String key){
+        String result = "";
+        //get a mirrored board key
+        for (int i = 0; i < 6; i++) {
+            for (int j = 6; j >= 0; j--) {
+                result += key.charAt(i*7+j);
+            }
+        }
+        return result;
+    }
+    private String convertGridToKey(char[][] grid){
+        //turn board grid into database key format
+        String result = "";
+        for (int i = 0; i < grid.length; i++) {
+            result += String.valueOf(grid[i]);
+        }
+        return result;
+    }
     /**
      * @param board Board object with 2d array grid char[Board.ROWS][Board.COLUMNS]
      * @return best column to put the next play in (starting at 0 being leftmost column)
@@ -57,22 +90,15 @@ public class MiniMax {
     public int getBestMove(Board board) {
         //check for board in board evaluation table
         try {
-            String boardUUID,mirroredBoardUUID;
-            char[][] grid = board.getGrid();
-            boardUUID = "";
-            mirroredBoardUUID = "";
+            String boardUUID,mirroredBoardUUID,switchedboardUUID,switchedmirroredboardUUID;
 
-            //turn board grid into database key format
-            for (int i = 0; i < grid.length; i++) {
-                boardUUID += String.valueOf(grid[i]);
-            }
-            //get a mirrored board key
-            for (int i = 0; i < 6; i++) {
-                for (int j = 6; j >= 0; j--) {
-                    mirroredBoardUUID += boardUUID.charAt(i*7+j);
-                }
-            }
-            ResultSet rs = App.db.query("SELECT * FROM " + DatabaseConnector.BOARDEVALTABLE + " WHERE board_uuid = '" + boardUUID + "' OR board_uuid = '" + mirroredBoardUUID+"'");
+            boardUUID = convertGridToKey(board.getGrid());
+            mirroredBoardUUID = mirrorKey(boardUUID);
+            switchedboardUUID = switchPlayerInKey(boardUUID);
+            switchedmirroredboardUUID = switchPlayerInKey(mirroredBoardUUID);
+
+            //database only stores one board for each horizontally mirrored board and for one starting player, however evaluation is the same.
+            ResultSet rs = App.db.query("SELECT * FROM " + DatabaseConnector.BOARDEVALTABLE + " WHERE board_uuid = '" + boardUUID + "' OR board_uuid = '" + switchedmirroredboardUUID + "' OR board_uuid = '" + switchedboardUUID + "' OR board_uuid = '" + mirroredBoardUUID+"'");
             if(rs.next()){
             String key = rs.getString(1);
             int column = rs.getInt(2)-1;
