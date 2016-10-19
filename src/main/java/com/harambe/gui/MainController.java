@@ -137,10 +137,7 @@ public class MainController implements Initializable, ControlledScreen {
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
 
         //take static music player and play mainTheme
-        MenuController.themePlayer.stop();
-        final URL resource = getClass().getResource("/audio/mainTheme.mp3");
-        MenuController.themePlayer = new MediaPlayer(new Media(resource.toString()));
-        MenuController.themePlayer.play();
+        App.themePlayer.playTheme("/audio/mainTheme.mp3");
 
         //init extra images
         Image asset1Img = new Image(stage.getRandomAssetImg());
@@ -899,7 +896,6 @@ public class MainController implements Initializable, ControlledScreen {
         if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
             endGame();
         } else if (SessionVars.getReplayMode()) {
-            MenuController.themePlayer.stop();
             myController.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE); //to start the main music again
             myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);
         } else {
@@ -1024,7 +1020,6 @@ public class MainController implements Initializable, ControlledScreen {
 
         alert.show();
 
-        MenuController.themePlayer.stop();
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 

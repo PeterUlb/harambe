@@ -12,7 +12,6 @@ import java.net.URL;
 public class Stage {
     private String imgLocation;
     private URL themeLocation;
-    public static MediaPlayer player; // prevent evil GC
 
     public Stage(String stageName) {
         setImg(stageName);

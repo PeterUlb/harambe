@@ -38,16 +38,10 @@ public class MenuController implements Initializable, ControlledScreen {
     @FXML
     private ImageView btnImgGerman;
 
-    public static MediaPlayer themePlayer;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //set & play menuTheme
-        final URL resource = getClass().getResource("/audio/menuTheme.mp3");
-        final Media theme = new Media(resource.toString());
-        themePlayer = new MediaPlayer(theme);
-        themePlayer.setVolume(0.05);
-        themePlayer.play();
+        App.themePlayer.playTheme("/audio/menuTheme.mp3");
         if (I18N.currentLang.equals(I18N.ENGLISH)) {
             btnImgEnglish.setStyle("-fx-image: url('/img/uk.png')");
             btnImgEnglish.setDisable(true);
@@ -181,14 +175,12 @@ public class MenuController implements Initializable, ControlledScreen {
     @FXML
     private void changeToGerman() {
         I18N.setLocale("de");
-        themePlayer.setMute(true);
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
     @FXML
     private void changeToEnglish() {
         I18N.setLocale("en");
-        themePlayer.setMute(true);
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 

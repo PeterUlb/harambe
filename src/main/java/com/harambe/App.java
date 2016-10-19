@@ -3,9 +3,8 @@ package com.harambe;
 
 import com.harambe.communication.ServerCommunication;
 import com.harambe.database.DatabaseConnector;
-import com.harambe.gui.MainController;
 import com.harambe.gui.MasterController;
-import com.harambe.gui.MenuController;
+import com.harambe.gui.ThemePlayer;
 import com.harambe.tools.I18N;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -16,16 +15,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.net.URL;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.ResourceBundle;
 
 /**
  * TODO: insert documentation here
@@ -35,6 +29,7 @@ public class App extends Application {
     public static DatabaseConnector db;
     public static ServerCommunication sC;
     public static Stage stage; //used for alert ownership
+    public static ThemePlayer themePlayer; // static because of evil garbage collection
 
     public static final String MENU_SCREEN = "startScreen";
     public static final String MENU_SCREEN_FILE = "/scenes/menu.fxml";
@@ -62,6 +57,7 @@ public class App extends Application {
 
 
     public void start(Stage stage) throws Exception {
+        App.themePlayer = new ThemePlayer();
         App.stage = stage;
         stage.getIcons().add(
                 new Image(getClass().getClassLoader().getResourceAsStream("img/appicon.png")));
@@ -90,7 +86,6 @@ public class App extends Application {
                 if (result.get() == ButtonType.YES){
                     Platform.exit();
                 } else if (result.get() == toMenuScreen) {
-                    MenuController.themePlayer.stop();
                     mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, true);
                 }
             }
@@ -102,11 +97,8 @@ public class App extends Application {
 
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN),
                 () -> {
-                    if(com.harambe.gui.Stage.player != null) {
-                        com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
-                    }
-                    if(MenuController.themePlayer != null) {
-                        MenuController.themePlayer.setMute(!MenuController.themePlayer.isMute());
+                    if(App.themePlayer != null) {
+                        App.themePlayer.setMute(!App.themePlayer.isMute());
                     }
                 }
         );
