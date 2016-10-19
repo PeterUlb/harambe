@@ -20,6 +20,8 @@ public class Player {
     private String winSoundLocation;
     private String selectSoundLocation;
 
+    MediaPlayer player;
+
     private int score;
 
     private char symbol;
@@ -110,21 +112,30 @@ public class Player {
     public void playDropSound() {
         final URL resource = getClass().getResource(dropSoundLocation);
         final Media drop = new Media(resource.toString());
-        MediaPlayer player = new MediaPlayer(drop);
+        if (player != null) {
+            player.stop();
+        }
+        player = new MediaPlayer(drop);
         player.play();
     }
 
     public void playWinSound() {
         final URL resource = getClass().getResource(winSoundLocation);
-        final Media drop = new Media(resource.toString());
-        MediaPlayer player = new MediaPlayer(drop);
+        final Media play = new Media(resource.toString());
+        if (player != null) {
+            player.stop();
+        }
+        player = new MediaPlayer(play);
         player.play();
     }
 
     public void playSelectSound() {
         final URL resource = getClass().getResource(selectSoundLocation);
-        final Media drop = new Media(resource.toString());
-        MediaPlayer player = new MediaPlayer(drop);
+        final Media select = new Media(resource.toString());
+        if (player != null) {
+            player.stop();
+        }
+        player = new MediaPlayer(select);
         player.play();
     }
 
