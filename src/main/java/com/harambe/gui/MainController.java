@@ -550,7 +550,6 @@ public class MainController implements Initializable, ControlledScreen {
     private void initPlayerVisuals(Player p1, Player p2) {
 
         //load image in ImageViewContainer for player 1
-        System.out.println(p1.getImgLocation());
         Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
         p1ImgView.setImage(p1Img);
 
