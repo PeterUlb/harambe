@@ -14,9 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCharacterCombination;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -95,17 +93,23 @@ public class App extends Application {
                     MenuController.themePlayer.stop();
                     mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, true);
                 }
-            } else if(t.getCode() == KeyCode.M) {
-                if(com.harambe.gui.Stage.player != null) {
-                    com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
-                }
-                if(MenuController.themePlayer != null) {
-                    MenuController.themePlayer.setMute(!MenuController.themePlayer.isMute());
-                }
-            } else if (t.getCode() == KeyCode.F) {
-                stage.setFullScreen(!stage.isFullScreen());
             }
         });
+
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN),
+                () -> stage.setFullScreen(!stage.isFullScreen())
+        );
+
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN),
+                () -> {
+                    if(com.harambe.gui.Stage.player != null) {
+                        com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
+                    }
+                    if(MenuController.themePlayer != null) {
+                        MenuController.themePlayer.setMute(!MenuController.themePlayer.isMute());
+                    }
+                }
+        );
 
 
         stage.show();
