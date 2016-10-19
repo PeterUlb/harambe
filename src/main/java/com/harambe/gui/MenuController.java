@@ -46,7 +46,7 @@ public class MenuController implements Initializable, ControlledScreen {
         final URL resource = getClass().getResource("/audio/menuTheme.mp3");
         final Media theme = new Media(resource.toString());
         themePlayer = new MediaPlayer(theme);
-        themePlayer.setVolume(0.1);
+        themePlayer.setVolume(0.05);
         themePlayer.play();
         if (I18N.currentLang.equals(I18N.ENGLISH)) {
             btnImgEnglish.setStyle("-fx-image: url('/img/uk.png')");
