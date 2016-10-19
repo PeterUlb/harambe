@@ -32,10 +32,10 @@ public class Player {
      * @param character character the player chose to play with (e.g. Harambe)
      * @param symbol    internal representation of the player chipImgLocation
      */
-    public Player(boolean ai, String name, Character character, char symbol) {
+    public Player(boolean ai, String name, String character, char symbol) {
         this.ai = ai;
         this.name = name;
-        this.character = character.name();
+        this.character = character;
         this.symbol = symbol;
         this.score = 0;
 
@@ -51,14 +51,14 @@ public class Player {
      * @param character character the player chose to play with (e.g. Harambe)
      * @param symbol    internal representation of the player chipImgLocation
      */
-    public Player(boolean ai, Character character, char symbol) {
-        this(ai, character.name(), character, symbol);
+    public Player(boolean ai, String character, char symbol) {
+        this(ai, character, character, symbol);
     }
 
 
     //methods for playerImg
-    private void setImg(Character character) {
-        this.imgLocation = "characters/" + character.name().toLowerCase() + "/avatar.png";
+    private void setImg(String character) {
+        this.imgLocation = "characters/" + character.toLowerCase() + "/avatar.png";
     }
 
     public String getImgLocation() {
@@ -71,8 +71,8 @@ public class Player {
      *
      * @param character character the player chose to play with (e.g. Harambe)
      */
-    private void setChipImgLocation(Character character) {
-        this.chipImgLocation = "characters/" + character.name().toLowerCase() + "/chip.png";
+    private void setChipImgLocation(String character) {
+        this.chipImgLocation = "characters/" + character.toLowerCase() + "/chip.png";
     }
 
     public String getChipImgLocation() {
@@ -102,9 +102,9 @@ public class Player {
      *
      * @param character character the player chose to play with (e.g. Harambe)
      */
-    private void setSounds(Character character) {
-        this.dropSoundLocation = "/characters/" + character.name().toLowerCase() + "/drop.mp3";
-        this.winSoundLocation = "/characters/" + character.name().toLowerCase() + "/win.mp3";
+    private void setSounds(String character) {
+        this.dropSoundLocation = "/characters/" + character.toLowerCase() + "/drop.mp3";
+        this.winSoundLocation = "/characters/" + character.toLowerCase() + "/win.mp3";
     }
 
     public void playDropSound() {

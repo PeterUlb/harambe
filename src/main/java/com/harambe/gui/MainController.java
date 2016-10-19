@@ -117,8 +117,8 @@ public class MainController implements Initializable, ControlledScreen {
 
     MasterController myController;
 
-    static Character p1Character = Character.characters[0];
-    static Character p2Character = Character.characters[1];
+    static String p1Character = Character.characters[0];
+    static String p2Character = Character.characters[1];
 
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -200,7 +200,7 @@ public class MainController implements Initializable, ControlledScreen {
         ourPlayer = p1;
         opponentPlayer = p2;
 
-        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character.name(), p2Character.name());
+        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character, p2Character);
         try {
             characterModel.persistInDatabase(App.db);
         } catch (SQLException e) {
@@ -214,8 +214,8 @@ public class MainController implements Initializable, ControlledScreen {
         Logger.debug("ReplaySet: " + SessionVars.setNumber);
         try {
             CharacterModel characterModel = CharacterModel.getCharacter(App.db, SessionVars.currentGameUUID);
-            p1Character = Character.valueOf(characterModel.getOurCharacter());
-            p2Character = Character.valueOf(characterModel.getOpponentCharacter());
+            p1Character = characterModel.getOurCharacter();
+            p2Character = characterModel.getOpponentCharacter();
         } catch (SQLException e) {
             Logger.debug("Couldn't load characters for game " + SessionVars.currentGameUUID);
         }
@@ -263,7 +263,7 @@ public class MainController implements Initializable, ControlledScreen {
             }
             SessionVars.initializeNewGame(p1.getName(), p2.getName());
         }
-        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character.name(), p2Character.name());
+        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character, p2Character);
         try {
             characterModel.persistInDatabase(App.db);
         } catch (SQLException e) {
