@@ -56,8 +56,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private Text player2Text;
 
     private MasterController myController;
-    private Character player1Character;
-    private Character player2Character;
+    private String player1Character;
+    private String player2Character;
     private ArrayList<Rectangle> squareArray;
 
 
@@ -93,8 +93,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
 
-    private void playSelectSound(Character character) {
-        URL resource = getClass().getResource("/characters/" + character.name().toLowerCase() + "/select.mp3");
+    private void playSelectSound(String character) {
+        URL resource = getClass().getResource("/characters/" + character.toLowerCase() + "/select.mp3");
         Media select = new Media(resource.toString());
         MediaPlayer player = new MediaPlayer(select);
         player.play();
@@ -117,7 +117,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             characterBgImg.setCache(true);
 
             //character image
-            Image characterSrc = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + Character.characters[i].toString().toLowerCase() + "/avatar.png"));
+            Image characterSrc = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + Character.characters[i].toLowerCase() + "/avatar.png"));
             ImageView characterImg= new ImageView(characterSrc);
             characterImg.setPreserveRatio(true);
             characterImg.setFitWidth(characterSize);
@@ -180,11 +180,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         Node source = (Node)event.getSource() ;
         int colIndex = GridPane.getColumnIndex(source);
         int rowIndex = GridPane.getRowIndex(source);
-        Character selectedCharacter = Character.characters[colIndex];
+        String selectedCharacter = Character.characters[colIndex];
 
         event.consume();
 
-        Image pImg = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + selectedCharacter.name().toLowerCase() + "/avatar.png"));
+        Image pImg = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + selectedCharacter.toLowerCase() + "/avatar.png"));
 
         if (player1Text.isVisible() && !Objects.equals(selectedCharacter, player2Character)) {
             player1.setImage(pImg);
