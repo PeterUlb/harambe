@@ -648,9 +648,6 @@ public class MainController implements Initializable, ControlledScreen {
 
         checkForWin();
 
-        //end round
-        switchPlayer();
-
         if(SessionVars.getSoloVsAI() && activePlayer != ourPlayer && !setDone) {
             // user is playing against AI, so his turn is followed by an AI turn
             dropForAI();
@@ -885,6 +882,9 @@ public class MainController implements Initializable, ControlledScreen {
             }
 
             Platform.runLater(this::cleanBoardImages);
+        } else {
+            // no win, continue playing
+            switchPlayer();
         }
 
     }
@@ -972,7 +972,15 @@ public class MainController implements Initializable, ControlledScreen {
             disableAllButtons(true);
 
             if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
-                SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
+                // Set end means: the next set is started by the player who didnt start the last set
+                // online: done in Communicator
+                if (SessionVars.weStartSet) {
+                    activePlayer = opponentPlayer;
+                } else {
+                    activePlayer = ourPlayer;
+                }
+                SessionVars.weStartSet = !SessionVars.weStartSet;
+                SessionVars.initializeNewSet(SessionVars.weStartSet); // in offline game we have to initialize a new set here
                 // online games do it in the playOnlineSet method, since there is decided who starts
             }
 
