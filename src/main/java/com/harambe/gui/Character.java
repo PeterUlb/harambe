@@ -23,7 +23,7 @@ public class Character {
     public static String[] characters;
 
     public static String getLocalizedCharacterName(int index) {
-        return I18N.getString(characters[index].toLowerCase());
+        return I18N.getString(characters[index]);
     }
 
     private static void initialize() {

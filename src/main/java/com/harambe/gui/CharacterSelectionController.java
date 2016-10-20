@@ -145,7 +145,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
             //character image
-            Image characterSrc = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + Character.characters[i].toLowerCase() + "/avatar.png"));
+            Image characterSrc = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + Character.characters[i] + "/avatar.png"));
             ImageView characterImg= new ImageView(characterSrc);
             characterImg.setPreserveRatio(true);
             characterImg.setFitWidth(characterSize);
