@@ -17,7 +17,7 @@ public class PusherCommunicator implements ServerCommunication {
     private long repeatTime = 100;
     private MainController game;
 
-    public PusherCommunicator(MainController game){
+    public PusherCommunicator(MainController game) {
         this.game = game;
         pusher = new PusherConnector();
         Thread thread = new Thread(pusher);
@@ -69,22 +69,22 @@ public class PusherCommunicator implements ServerCommunication {
          */
 
         //Check for Winner
-        if (!splitMessage[3].contains("offen")){
+        if (!splitMessage[3].contains("offen")) {
             //System.out.println("Winner detected!");
-            if (!splitMessage[3].contains("X")){
-                if(game.p1.getSymbol() == 'X') {
+            if (splitMessage[3].contains("O")) {
+                if (game.p1.getSymbol() == 'O') {
                     game.p1.incrementScore();
-                }else{
-                    game.p2.incrementScore();
-                }
-                SessionVars.weWonSet = game.ourPlayer.getSymbol() == 'X';
-            }else{
-                if(game.p1.getSymbol() == 'O') {
-                    game.p1.incrementScore();
-                }else{
+                } else {
                     game.p2.incrementScore();
                 }
                 SessionVars.weWonSet = game.ourPlayer.getSymbol() == 'O';
+            } else {
+                if (game.p1.getSymbol() == 'X') {
+                    game.p1.incrementScore();
+                } else {
+                    game.p2.incrementScore();
+                }
+                SessionVars.weWonSet = game.ourPlayer.getSymbol() == 'X';
             }
             game.redrawScore();
             SetModel setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, SessionVars.weWonSet);

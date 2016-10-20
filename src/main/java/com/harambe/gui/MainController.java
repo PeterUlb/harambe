@@ -29,8 +29,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -791,7 +789,7 @@ public class MainController implements Initializable, ControlledScreen {
 
                 SetModel setModel;
 
-                if (activePlayer == p1) {
+                if (activePlayer == ourPlayer) {
                     setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, true);
                     winAnim(p1ImgView);
                 } else {
@@ -884,6 +882,8 @@ public class MainController implements Initializable, ControlledScreen {
             Platform.runLater(this::cleanBoardImages);
         } else {
             // no win, continue playing
+            // online: startPlayer after win is decided by the server
+            // offline: startPlayer after win is the one who didn't start last time (= endSet methdd)
             switchPlayer();
         }
 
@@ -1021,7 +1021,12 @@ public class MainController implements Initializable, ControlledScreen {
         alert.initOwner(App.stage);
         alert.setTitle(I18N.getString("information.dialog"));
         alert.setHeaderText(null);
-        alert.setContentText(MessageFormat.format(I18N.getString("player.?.wins.the.game"), activePlayer.getName()));
+        // do not trust active player at this point, after the last drop, active player is already set to the next one online
+        if (p1.getScore() >= 2) {
+            alert.setContentText(MessageFormat.format(I18N.getString("player.?.wins.the.game"), p1.getName()));
+        } else if (p2.getScore() >= 2) {
+            alert.setContentText(MessageFormat.format(I18N.getString("player.?.wins.the.game"), p2.getName()));
+        }
 
         alert.show();
 
