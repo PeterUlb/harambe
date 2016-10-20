@@ -6,20 +6,30 @@ import com.harambe.database.DatabaseConnector;
 import com.harambe.gui.MasterController;
 import com.harambe.gui.ThemePlayer;
 import com.harambe.tools.I18N;
+import com.harambe.tools.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * TODO: insert documentation here
@@ -88,6 +98,20 @@ public class App extends Application {
                 } else if (result.get() == toMenuScreen) {
                     mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, true);
                 }
+            } else if (t.getCode() == KeyCode.F12) {
+                Thread thread = new Thread(() -> {
+                    try {
+                        final FutureTask<WritableImage> query = new FutureTask<>(() -> scene.snapshot(null));
+                        Platform.runLater(query);
+                        WritableImage image = query.get();
+                        File file = new File("screenshots/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss-SSS").format(new Date()) + ".png");
+                        file.getParentFile().mkdirs();
+                        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+                    } catch (IOException | InterruptedException | ExecutionException e) {
+                        Logger.error("Saving screenshot failed");
+                    }
+                });
+                thread.start();
             }
         });
 
