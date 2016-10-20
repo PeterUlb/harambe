@@ -103,8 +103,15 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         createCharacterList(characterSize, columns);
 
         //init player default images & buttons
-        player1Text.setText(I18N.getString("select.player.1"));
-        player2Text.setText(I18N.getString("select.player.2"));
+        if (!SessionVars.getUsePusherInterface() && !SessionVars.getUseFileInterface()) {
+            player1Text.setText(I18N.getString("select.player.1"));
+            player2Text.setText(I18N.getString("select.player.2"));
+        } else {
+            player1Text.setText(I18N.getString("select.our.player"));
+            player2Text.setText(I18N.getString("select.opponent.player"));
+            // 350 not 400 since text is longer
+            player2Text.setTranslateX(350);
+        }
     }
 
 

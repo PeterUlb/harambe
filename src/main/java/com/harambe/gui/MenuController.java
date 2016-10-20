@@ -140,6 +140,7 @@ public class MenuController implements Initializable, ControlledScreen {
             if (selectedDirectory != null) {
                 SessionVars.useFileInterface(true, selectedDirectory.getAbsolutePath());
             } else {
+                btnImgOnline.setDisable(false);
                 return;
             }
 
