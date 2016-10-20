@@ -553,9 +553,6 @@ public class MainController implements Initializable, ControlledScreen {
         //load image in ImageViewContainer for player 2
         Image p2Img = new Image(getClass().getClassLoader().getResourceAsStream((p2.getImgLocation())));
         p2ImgView.setImage(p2Img);
-        //mirror Image for player 2
-        p2ImgView.setScaleX(-1);
-
 
         //init Names
         player1Name.setText(p1.getName());

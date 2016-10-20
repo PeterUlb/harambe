@@ -12,8 +12,8 @@
    
       <StackPane fx:id="field" styleClass="field" stylesheets="/styles/main.css" xmlns="http://javafx.com/javafx/8">
       
-             <ImageView fx:id="p1ImgView" styleClass="playerImg" translateX="-785.0" translateY="170.0" />
-             <ImageView fx:id="p2ImgView" styleClass="playerImg" translateX="785.0" translateY="170.0" />
+             <ImageView fx:id="p1ImgView" styleClass="playerImg" translateX="-785.0" translateY="170.0" fitHeight="450" fitWidth="400" preserveRatio="true" />
+             <ImageView fx:id="p2ImgView" styleClass="playerImg" translateX="785.0" translateY="170.0" fitHeight="450" fitWidth="400" preserveRatio="true" scaleX="-1" />
       
              <ImageView fx:id="asset1" translateX="-640" translateY="-250" />
              <ImageView fx:id="asset2" translateX="640" translateY="-250" />
