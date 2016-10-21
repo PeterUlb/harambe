@@ -120,7 +120,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
      * @param character selected character
      */
     private void playSelectSound(String character) {
-        URL resource = getClass().getResource("/characters/" + character.toLowerCase() + "/select.mp3");
+        URL resource = getClass().getResource("/characters/" + character + "/select.mp3");
         Media select = new Media(resource.toString());
         MediaPlayer player = new MediaPlayer(select);
         player.play();
@@ -228,7 +228,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         event.consume();
 
-        Image pImg = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + selectedCharacter.toLowerCase() + "/avatar.png"));
+        Image pImg = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + selectedCharacter + "/avatar.png"));
 
 
         if (player1Text.isVisible() && !Objects.equals(selectedCharacter, player2Character)) {
