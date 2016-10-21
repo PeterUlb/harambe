@@ -584,6 +584,9 @@ public class MainController implements Initializable, ControlledScreen {
         previewImg.setStyle("-fx-opacity: .5");
         previewImg.setTranslateY(-500);
         previewImg.setTranslateX(btn.getTranslateX());
+        previewImg.setPreserveRatio(true);
+        previewImg.setFitWidth(140);
+        previewImg.setFitHeight(150);
         bg.getChildren().add(previewImg);
     }
 
@@ -617,6 +620,9 @@ public class MainController implements Initializable, ControlledScreen {
         //spawn chip
         Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream(activePlayer.getChipImgLocation()));
         ImageView imgView = new ImageView(chipImg);
+        imgView.setPreserveRatio(true);
+        imgView.setFitWidth(140);
+        imgView.setFitHeight(150);
 
         //store chip img
         chipArray.add(imgView);

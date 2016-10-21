@@ -20,7 +20,7 @@ public class I18N {
         try {
             return instance.getString(key);
         } catch (MissingResourceException e) {
-            Logger.event("Missing translation for '" + key + "' {language: " + currentLang + '}');
+            Logger.warning("Missing translation for '" + key + "' {language: " + currentLang + '}');
             return original;
         }
     }
