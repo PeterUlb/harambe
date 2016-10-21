@@ -77,13 +77,15 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private ArrayList<Rectangle> squareArray;
     private int columns;
 
+    private ArrayList<MediaPlayer> antiGarbageCollection;
+
 
     /**
      * initialization method of the view. Initializes variables and sets the initial settings
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        antiGarbageCollection = new ArrayList<>();
         //initialize array
         squareArray = new ArrayList<>();
 
@@ -123,6 +125,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         URL resource = getClass().getResource("/characters/" + character + "/select.mp3");
         Media select = new Media(resource.toString());
         MediaPlayer player = new MediaPlayer(select);
+        antiGarbageCollection.add(player);
+        player.setOnEndOfMedia(() -> {
+            player.dispose();
+            antiGarbageCollection.remove(player);
+        });
         player.play();
     }
 
