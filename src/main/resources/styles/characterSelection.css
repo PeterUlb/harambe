@@ -99,3 +99,14 @@
     -fx-image: url("/img/check_hover.png");
 }
 
+.ai {
+    -fx-image: url("/img/ai.png");
+    -fx-cursor: hand;
+}
+
+.human {
+    -fx-image: url("/img/human.png");
+    -fx-cursor: hand;
+}
+
+

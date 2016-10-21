@@ -59,33 +59,6 @@ public class MenuController implements Initializable, ControlledScreen {
     //onClickEvent switch screen to local game
     @FXML
     private void playLocal(MouseEvent event)/*throws IOException*/ {
-        // TODO this isn't the final user interface
-        btnImgLocal.setDisable(true);
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initOwner(App.stage);
-        alert.setTitle(I18N.getString("selection"));
-        alert.setHeaderText(I18N.getString("offline.mode"));
-        alert.setContentText(I18N.getString("choose.your.option"));
-
-        ButtonType buttonTypeAI = new ButtonType(I18N.getString("human.vs.ai"));
-        ButtonType buttonTypeVersus = new ButtonType(I18N.getString("human.vs.human"));
-        ButtonType buttonTypeCancel = new ButtonType(I18N.getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        alert.getButtonTypes().setAll(buttonTypeAI, buttonTypeVersus, buttonTypeCancel);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        alert.close();
-
-        if (result.get() == buttonTypeAI) {
-            SessionVars.soloVsAI(true);
-        } else if (result.get() == buttonTypeVersus) {
-            // do not set any flags for Human vs Human for now
-            SessionVars.resetFlags();
-        } else {
-            btnImgLocal.setDisable(false);
-            return;
-        }
-        btnImgLocal.setDisable(false);
         myController.loadAndSetScreen(App.CHARACTER_SELECTION_SCREEN, App.CHARACTER_SELECTION_SCREEN_FILE, true);
     }
 

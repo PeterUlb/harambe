@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.Group?>
 <StackPane styleClass="bg" stylesheets="/styles/characterSelection.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.CharacterSelectionController">
 
     <StackPane fx:id="bg" styleClass="fg">
@@ -28,13 +29,26 @@
         <ImageView fx:id="backBtn" onMouseClicked="#back" translateX="-850" translateY="-450" />
 
 
-        <Text fx:id="player1Name" styleClass="selectText" translateX="-400" translateY="490" />
-        <TextField fx:id="player1NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateX="-400" translateY="490" />
-        <ImageView fx:id="player1EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="-260" translateY="490"/>
 
-        <Text fx:id="player2Name" styleClass="selectText" translateX="400" translateY="490" />
-        <TextField fx:id="player2NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateX="400" translateY="490" />
-        <ImageView fx:id="player2EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="550" translateY="490"/>
+        <Text fx:id="turnTimeLabel" text="turn time:" styleClass="selectText" translateX="300" translateY="520"/>
+        <Spinner fx:id="turnTime" visible="false" initialValue="2000" min="1" max="5000" editable="true" amountToStepBy="100" translateX="400" translateY="520"/>
+
+        <ImageView fx:id="ai" styleClass="ai" onMouseClicked="#AISwitch" translateX="300" translateY="500" fitWidth="50" preserveRatio="true"/>
+
+
+
+        <Group fx:id="player1NameGroup" translateY="500" translateX="-400">
+            <Text fx:id="player1Name" styleClass="selectText"/>
+            <TextField fx:id="player1NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateY="-30" />
+        </Group>
+        <ImageView fx:id="player1EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="-265" translateY="500"/>
+
+        <Group fx:id="player2NameGroup" translateY="500" translateX="400">
+            <Text fx:id="player2Name" styleClass="selectText"/>
+            <TextField fx:id="player2NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateY="-30"/>
+        </Group>
+        <ImageView fx:id="player2EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="545" translateY="500"/>
+
 
     </StackPane>
 
