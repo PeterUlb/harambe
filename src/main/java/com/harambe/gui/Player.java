@@ -60,7 +60,7 @@ public class Player {
 
     //methods for playerImg
     private void setImg(String character) {
-        this.imgLocation = "characters/" + character + "/avatar.png";
+        this.imgLocation = "/characters/" + character + "/avatar.png";
     }
 
     public String getImgLocation() {
@@ -74,7 +74,7 @@ public class Player {
      * @param character character the player chose to play with (e.g. Harambe)
      */
     private void setChipImgLocation(String character) {
-        this.chipImgLocation = "characters/" + character + "/chip.png";
+        this.chipImgLocation = "/characters/" + character + "/chip.png";
     }
 
     public String getChipImgLocation() {

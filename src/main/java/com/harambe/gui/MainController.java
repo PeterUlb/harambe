@@ -152,7 +152,7 @@ public class MainController implements Initializable, ControlledScreen {
         winLocation = null;
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
-        winCircleImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/wincircle.png")));
+        winCircleImg = new Image(getClass().getResourceAsStream("/img/wincircle.png"));
 
         if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             initOnlineGame();
@@ -329,7 +329,7 @@ public class MainController implements Initializable, ControlledScreen {
      * @param stage
      */
     private void playBgAnimation(Stage stage) {
-        Image bgAnimImg = new Image(getClass().getClassLoader().getResourceAsStream((stage.getBgAnimImg())));
+        Image bgAnimImg = new Image(getClass().getResourceAsStream(stage.getBgAnimImg()));
 
         bgAnim.setImage(bgAnimImg);
         bgAnim.setCache(true);
@@ -545,11 +545,11 @@ public class MainController implements Initializable, ControlledScreen {
     private void initPlayerVisuals(Player p1, Player p2) {
 
         //load image in ImageViewContainer for player 1
-        Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
+        Image p1Img = new Image(getClass().getResourceAsStream(p1.getImgLocation()));
         p1ImgView.setImage(p1Img);
 
         //load image in ImageViewContainer for player 2
-        Image p2Img = new Image(getClass().getClassLoader().getResourceAsStream((p2.getImgLocation())));
+        Image p2Img = new Image(getClass().getResourceAsStream(p2.getImgLocation()));
         p2ImgView.setImage(p2Img);
 
         //init Names
@@ -557,7 +557,7 @@ public class MainController implements Initializable, ControlledScreen {
         player2Name.setText(p2.getName());
 
         //init Player1 Chips
-        Image p1Chip = new Image(getClass().getClassLoader().getResourceAsStream(p1.getChipImgLocation()));
+        Image p1Chip = new Image(getClass().getResourceAsStream(p1.getChipImgLocation()));
         p1ChipView.setImage(p1Chip);
         p1ChipView.setFitWidth(64);
         p1ChipView.setPreserveRatio(true);
@@ -565,7 +565,7 @@ public class MainController implements Initializable, ControlledScreen {
         p1ChipView.setCache(true);
 
         //init Player2 Chips
-        Image p2Chip = new Image(getClass().getClassLoader().getResourceAsStream(p2.getChipImgLocation()));
+        Image p2Chip = new Image(getClass().getResourceAsStream(p2.getChipImgLocation()));
         p2ChipView.setImage(p2Chip);
         p2ChipView.setFitWidth(64);
         p2ChipView.setPreserveRatio(true);
@@ -578,7 +578,7 @@ public class MainController implements Initializable, ControlledScreen {
         Button btn = (Button) event.getSource();
 
         //spawn preview chip
-        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream(activePlayer.getChipImgLocation()));
+        Image chipImg = new Image(getClass().getResourceAsStream(activePlayer.getChipImgLocation()));
         previewImg = new ImageView(chipImg);
         previewImg.setId("previewChip");
         previewImg.setStyle("-fx-opacity: .5");
@@ -619,7 +619,7 @@ public class MainController implements Initializable, ControlledScreen {
         double x = btn.getTranslateX();
 
         //spawn chip
-        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream(activePlayer.getChipImgLocation()));
+        Image chipImg = new Image(getClass().getResourceAsStream(activePlayer.getChipImgLocation()));
         ImageView imgView = new ImageView(chipImg);
         // TODO check if the graphics quality is still acceptable
         imgView.setPreserveRatio(true);
@@ -811,6 +811,13 @@ public class MainController implements Initializable, ControlledScreen {
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
+                }
+            } else {
+                // trigger online win animation
+                if (activePlayer == p1) {
+                    winAnim(p1ImgView);
+                } else {
+                    winAnim(p2ImgView);
                 }
             }
 

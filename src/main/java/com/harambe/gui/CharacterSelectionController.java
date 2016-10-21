@@ -132,7 +132,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
      * @param columns number of characters per row
      */
     private void createCharacterList(int characterSize, int columns) {
-        Image characterBg = new Image(getClass().getClassLoader().getResourceAsStream("img/gradient_orange.png"));
+        Image characterBg = new Image(getClass().getResourceAsStream("/img/gradient_orange.png"));
 
         //create the list of characters dynamically
         for (int i = 0, column = 0, row = -1; i < Character.characters.length; i++, column++) {
@@ -152,7 +152,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
             //character image
-            Image characterSrc = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + Character.characters[i] + "/avatar.png"));
+            Image characterSrc = new Image(getClass().getResourceAsStream("/characters/" + Character.characters[i] + "/avatar.png"));
             ImageView characterImg= new ImageView(characterSrc);
             characterImg.setPreserveRatio(true);
             characterImg.setFitWidth(characterSize);
@@ -228,7 +228,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         event.consume();
 
-        Image pImg = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + selectedCharacter + "/avatar.png"));
+        Image pImg = new Image(getClass().getResourceAsStream("/characters/" + selectedCharacter + "/avatar.png"));
 
 
         if (player1Text.isVisible() && !Objects.equals(selectedCharacter, player2Character)) {

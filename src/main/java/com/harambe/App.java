@@ -72,7 +72,7 @@ public class App extends Application {
         App.themePlayer = new ThemePlayer();
         App.stage = stage;
         stage.getIcons().add(
-                new Image(getClass().getClassLoader().getResourceAsStream("img/appicon.png")));
+                new Image(getClass().getResourceAsStream("/img/appicon.png")));
 
         MasterController mainContainer = new MasterController();
         mainContainer.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
