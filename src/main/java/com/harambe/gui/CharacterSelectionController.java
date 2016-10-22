@@ -3,8 +3,10 @@ package com.harambe.gui;
 import com.harambe.App;
 import com.harambe.game.SessionVars;
 import com.harambe.tools.I18N;
+import com.harambe.tools.Logger;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,6 +18,8 @@ import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
@@ -124,6 +128,44 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             // 350 not 400 since text is longer
             player2Text.setTranslateX(350);
         }
+
+        SpinnerValueFactory.IntegerSpinnerValueFactory x = (SpinnerValueFactory.IntegerSpinnerValueFactory) turnTime.getValueFactory();
+        final int lowerBound = x.getMin();
+        final int upperBound = x.getMax();
+        turnTime.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() != KeyCode.LEFT && event.getCode() != KeyCode.RIGHT){
+                turnTime.getEditor().setStyle("-fx-text-fill: black");
+                String turnTimeText = turnTime.getEditor().getText();
+                if (turnTimeText.length() > 0) {
+                    try {
+                        // workaround since the spinner value needs an enter input after manual value setting. So we get the editor value...
+                        long turnTimeValue = Long.parseLong(turnTimeText);
+                        if (turnTimeValue < 0) {
+                            turnTime.getEditor().setStyle("-fx-text-fill: red");
+                            throw new NumberFormatException();
+                        }
+                        if (turnTimeValue < lowerBound) {
+                            turnTime.getEditor().setText(String.valueOf(x.getMin()));
+                            turnTime.getEditor().setStyle("-fx-text-fill: red");
+                            turnTime.getEditor().positionCaret(turnTime.getEditor().getText().length());
+                        } else if (turnTimeValue > upperBound) {
+                            turnTime.getEditor().setText(String.valueOf(x.getMax()));
+                            turnTime.getEditor().setStyle("-fx-text-fill: red");
+                            turnTime.getEditor().positionCaret(turnTime.getEditor().getText().length());
+                        }
+                    } catch (NumberFormatException e) {
+                        turnTime.getEditor().setText(turnTimeText.replaceAll("[^\\d]", "")); // replace all non-numeric charracters
+                        if (turnTime.getEditor().getText().length() == 0) {
+                            turnTime.getEditor().setText("2000");
+                            turnTime.getEditor().setStyle("-fx-text-fill: red");
+                        }
+                        turnTime.getEditor().positionCaret(turnTime.getEditor().getText().length());
+                    }
+                }
+            }
+        });
+
+        turnTimeLabel.setText(I18N.getString("turn.time.colon"));
     }
 
 
@@ -494,16 +536,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             //set turn time
             try {
                 // workaround since the spinner value needs an enter input after manual value setting. So we get the editor value...
-                SpinnerValueFactory.IntegerSpinnerValueFactory x = (SpinnerValueFactory.IntegerSpinnerValueFactory) turnTime.getValueFactory();
                 long turnTimeValue = Long.parseLong(turnTime.getEditor().getText());
-                if (turnTimeValue < x.getMin()) {
-                    SessionVars.timeoutThresholdInMillis = x.getMin();
-                } else if (turnTimeValue > x.getMax()) {
-                    SessionVars.timeoutThresholdInMillis = x.getMax();
-                } else {
-                    SessionVars.timeoutThresholdInMillis = Long.parseLong(turnTime.getEditor().getText());
-                }
+                SessionVars.timeoutThresholdInMillis = turnTimeValue;
             } catch (NumberFormatException e) {
+                // this can happen when the user input is nothing, every other false possibility (too high, too low, non-numeric)
+                // is handled by the key event handler attached to the spinner
                 SessionVars.timeoutThresholdInMillis = 2000; // set default
             }
 
