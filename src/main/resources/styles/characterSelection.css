@@ -102,10 +102,16 @@
     -fx-image: url("/img/ai.png");
     -fx-cursor: hand;
 }
+.ai:hover {
+    -fx-image: url("/img/ai_hover.png");
+}
 
 .human {
     -fx-image: url("/img/human.png");
     -fx-cursor: hand;
+}
+.human:hover {
+    -fx-image: url("/img/human_hover.png");
 }
 
 .turnTimeLabel {
