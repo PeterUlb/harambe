@@ -943,6 +943,10 @@ public class MainController implements Initializable, ControlledScreen {
             // needed to verify that new moves can be done by the player
             setDone = false;
         }
+
+        if (gameDone) {
+            myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
+        }
     }
 
 
@@ -1044,8 +1048,6 @@ public class MainController implements Initializable, ControlledScreen {
         }
 
         alert.show();
-
-        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
     public void redrawScore() {
