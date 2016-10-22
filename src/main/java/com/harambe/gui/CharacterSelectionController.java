@@ -3,21 +3,22 @@ package com.harambe.gui;
 import com.harambe.App;
 import com.harambe.game.SessionVars;
 import com.harambe.tools.I18N;
-import javafx.collections.ObservableList;
+import javafx.beans.property.Property;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.effect.ColorAdjust;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -26,6 +27,7 @@ import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
@@ -35,6 +37,8 @@ import java.util.ResourceBundle;
 public class CharacterSelectionController implements Initializable, ControlledScreen {
 
 
+    @FXML
+    private StackPane bg;
     @FXML
     private GridPane grid;
     @FXML
@@ -65,12 +69,6 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private Text player2Name;
     @FXML
     private TextField player2NameEdit;
-    @FXML
-    private Spinner<Integer> turnTime;
-    @FXML
-    private Text turnTimeLabel;
-    @FXML
-    private ImageView aiHumanImg;
 
 
     private MasterController myController;
@@ -78,13 +76,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private String player2Character;
     private ArrayList<Rectangle> squareArray;
     private int columns;
-    private int sliderHeight = 30;
-    private String p1NameTemp;
-    private String p2NameTemp;
-    private Node p1ImgTemp;
-    private Node p2ImgTemp;
-    private boolean soloVsAI;
-    private ColorAdjust blackout = new ColorAdjust();
+
+    private ArrayList<MediaPlayer> antiGarbageCollection;
 
 
     /**
@@ -92,14 +85,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        antiGarbageCollection = new ArrayList<>();
         //initialize array
         squareArray = new ArrayList<>();
 
         playBtn.setDisable(true);
-
-        //set effect for blacking out the player images
-        blackout.setBrightness(-1.0);
 
         if (I18N.currentLang.equals(I18N.GERMAN)) {
             backBtn.getStyleClass().add("zurueckBtn");
@@ -111,7 +101,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         //setup images (image size & number of playercolumns)
         final int characterSize = 150;
-        columns = 9;
+        columns = 10;
         createCharacterList(characterSize, columns);
 
         //init player default images & buttons
@@ -132,9 +122,14 @@ public class CharacterSelectionController implements Initializable, ControlledSc
      * @param character selected character
      */
     private void playSelectSound(String character) {
-        URL resource = getClass().getResource("/characters/" + character.toLowerCase() + "/select.mp3");
+        URL resource = getClass().getResource("/characters/" + character + "/select.mp3");
         Media select = new Media(resource.toString());
         MediaPlayer player = new MediaPlayer(select);
+        antiGarbageCollection.add(player);
+        player.setOnEndOfMedia(() -> {
+            player.dispose();
+            antiGarbageCollection.remove(player);
+        });
         player.play();
     }
 
@@ -144,7 +139,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
      * @param columns number of characters per row
      */
     private void createCharacterList(int characterSize, int columns) {
-        Image characterBg = new Image(getClass().getClassLoader().getResourceAsStream("img/gradient_orange.png"));
+        Image characterBg = new Image(getClass().getResourceAsStream("/img/gradient_orange.png"));
 
         //create the list of characters dynamically
         for (int i = 0, column = 0, row = -1; i < Character.characters.length; i++, column++) {
@@ -164,12 +159,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
             //character image
-            Image characterSrc = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + Character.characters[i] + "/avatar.png"));
-            ImageView characterImg = new ImageView(characterSrc);
+            Image characterSrc = new Image(getClass().getResourceAsStream("/characters/" + Character.characters[i] + "/avatar.png"));
+            ImageView characterImg= new ImageView(characterSrc);
             characterImg.setPreserveRatio(true);
             characterImg.setFitWidth(characterSize);
             characterImg.setFitHeight(characterSize - characterSize / 10);
-            characterImg.getStyleClass().set(0, "charImage"); //set styleClass to get a unique identifier
             characterImg.setSmooth(true);
             characterImg.setCache(true);
             GridPane.setHalignment(characterImg, HPos.CENTER);
@@ -194,13 +188,12 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             characterBgImg.addEventHandler(MouseEvent.MOUSE_ENTERED, mouseOverHandler);
             square.addEventHandler(MouseEvent.MOUSE_EXITED, mouseOutHandler);
 
-            //character name label
+
             Text t = new Text(Character.getLocalizedCharacterName(i));
             t.getStyleClass().add("characterText");
             GridPane.setHalignment(t, HPos.CENTER);
             t.setTranslateY(characterSize / 2);
 
-            //add all elements to the grid
             grid.add(characterBgImg, column, row);
             grid.add(characterImg, column, row);
             grid.add(square, column, row);
@@ -217,8 +210,6 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         int rowIndex = GridPane.getRowIndex(source);
 
         squareArray.get(colIndex+rowIndex*columns).setVisible(true);
-
-        event.consume();
     };
 
     /**
@@ -230,13 +221,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         int rowIndex = GridPane.getRowIndex(source);
 
         squareArray.get(colIndex+rowIndex*columns).setVisible(false);
-
-        event.consume();
     };
 
 
     /**
-     * event handler for clicking on a character image to load it as a selected player
+     * event handler for clicking on a character image
      */
     private EventHandler<MouseEvent> clickHandler = event -> {
         Node source = (Node)event.getSource() ;
@@ -246,10 +235,10 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         event.consume();
 
-        Image pImg = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + selectedCharacter.toLowerCase() + "/avatar.png"));
+        Image pImg = new Image(getClass().getResourceAsStream("/characters/" + selectedCharacter + "/avatar.png"));
 
 
-        if (player1Text.isVisible() && !selectedCharacter.equals(player2Character)) {
+        if (player1Text.isVisible() && !Objects.equals(selectedCharacter, player2Character)) {
             player1.setImage(pImg);
             player1Remove.setVisible(true);
             player1Remove.setDisable(false);
@@ -257,24 +246,12 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             playSelectSound(selectedCharacter);
             player1Text.setVisible(false);
 
-            //black out image
-            for (Node node : grid.getChildren()) {
-                if(GridPane.getRowIndex(node) == rowIndex && GridPane.getColumnIndex(node) == colIndex && node.getStyleClass().get(0).equals("charImage")) {
-                    node.setEffect(blackout);
-                    p1ImgTemp = node;
-                    break;
-                }
-            }
-
             //edit Name
             player1EditImg.setVisible(true);
             player1Name.setVisible(true);
             player1Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
-
-            //save player name and player img for later usage
-            p1NameTemp = player1Name.getText();
         } else {
-            if (player2Text.isVisible() && !selectedCharacter.equals(player1Character)) {
+            if (player2Text.isVisible() && !Objects.equals(selectedCharacter, player1Character)) {
                 player2.setImage(pImg);
                 player2Remove.setVisible(true);
                 player2Remove.setDisable(false);
@@ -282,29 +259,13 @@ public class CharacterSelectionController implements Initializable, ControlledSc
                 playSelectSound(selectedCharacter);
                 player2Text.setVisible(false);
 
-                //black out image
-                for (Node node : grid.getChildren()) {
-                    if(GridPane.getRowIndex(node) == rowIndex && GridPane.getColumnIndex(node) == colIndex && node.getStyleClass().get(0).equals("charImage")) {
-                        node.setEffect(blackout);
-                        p2ImgTemp = node;
-                        break;
-                    }
-                }
-
                 //edit Name
                 player2EditImg.setVisible(true);
                 player2Name.setVisible(true);
                 player2Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
-
-                //enable ai switch
-                aiHumanImg.setVisible(true);
-
-                //save player name to string
-                p2NameTemp = player2Name.getText();
             }
         }
 
-        event.consume();
         //enable/ disable play button
         checkDisablePlayBtn();
     };
@@ -317,48 +278,27 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private void deletePlayer(ActionEvent event) {
         Button source = (Button)event.getSource();
 
-        //is it player 1 or 2 that should be deleted?
         if (source.getTranslateX() < 0) {
-            //it is player 1
             player1Text.setVisible(true);
             player1.setImage(null);
             player1Character=null;
 
             //hide name edit
-            player1EditImg.getStyleClass().set(1, "editImg");
             player1EditImg.setVisible(false);
+            player1EditImg.getStyleClass().set(1, "editImg");
             player1NameEdit.setVisible(false);
             player1Name.setVisible(false);
 
-            //"unblack" player
-            p1ImgTemp.setEffect(null);
         } else {
-            //it is player 2
             player2Text.setVisible(true);
             player2.setImage(null);
             player2Character=null;
 
             //hide name edit
-            player2EditImg.getStyleClass().set(1, "editImg");
             player2EditImg.setVisible(false);
+            player2EditImg.getStyleClass().set(1, "editImg");
             player2NameEdit.setVisible(false);
             player2Name.setVisible(false);
-
-            //"unblack" player
-            p2ImgTemp.setEffect(null);
-
-            //move label/ edit/ editImg back to its place
-            if (aiHumanImg.getStyleClass().get(1).equals("ai")) {
-                player2NameEdit.setTranslateY(player2NameEdit.getTranslateY() + sliderHeight);
-                player2Name.setTranslateY(player2Name.getTranslateY() + sliderHeight);
-                player2EditImg.setTranslateY(player2EditImg.getTranslateY() + sliderHeight);
-            }
-
-            //hide turntime spinner + label, deactivate button
-            aiHumanImg.setVisible(false);
-            aiHumanImg.getStyleClass().set(1, "human");
-            turnTime.setVisible(false);
-            turnTimeLabel.setVisible(false);
         }
         source.setVisible(false);
         source.setDisable(true);
@@ -379,9 +319,9 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         if (source.getStyleClass().get(1).equals("editImg")) {
             //started editing
             source.getStyleClass().set(1, "editImgCheck");
-            //check for player1/ player2, change visibility from editText->visible ,Text->invisible and copy over the values from Text->editText
 
-            if (source.getId().equals(player1EditImg.getId())) {
+            //check for player1/ player2, change visibility from editText->visible ,Text->invisible and copy over the values from Text->editText
+            if (source.getTranslateX() < 0) {
                 player1NameEdit.setVisible(true);
                 player1Name.setVisible(false);
                 player1NameEdit.setText(player1Name.getText());
@@ -395,7 +335,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             source.getStyleClass().set(1, "editImg");
 
             //check for player1/ player2, change visibility from editText->invisible ,Text->visible and copy over the values from editText->Text
-            if (source.getId().equals(player1EditImg.getId())) {
+            if (source.getTranslateX() < 0) {
                 player1NameEdit.setVisible(false);
                 player1Name.setVisible(true);
                 player1Name.setText(player1NameEdit.getText());
@@ -405,8 +345,6 @@ public class CharacterSelectionController implements Initializable, ControlledSc
                 player2Name.setText(player2NameEdit.getText());
             }
         }
-
-        event.consume();
     }
 
     /**
@@ -418,49 +356,6 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         } else {
             playBtn.setDisable(true);
         }
-    }
-
-    @FXML
-    private void aiSwitch(MouseEvent event) {
-        Node source = (Node)event.getSource();
-
-        if (source.getStyleClass().get(1).equals("ai")) {
-            //switch to human icon
-            source.getStyleClass().set(1, "human");
-
-            //set turntime spinner invisible
-            turnTime.setVisible(false);
-            turnTimeLabel.setVisible(false);
-
-            //move p2NameLabel down
-            player2NameEdit.setTranslateY(player2NameEdit.getTranslateY() + sliderHeight);
-            player2Name.setTranslateY(player2Name.getTranslateY() + sliderHeight);
-            player2EditImg.setTranslateY(player2EditImg.getTranslateY() + sliderHeight);
-
-            //change name to add "[AI]"
-            player2Name.setText(p2NameTemp);
-
-        } else {
-            //switch to ai icon
-            source.getStyleClass().set(1, "ai");
-
-            //set turntime spinner visible
-            turnTime.setVisible(true);
-            turnTimeLabel.setVisible(true);
-
-            //move p2NameLabel up
-            player2NameEdit.setTranslateY(player2NameEdit.getTranslateY() - sliderHeight);
-            player2Name.setTranslateY(player2Name.getTranslateY() - sliderHeight);
-            player2EditImg.setTranslateY(player2EditImg.getTranslateY() - sliderHeight);
-
-            //change name to add "[AI]"
-            player2Name.setText("[" + I18N.getString("ai") + "]" + p2NameTemp);
-
-            //set vs ai
-            soloVsAI = true;
-        }
-
-        event.consume();
     }
 
 
@@ -476,30 +371,19 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         if (player1Character!=null && player2Character!=null) {
 
-            //set player names & theri corresponding characters
             SessionVars.ourPlayerName = player1Name.getText();
             MainController.p1Character = player1Character;
             SessionVars.opponentPlayerName = player2Name.getText();
             MainController.p2Character = player2Character;
 
-            //set playmode
-            if (soloVsAI) {
-                SessionVars.soloVsAI(true);
-            }
-            //set turn time
-            SessionVars.timeoutThresholdInMillis = Long.valueOf(turnTime.getValue());
-
             myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);
         }
-
-        event.consume();
     }
 
     @FXML
     private void back(MouseEvent event)/*throws IOException*/ {
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
 
-        event.consume();
     }
 
 

@@ -14,6 +14,7 @@ import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -39,11 +40,14 @@ public class StatisticsController implements Initializable, ControlledScreen {
     private NumberAxis turnsPerSetChartxAxis;
     @FXML
     private NumberAxis turnsPerSetChartyAxis;
+    @FXML
+    private Button backBtn;
 
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        backBtn.setText(I18N.getString("back"));
         int wonGames = 0;
         int lostGames = 0;
         int wonSets = 0;
@@ -65,7 +69,7 @@ public class StatisticsController implements Initializable, ControlledScreen {
 
                 for (SetModel set :
                         SetModel.getSets(App.db, gM.getGameUUID())) {
-                    if (set.getWeWon().equals("draw")) {
+                    if (set.getWeWon().equals(I18N.getString("draw"))) {
                         drawSets++;
                     }
                     int turnsInSet = 0;

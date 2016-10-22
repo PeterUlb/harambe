@@ -31,7 +31,7 @@
 
     <HBox spacing="10" alignment="BOTTOM_LEFT" GridPane.columnIndex="0"
           GridPane.rowIndex="2">
-        <Button text="back" onAction="#backToReplayScreen"/>
+        <Button fx:id="backBtn" onAction="#backToReplayScreen"/>
     </HBox>
 
 

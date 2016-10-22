@@ -60,7 +60,7 @@ public class Player {
 
     //methods for playerImg
     private void setImg(String character) {
-        this.imgLocation = "characters/" + character.toLowerCase() + "/avatar.png";
+        this.imgLocation = "/characters/" + character + "/avatar.png";
     }
 
     public String getImgLocation() {
@@ -74,7 +74,7 @@ public class Player {
      * @param character character the player chose to play with (e.g. Harambe)
      */
     private void setChipImgLocation(String character) {
-        this.chipImgLocation = "characters/" + character.toLowerCase() + "/chip.png";
+        this.chipImgLocation = "/characters/" + character + "/chip.png";
     }
 
     public String getChipImgLocation() {
@@ -105,8 +105,8 @@ public class Player {
      * @param character character the player chose to play with (e.g. Harambe)
      */
     private void setSounds(String character) {
-        this.dropSoundLocation = "/characters/" + character.toLowerCase() + "/drop.mp3";
-        this.winSoundLocation = "/characters/" + character.toLowerCase() + "/win.mp3";
+        this.dropSoundLocation = "/characters/" + character + "/drop.mp3";
+        this.winSoundLocation = "/characters/" + character + "/win.mp3";
     }
 
     public void playDropSound() {
