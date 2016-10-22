@@ -244,6 +244,16 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             //character name label
             Text t = new Text(Character.getLocalizedCharacterName(i));
             t.getStyleClass().add("characterText");
+            if (t.getText().length() > 9 && t.getText().length() <= 10) {
+                t.setStyle("-fx-font-size: 30");
+            } else if (t.getText().length() > 10 && t.getText().length() <= 13) {
+                t.setStyle("-fx-font-size: 25");
+            } else if (t.getText().length() > 13 && t.getText().length() <= 15) {
+                t.setStyle("-fx-font-size: 20");
+            } else if (t.getText().length() > 15){
+                t.setText(Character.getLocalizedCharacterName(i).substring(0, 13) + "...");
+                t.setStyle("-fx-font-size: 20");
+            }
             GridPane.setHalignment(t, HPos.CENTER);
             t.setTranslateY(characterSize / 2);
 
@@ -317,6 +327,16 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             player1EditImg.setVisible(true);
             player1Name.setVisible(true);
             player1Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
+            if (player1Name.getText().length() > 9 && player1Name.getText().length() <= 10) {
+                player1Name.setStyle("-fx-font-size: 44");
+            } else if (player1Name.getText().length() > 10 && player1Name.getText().length() <= 13) {
+                player1Name.setStyle("-fx-font-size: 37");
+            } else if (player1Name.getText().length() > 13 && player1Name.getText().length() <= 15) {
+                player1Name.setStyle("-fx-font-size: 30");
+            } else if (player1Name.getText().length() > 15){
+                player1Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns).substring(0, 13) + "...");
+                player1Name.setStyle("-fx-font-size: 23");
+            }
 
             //save player name and player img for later usage
             p1NameTemp = player1Name.getText();
@@ -342,6 +362,17 @@ public class CharacterSelectionController implements Initializable, ControlledSc
                 player2EditImg.setVisible(true);
                 player2Name.setVisible(true);
                 player2Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
+                if (player2Name.getText().length() > 9 && player2Name.getText().length() <= 10) {
+                    player2Name.setStyle("-fx-font-size: 44");
+                } else if (player2Name.getText().length() > 10 && player2Name.getText().length() <= 13) {
+                    player2Name.setStyle("-fx-font-size: 37");
+                } else if (player2Name.getText().length() > 13 && player2Name.getText().length() <= 15) {
+                    player2Name.setStyle("-fx-font-size: 30");
+                } else if (player2Name.getText().length() > 15){
+                    player2Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns).substring(0, 13) + "...");
+                    player2Name.setStyle("-fx-font-size: 23");
+                }
+
 
                 //enable ai switch
                 aiHumanImg.setVisible(true);

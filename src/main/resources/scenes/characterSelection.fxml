@@ -16,7 +16,7 @@
           <ImageView fx:id="player1" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="-400"/>
 
             <Text fx:id="player2Text" styleClass="selectText" translateX="400" translateY="-200" />
-          <ImageView fx:id="player2" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="400"/>
+          <ImageView fx:id="player2" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="400" scaleX="-1"/>
         </StackPane>
 
         <GridPane fx:id="grid" alignment="center" hgap="3" translateY="-75" vgap="30"/>
