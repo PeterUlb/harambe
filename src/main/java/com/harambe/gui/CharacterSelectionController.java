@@ -3,6 +3,7 @@ package com.harambe.gui;
 import com.harambe.App;
 import com.harambe.game.SessionVars;
 import com.harambe.tools.I18N;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -68,13 +70,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     @FXML
     private Text turnTimeLabel;
     @FXML
-    private ImageView ai;
-    @FXML
-    private ImageView human;
-    @FXML
-    private Group player1NameGroup;
-    @FXML
-    private Group player2NameGroup;
+    private ImageView aiHumanImg;
 
 
     private MasterController myController;
@@ -82,7 +78,13 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private String player2Character;
     private ArrayList<Rectangle> squareArray;
     private int columns;
+    private int sliderHeight = 30;
+    private String p1NameTemp;
+    private String p2NameTemp;
+    private Node p1ImgTemp;
+    private Node p2ImgTemp;
     private boolean soloVsAI;
+    private ColorAdjust blackout = new ColorAdjust();
 
 
     /**
@@ -95,6 +97,9 @@ public class CharacterSelectionController implements Initializable, ControlledSc
         squareArray = new ArrayList<>();
 
         playBtn.setDisable(true);
+
+        //set effect for blacking out the player images
+        blackout.setBrightness(-1.0);
 
         if (I18N.currentLang.equals(I18N.GERMAN)) {
             backBtn.getStyleClass().add("zurueckBtn");
@@ -160,10 +165,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
             //character image
             Image characterSrc = new Image(getClass().getClassLoader().getResourceAsStream("characters/" + Character.characters[i] + "/avatar.png"));
-            ImageView characterImg= new ImageView(characterSrc);
+            ImageView characterImg = new ImageView(characterSrc);
             characterImg.setPreserveRatio(true);
             characterImg.setFitWidth(characterSize);
             characterImg.setFitHeight(characterSize - characterSize / 10);
+            characterImg.getStyleClass().set(0, "charImage"); //set styleClass to get a unique identifier
             characterImg.setSmooth(true);
             characterImg.setCache(true);
             GridPane.setHalignment(characterImg, HPos.CENTER);
@@ -251,10 +257,22 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             playSelectSound(selectedCharacter);
             player1Text.setVisible(false);
 
+            //black out image
+            for (Node node : grid.getChildren()) {
+                if(GridPane.getRowIndex(node) == rowIndex && GridPane.getColumnIndex(node) == colIndex && node.getStyleClass().get(0).equals("charImage")) {
+                    node.setEffect(blackout);
+                    p1ImgTemp = node;
+                    break;
+                }
+            }
+
             //edit Name
             player1EditImg.setVisible(true);
             player1Name.setVisible(true);
             player1Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
+
+            //save player name and player img for later usage
+            p1NameTemp = player1Name.getText();
         } else {
             if (player2Text.isVisible() && !selectedCharacter.equals(player1Character)) {
                 player2.setImage(pImg);
@@ -264,13 +282,25 @@ public class CharacterSelectionController implements Initializable, ControlledSc
                 playSelectSound(selectedCharacter);
                 player2Text.setVisible(false);
 
+                //black out image
+                for (Node node : grid.getChildren()) {
+                    if(GridPane.getRowIndex(node) == rowIndex && GridPane.getColumnIndex(node) == colIndex && node.getStyleClass().get(0).equals("charImage")) {
+                        node.setEffect(blackout);
+                        p2ImgTemp = node;
+                        break;
+                    }
+                }
+
                 //edit Name
                 player2EditImg.setVisible(true);
                 player2Name.setVisible(true);
                 player2Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
 
                 //enable ai switch
-                ai.setDisable(false);
+                aiHumanImg.setVisible(true);
+
+                //save player name to string
+                p2NameTemp = player2Name.getText();
             }
         }
 
@@ -296,8 +326,12 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
             //hide name edit
             player1EditImg.getStyleClass().set(1, "editImg");
-            player1NameGroup.setVisible(false);
+            player1EditImg.setVisible(false);
+            player1NameEdit.setVisible(false);
+            player1Name.setVisible(false);
 
+            //"unblack" player
+            p1ImgTemp.setEffect(null);
         } else {
             //it is player 2
             player2Text.setVisible(true);
@@ -306,10 +340,25 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
             //hide name edit
             player2EditImg.getStyleClass().set(1, "editImg");
-            player2NameGroup.setVisible(false);
+            player2EditImg.setVisible(false);
+            player2NameEdit.setVisible(false);
+            player2Name.setVisible(false);
 
-            //hide ai slider & deactivate button
-            ai.setDisable(true);
+            //"unblack" player
+            p2ImgTemp.setEffect(null);
+
+            //move label/ edit/ editImg back to its place
+            if (aiHumanImg.getStyleClass().get(1).equals("ai")) {
+                player2NameEdit.setTranslateY(player2NameEdit.getTranslateY() + sliderHeight);
+                player2Name.setTranslateY(player2Name.getTranslateY() + sliderHeight);
+                player2EditImg.setTranslateY(player2EditImg.getTranslateY() + sliderHeight);
+            }
+
+            //hide turntime spinner + label, deactivate button
+            aiHumanImg.setVisible(false);
+            aiHumanImg.getStyleClass().set(1, "human");
+            turnTime.setVisible(false);
+            turnTimeLabel.setVisible(false);
         }
         source.setVisible(false);
         source.setDisable(true);
@@ -372,36 +421,43 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     }
 
     @FXML
-    private void AISwitch(MouseEvent event) {
+    private void aiSwitch(MouseEvent event) {
         Node source = (Node)event.getSource();
-        int sliderHeight = 30;
 
         if (source.getStyleClass().get(1).equals("ai")) {
-            //set boolean value to ai
-            soloVsAI = true;
-
-            //set ai slider visible
-            turnTime.setVisible(true);
-            turnTimeLabel.setVisible(true);
-
             //switch to human icon
             source.getStyleClass().set(1, "human");
 
-            //move p2NameLabel up
-            player2NameGroup.setTranslateY(player2NameGroup.getTranslateY() - sliderHeight);
-            player2EditImg.setTranslateY(player2EditImg.getTranslateY() - sliderHeight);
-        } else {
-            //set ai slider invisible
+            //set turntime spinner invisible
             turnTime.setVisible(false);
             turnTimeLabel.setVisible(false);
 
-            //disable human switch
-            human.setDisable(true);
-            ai.setDisable(false);
-
             //move p2NameLabel down
-            player2NameGroup.setTranslateY(player2NameGroup.getTranslateY() + sliderHeight);
+            player2NameEdit.setTranslateY(player2NameEdit.getTranslateY() + sliderHeight);
+            player2Name.setTranslateY(player2Name.getTranslateY() + sliderHeight);
             player2EditImg.setTranslateY(player2EditImg.getTranslateY() + sliderHeight);
+
+            //change name to add "[AI]"
+            player2Name.setText(p2NameTemp);
+
+        } else {
+            //switch to ai icon
+            source.getStyleClass().set(1, "ai");
+
+            //set turntime spinner visible
+            turnTime.setVisible(true);
+            turnTimeLabel.setVisible(true);
+
+            //move p2NameLabel up
+            player2NameEdit.setTranslateY(player2NameEdit.getTranslateY() - sliderHeight);
+            player2Name.setTranslateY(player2Name.getTranslateY() - sliderHeight);
+            player2EditImg.setTranslateY(player2EditImg.getTranslateY() - sliderHeight);
+
+            //change name to add "[AI]"
+            player2Name.setText("[" + I18N.getString("ai") + "]" + p2NameTemp);
+
+            //set vs ai
+            soloVsAI = true;
         }
 
         event.consume();
@@ -431,7 +487,6 @@ public class CharacterSelectionController implements Initializable, ControlledSc
                 SessionVars.soloVsAI(true);
             }
             //set turn time
-            System.out.println(turnTime.getValue());
             SessionVars.timeoutThresholdInMillis = Long.valueOf(turnTime.getValue());
 
             myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);

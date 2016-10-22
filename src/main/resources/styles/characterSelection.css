@@ -80,7 +80,6 @@
 .editText {
     -fx-font-size: 20px;
     -fx-font-family: impact;
-    -fx-fill: #fefefe;
 }
 
 .editImg {
@@ -109,4 +108,11 @@
     -fx-cursor: hand;
 }
 
+.turnTimeLabel {
+    -fx-font-size: 20px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 0.5;
+}
 
