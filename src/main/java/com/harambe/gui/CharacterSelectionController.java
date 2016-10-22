@@ -481,7 +481,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         if (player1Character!=null && player2Character!=null) {
 
-            //set player names & theri corresponding characters
+            //set player names & their corresponding characters
             SessionVars.ourPlayerName = player1Name.getText();
             MainController.p1Character = player1Character;
             SessionVars.opponentPlayerName = player2Name.getText();
@@ -492,7 +492,20 @@ public class CharacterSelectionController implements Initializable, ControlledSc
                 SessionVars.soloVsAI(true);
             }
             //set turn time
-            SessionVars.timeoutThresholdInMillis = Long.valueOf(turnTime.getValue());
+            try {
+                // workaround since the spinner value needs an enter input after manual value setting. So we get the editor value...
+                SpinnerValueFactory.IntegerSpinnerValueFactory x = (SpinnerValueFactory.IntegerSpinnerValueFactory) turnTime.getValueFactory();
+                long turnTimeValue = Long.parseLong(turnTime.getEditor().getText());
+                if (turnTimeValue < x.getMin()) {
+                    SessionVars.timeoutThresholdInMillis = x.getMin();
+                } else if (turnTimeValue > x.getMax()) {
+                    SessionVars.timeoutThresholdInMillis = x.getMax();
+                } else {
+                    SessionVars.timeoutThresholdInMillis = Long.parseLong(turnTime.getEditor().getText());
+                }
+            } catch (NumberFormatException e) {
+                SessionVars.timeoutThresholdInMillis = 2000; // set default
+            }
 
             myController.loadAndSetScreen(App.MAIN_SCREEN, App.MAIN_SCREEN_FILE, true);
         }
