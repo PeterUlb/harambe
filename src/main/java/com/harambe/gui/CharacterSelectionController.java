@@ -360,7 +360,9 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
                 //enable ai switch
-                aiHumanImg.setVisible(true);
+                if (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
+                    aiHumanImg.setVisible(true);
+                }
 
                 //save player name to string
                 p2NameTemp = player2Name.getText();
