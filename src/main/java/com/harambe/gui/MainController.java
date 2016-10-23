@@ -556,6 +556,10 @@ public class MainController implements Initializable, ControlledScreen {
         player1Name.setText(p1.getName());
         player2Name.setText(p2.getName());
 
+        //adaptive font size
+        changePlayerFontSize(player1Name);
+        changePlayerFontSize(player2Name);
+
         //init Player1 Chips
         Image p1Chip = new Image(getClass().getResourceAsStream(p1.getChipImgLocation()));
         p1ChipView.setImage(p1Chip);
@@ -1051,5 +1055,18 @@ public class MainController implements Initializable, ControlledScreen {
     public void redrawScore() {
         player1Score.setText(String.valueOf(p1.getScore()));
         player2Score.setText(String.valueOf(p2.getScore()));
+    }
+
+    private void changePlayerFontSize(Text playerNameText) {
+        int length = playerNameText.getText().length();
+        if (length > 9 && length <= 10) {
+            playerNameText.setStyle("-fx-font-size: 44");
+        } else if (length > 10 && length <= 13) {
+            playerNameText.setStyle("-fx-font-size: 37");
+        } else if (length > 13 && length <= 15) {
+            playerNameText.setStyle("-fx-font-size: 30");
+        } else if (length > 15){
+            playerNameText.setStyle("-fx-font-size: 23");
+        }
     }
 }

@@ -244,16 +244,19 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             //character name label
             Text t = new Text(Character.getLocalizedCharacterName(i));
             t.getStyleClass().add("characterText");
-            if (t.getText().length() > 9 && t.getText().length() <= 10) {
+            
+            int length = t.getText().length();
+            if (length <= 10) {
                 t.setStyle("-fx-font-size: 30");
-            } else if (t.getText().length() > 10 && t.getText().length() <= 13) {
+            } else if (length > 10 && length <= 13) {
                 t.setStyle("-fx-font-size: 25");
-            } else if (t.getText().length() > 13 && t.getText().length() <= 15) {
+            } else if (length > 13 && length <= 15) {
                 t.setStyle("-fx-font-size: 20");
-            } else if (t.getText().length() > 15){
+            } else if (length > 15){
                 t.setText(Character.getLocalizedCharacterName(i).substring(0, 13) + "...");
                 t.setStyle("-fx-font-size: 20");
             }
+            
             GridPane.setHalignment(t, HPos.CENTER);
             t.setTranslateY(characterSize / 2);
 
@@ -327,16 +330,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             player1EditImg.setVisible(true);
             player1Name.setVisible(true);
             player1Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
-            if (player1Name.getText().length() > 9 && player1Name.getText().length() <= 10) {
-                player1Name.setStyle("-fx-font-size: 44");
-            } else if (player1Name.getText().length() > 10 && player1Name.getText().length() <= 13) {
-                player1Name.setStyle("-fx-font-size: 37");
-            } else if (player1Name.getText().length() > 13 && player1Name.getText().length() <= 15) {
-                player1Name.setStyle("-fx-font-size: 30");
-            } else if (player1Name.getText().length() > 15){
-                player1Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns).substring(0, 13) + "...");
-                player1Name.setStyle("-fx-font-size: 23");
-            }
+            changeSelectionFontSize(player1Name);
 
             //save player name and player img for later usage
             p1NameTemp = player1Name.getText();
@@ -362,16 +356,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
                 player2EditImg.setVisible(true);
                 player2Name.setVisible(true);
                 player2Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
-                if (player2Name.getText().length() > 9 && player2Name.getText().length() <= 10) {
-                    player2Name.setStyle("-fx-font-size: 44");
-                } else if (player2Name.getText().length() > 10 && player2Name.getText().length() <= 13) {
-                    player2Name.setStyle("-fx-font-size: 37");
-                } else if (player2Name.getText().length() > 13 && player2Name.getText().length() <= 15) {
-                    player2Name.setStyle("-fx-font-size: 30");
-                } else if (player2Name.getText().length() > 15){
-                    player2Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns).substring(0, 13) + "...");
-                    player2Name.setStyle("-fx-font-size: 23");
-                }
+                changeSelectionFontSize(player2Name);
 
 
                 //enable ai switch
@@ -518,6 +503,8 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             //change name to add "[AI]"
             player2Name.setText(p2NameTemp);
 
+            changeSelectionFontSize(player2Name);
+
         } else {
             //switch to ai icon
             source.getStyleClass().set(1, "ai");
@@ -534,11 +521,28 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             //change name to add "[AI]"
             player2Name.setText("[" + I18N.getString("ai") + "]" + p2NameTemp);
 
+            changeSelectionFontSize(player2Name);
+
             //set vs ai
             soloVsAI = true;
         }
 
         event.consume();
+    }
+
+    private void changeSelectionFontSize(Text playername) {
+        int length = playername.getText().length();
+        if (length <= 9) {
+            playername.setStyle("-fx-font-size: 50");
+        } else if (length > 9 && length <= 10) {
+            playername.setStyle("-fx-font-size: 44");
+        } else if (length > 10 && length <= 13) {
+            playername.setStyle("-fx-font-size: 37");
+        } else if (length > 13 && length <= 15) {
+            playername.setStyle("-fx-font-size: 30");
+        } else if (length > 15){
+            playername.setStyle("-fx-font-size: 23");
+        }
     }
 
 
