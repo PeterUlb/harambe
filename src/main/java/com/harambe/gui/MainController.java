@@ -128,6 +128,7 @@ public class MainController implements Initializable, ControlledScreen {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        Logger.debug("Max: " + SessionVars.timeoutThresholdInMillis);
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
@@ -234,7 +235,7 @@ public class MainController implements Initializable, ControlledScreen {
             ourPlayer = p2; // keep track who we are :)
             opponentPlayer = p1;
             miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + ourPlayer.getSymbol());
             if (SessionVars.getUseFileInterface()) {
                 App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false, this);
             } else if (SessionVars.getUsePusherInterface()) {
@@ -250,7 +251,7 @@ public class MainController implements Initializable, ControlledScreen {
             ourPlayer = p1; // keep track who we are :)
             opponentPlayer = p2;
             miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + ourPlayer.getSymbol());
             if (SessionVars.getUseFileInterface()) {
                 App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true, this);
             } else if (SessionVars.getUsePusherInterface()) {
@@ -295,7 +296,7 @@ public class MainController implements Initializable, ControlledScreen {
         if (activePlayer != ourPlayer) {
             // AI starts, so first turn is AI
             // initialize MiniMax in offline mode
-            Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + opponentPlayer.getSymbol());
             long start = System.nanoTime();
             fireButton(miniMax.getBestMove(board));
             Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");

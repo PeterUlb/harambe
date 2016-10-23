@@ -332,6 +332,14 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             player1Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
             changeSelectionFontSize(player1Name);
 
+            // TODO remove this if statement when UI is optimized for online games 
+            if (SessionVars.getUseFileInterface() || SessionVars.getUsePusherInterface()) {
+                turnTime.setVisible(true);
+                turnTime.setTranslateX(60);
+                turnTimeLabel.setVisible(true);
+                turnTimeLabel.setTranslateX(-80);
+            }
+
             //save player name and player img for later usage
             p1NameTemp = player1Name.getText();
         } else {
@@ -360,6 +368,7 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
                 //enable ai switch
+                // TODO remove this if statement when UI is optimized for online games
                 if (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                     aiHumanImg.setVisible(true);
                 }
@@ -412,18 +421,21 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             //"unblack" player
             p2ImgTemp.setEffect(null);
 
-            //move label/ edit/ editImg back to its place
-            if (aiHumanImg.getStyleClass().get(1).equals("ai")) {
-                player2NameEdit.setTranslateY(player2NameEdit.getTranslateY() + sliderHeight);
-                player2Name.setTranslateY(player2Name.getTranslateY() + sliderHeight);
-                player2EditImg.setTranslateY(player2EditImg.getTranslateY() + sliderHeight);
-            }
+            // TODO remove this if statement when UI is optimized for online games
+            if (!SessionVars.getUsePusherInterface() && !SessionVars.getUseFileInterface()) {
+                //move label/ edit/ editImg back to its place
+                if (aiHumanImg.getStyleClass().get(1).equals("ai")) {
+                    player2NameEdit.setTranslateY(player2NameEdit.getTranslateY() + sliderHeight);
+                    player2Name.setTranslateY(player2Name.getTranslateY() + sliderHeight);
+                    player2EditImg.setTranslateY(player2EditImg.getTranslateY() + sliderHeight);
+                }
 
-            //hide turntime spinner + label, deactivate button
-            aiHumanImg.setVisible(false);
-            aiHumanImg.getStyleClass().set(1, "human");
-            turnTime.setVisible(false);
-            turnTimeLabel.setVisible(false);
+                //hide turntime spinner + label, deactivate button
+                aiHumanImg.setVisible(false);
+                aiHumanImg.getStyleClass().set(1, "human");
+                turnTime.setVisible(false);
+                turnTimeLabel.setVisible(false);
+            }
         }
         source.setVisible(false);
         source.setDisable(true);
