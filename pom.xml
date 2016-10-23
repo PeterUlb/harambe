@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.harambe</groupId>
-  <artifactId>4GA</artifactId>
+  <artifactId>harambe-agent</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>4GA</name>
+  <name>harambe-agent</name>
   <url>http://maven.apache.org</url>
 
   <properties>
