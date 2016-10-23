@@ -500,10 +500,11 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             player2Name.setTranslateY(player2Name.getTranslateY() + sliderHeight);
             player2EditImg.setTranslateY(player2EditImg.getTranslateY() + sliderHeight);
 
-            //change name to add "[AI]"
             player2Name.setText(p2NameTemp);
 
             changeSelectionFontSize(player2Name);
+
+            soloVsAI = false;
 
         } else {
             //switch to ai icon
