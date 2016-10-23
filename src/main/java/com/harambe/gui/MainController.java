@@ -752,7 +752,11 @@ public class MainController implements Initializable, ControlledScreen {
         //chip drop transition/ animation
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(imgView);
-        trans.setDuration(new Duration(100));
+        if (SessionVars.timeoutThresholdInMillis >= 100) {
+            trans.setDuration(new Duration(100));
+        } else {
+            trans.setDuration(new Duration(SessionVars.timeoutThresholdInMillis));
+        }
 
         //move chip to clickLocation
         double startPos = -410f;
