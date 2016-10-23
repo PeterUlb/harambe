@@ -28,6 +28,14 @@
     -fx-stroke-width: 1;
 }
 
+.playerNameRed {
+    -fx-fill: red;
+}
+
+.playerNameGreen {
+    -fx-fill: green;
+}
+
 .playerImg {
     -fx-effect: dropshadow(three-pass-box, #222222 , 1, 0.5, -5, 5);
 }

@@ -229,8 +229,8 @@ public class MainController implements Initializable, ControlledScreen {
             // we are 'X', so right side on the UI
             p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
             p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
-            player2Name.setStyle("-fx-fill: green");
-            player1Name.setStyle("-fx-fill: red");
+            player2Name.getStyleClass().add("playerNameGreen");
+            player1Name.getStyleClass().add("playerNameRed");
             ourPlayer = p2; // keep track who we are :)
             opponentPlayer = p1;
             miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
@@ -245,8 +245,8 @@ public class MainController implements Initializable, ControlledScreen {
             // we are 'O', so left side on the UI
             p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
             p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
-            player1Name.setStyle("-fx-fill: green");
-            player2Name.setStyle("-fx-fill: red");
+            player1Name.getStyleClass().add("playerNameGreen");
+            player2Name.getStyleClass().add("playerNameRed");
             ourPlayer = p1; // keep track who we are :)
             opponentPlayer = p2;
             miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
