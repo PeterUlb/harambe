@@ -128,7 +128,7 @@ public class StatisticsController implements Initializable, ControlledScreen {
         turnsPerSetChartxAxis.setLabel(I18N.getString("set.number"));
 
         turnsPerSetChartyAxis.setLowerBound(0);
-        turnsPerSetChartyAxis.setUpperBound(Collections.max(turnNumbers)); // max turns played in all sets
+        turnsPerSetChartyAxis.setUpperBound((double) Collections.max(turnNumbers)); // max turns played in all sets
         turnsPerSetChartyAxis.setTickUnit(1);
         turnsPerSetChartyAxis.setAutoRanging(false);
         turnsPerSetChartyAxis.setMinorTickVisible(false);
