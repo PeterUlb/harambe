@@ -7,21 +7,18 @@
 <?import javafx.scene.layout.*?>
 
 <StackPane fx:id="bg" styleClass="bg" stylesheets="/styles/main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.MainController">
-   <children>
-   
+
       <ImageView fx:id="bgAnim" translateX="-1000" translateY="100" />
    
       <StackPane fx:id="field" styleClass="field" stylesheets="/styles/main.css" xmlns="http://javafx.com/javafx/8">
-      <children>
       
              <ImageView fx:id="p1ImgView" styleClass="playerImg" translateX="-785.0" translateY="170.0" />
-             <ImageView fx:id="p2ImgView" styleClass="playerImg" translateX="785.0" translateY="170.0" />
+             <ImageView fx:id="p2ImgView" styleClass="playerImg" translateX="785.0" translateY="170.0" scaleX="-1" />
       
              <ImageView fx:id="asset1" translateX="-640" translateY="-250" />
              <ImageView fx:id="asset2" translateX="640" translateY="-250" />
       
              <StackPane fx:id="fg" styleClass="fg">
-         <children>
          
                     <Button fx:id="b0" onAction="#dropChip" onMouseEntered="#previewChip" onMouseExited="#erasePreviewChip" styleClass="column" text="Column 1" translateX="-450.0" />
                     <Button fx:id="b1" onAction="#dropChip" onMouseEntered="#previewChip" onMouseExited="#erasePreviewChip" styleClass="column" text="Column 2" translateX="-300.0" />
@@ -32,8 +29,8 @@
                     <Button fx:id="b6" onAction="#dropChip" onMouseEntered="#previewChip" onMouseExited="#erasePreviewChip" styleClass="column" text="Column 7" translateX="450.0" />
          
          
-                    <Text fx:id="player1Name" styleClass="playerName" translateX="-790.0" translateY="425.0" />
-                    <Text fx:id="player2Name" styleClass="playerName" translateX="790.0" translateY="425.0" />
+                    <Text fx:id="player1Name" styleClass="playerName" translateX="-750.0" translateY="425.0" />
+                    <Text fx:id="player2Name" styleClass="playerName" translateX="810.0" translateY="425.0" />
          
                     <Text fx:id="player1Score" styleClass="score" text="0" translateX="-200.0" translateY="-490.0" />
                     <Text fx:id="player2Score" styleClass="score" text="0" translateX="200.0" translateY="-490.0" />
@@ -42,13 +39,9 @@
          
                     <ImageView fx:id="p1ChipView" translateX="-890.0" translateY="425.0" />
                     <ImageView fx:id="p2ChipView" translateX="680.0" translateY="425.0" />
-         </children>
              </StackPane>
-      </children>
    
    
       </StackPane>
-   </children>
-
 
 </StackPane>

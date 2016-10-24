@@ -12,7 +12,6 @@ import java.net.URL;
 public class Stage {
     private String imgLocation;
     private URL themeLocation;
-    public static MediaPlayer player; // prevent evil GC
 
     public Stage(String stageName) {
         setImg(stageName);
@@ -32,9 +31,9 @@ public class Stage {
     public String getRandomAssetImg() {
         int rndm = (int) Math.round(Math.random() * 2);
         switch (rndm) {
-            case 0: return "img/tukan.png";
-            case 1: return "img/monkey.png";
-            case 2: return "img/monkey_2.png";
+            case 0: return "/img/tukan.png";
+            case 1: return "/img/monkey.png";
+            case 2: return "/img/monkey_2.png";
         }
         return "";
     }
@@ -42,10 +41,10 @@ public class Stage {
     public String getBgAnimImg() {
         double rndm = Math.random();
         if (rndm > 0.9) {
-            return "img/swsd.png";
+            return "/img/swsd.png";
         }
         else {
-            return "img/seagull.png";
+            return "/img/seagull.png";
         }
     }
 

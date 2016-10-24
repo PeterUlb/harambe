@@ -29,8 +29,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -117,8 +115,8 @@ public class MainController implements Initializable, ControlledScreen {
 
     MasterController myController;
 
-    static Character p1Character = Character.characters[0];
-    static Character p2Character = Character.characters[1];
+    static String p1Character = Character.characters[0];
+    static String p2Character = Character.characters[1];
 
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -130,6 +128,7 @@ public class MainController implements Initializable, ControlledScreen {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        Logger.debug("Max: " + SessionVars.timeoutThresholdInMillis);
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
@@ -137,10 +136,7 @@ public class MainController implements Initializable, ControlledScreen {
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
 
         //take static music player and play mainTheme
-        MenuController.themePlayer.stop();
-        final URL resource = getClass().getResource("/audio/mainTheme.mp3");
-        MenuController.themePlayer = new MediaPlayer(new Media(resource.toString()));
-        MenuController.themePlayer.play();
+        App.themePlayer.playTheme("/audio/mainTheme.mp3");
 
         //init extra images
         Image asset1Img = new Image(stage.getRandomAssetImg());
@@ -157,7 +153,7 @@ public class MainController implements Initializable, ControlledScreen {
         winLocation = null;
         //get chip placement columns
         freeSpace = board.getFirstAvailableRow();
-        winCircleImg = new Image(getClass().getClassLoader().getResourceAsStream(("img/wincircle.png")));
+        winCircleImg = new Image(getClass().getResourceAsStream("/img/wincircle.png"));
 
         if (SessionVars.getUsePusherInterface() || SessionVars.getUseFileInterface()) {
             initOnlineGame();
@@ -200,7 +196,7 @@ public class MainController implements Initializable, ControlledScreen {
         ourPlayer = p1;
         opponentPlayer = p2;
 
-        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character.name(), p2Character.name());
+        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character, p2Character);
         try {
             characterModel.persistInDatabase(App.db);
         } catch (SQLException e) {
@@ -214,8 +210,8 @@ public class MainController implements Initializable, ControlledScreen {
         Logger.debug("ReplaySet: " + SessionVars.setNumber);
         try {
             CharacterModel characterModel = CharacterModel.getCharacter(App.db, SessionVars.currentGameUUID);
-            p1Character = Character.valueOf(characterModel.getOurCharacter());
-            p2Character = Character.valueOf(characterModel.getOpponentCharacter());
+            p1Character = characterModel.getOurCharacter();
+            p2Character = characterModel.getOpponentCharacter();
         } catch (SQLException e) {
             Logger.debug("Couldn't load characters for game " + SessionVars.currentGameUUID);
         }
@@ -234,12 +230,12 @@ public class MainController implements Initializable, ControlledScreen {
             // we are 'X', so right side on the UI
             p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
             p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
-            player2Name.setStyle("-fx-fill: green");
-            player1Name.setStyle("-fx-fill: red");
+            player2Name.getStyleClass().add("playerNameGreen");
+            player1Name.getStyleClass().add("playerNameRed");
             ourPlayer = p2; // keep track who we are :)
             opponentPlayer = p1;
             miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + ourPlayer.getSymbol());
             if (SessionVars.getUseFileInterface()) {
                 App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false, this);
             } else if (SessionVars.getUsePusherInterface()) {
@@ -250,12 +246,12 @@ public class MainController implements Initializable, ControlledScreen {
             // we are 'O', so left side on the UI
             p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
             p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
-            player1Name.setStyle("-fx-fill: green");
-            player2Name.setStyle("-fx-fill: red");
+            player1Name.getStyleClass().add("playerNameGreen");
+            player2Name.getStyleClass().add("playerNameRed");
             ourPlayer = p1; // keep track who we are :)
             opponentPlayer = p2;
             miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + ourPlayer.getSymbol());
             if (SessionVars.getUseFileInterface()) {
                 App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true, this);
             } else if (SessionVars.getUsePusherInterface()) {
@@ -263,7 +259,7 @@ public class MainController implements Initializable, ControlledScreen {
             }
             SessionVars.initializeNewGame(p1.getName(), p2.getName());
         }
-        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character.name(), p2Character.name());
+        CharacterModel characterModel = new CharacterModel(SessionVars.currentGameUUID, p1Character, p2Character);
         try {
             characterModel.persistInDatabase(App.db);
         } catch (SQLException e) {
@@ -300,7 +296,7 @@ public class MainController implements Initializable, ControlledScreen {
         if (activePlayer != ourPlayer) {
             // AI starts, so first turn is AI
             // initialize MiniMax in offline mode
-            Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + opponentPlayer.getSymbol());
             long start = System.nanoTime();
             fireButton(miniMax.getBestMove(board));
             Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");
@@ -334,7 +330,7 @@ public class MainController implements Initializable, ControlledScreen {
      * @param stage
      */
     private void playBgAnimation(Stage stage) {
-        Image bgAnimImg = new Image(getClass().getClassLoader().getResourceAsStream((stage.getBgAnimImg())));
+        Image bgAnimImg = new Image(getClass().getResourceAsStream(stage.getBgAnimImg()));
 
         bgAnim.setImage(bgAnimImg);
         bgAnim.setCache(true);
@@ -550,23 +546,23 @@ public class MainController implements Initializable, ControlledScreen {
     private void initPlayerVisuals(Player p1, Player p2) {
 
         //load image in ImageViewContainer for player 1
-        Image p1Img = new Image(getClass().getClassLoader().getResourceAsStream((p1.getImgLocation())));
+        Image p1Img = new Image(getClass().getResourceAsStream(p1.getImgLocation()));
         p1ImgView.setImage(p1Img);
 
         //load image in ImageViewContainer for player 2
-        Image p2Img = new Image(getClass().getClassLoader().getResourceAsStream((p2.getImgLocation())));
+        Image p2Img = new Image(getClass().getResourceAsStream(p2.getImgLocation()));
         p2ImgView.setImage(p2Img);
-        //mirror Image for player 2
-        p2ImgView.setScaleX(-1);
-
 
         //init Names
-        player1Name.setText(p1.getName() + " (" + p1.getSymbol() + ")");
-        player2Name.setText(p2.getName() + " (" + p2.getSymbol() + ")");
+        player1Name.setText(p1.getName());
+        player2Name.setText(p2.getName());
+
+        //adaptive font size
+        changePlayerFontSize(player1Name);
+        changePlayerFontSize(player2Name);
 
         //init Player1 Chips
-        Chip c1 = new Chip(p1.getChip());
-        Image p1Chip = new Image(getClass().getClassLoader().getResourceAsStream((c1.getImg())));
+        Image p1Chip = new Image(getClass().getResourceAsStream(p1.getChipImgLocation()));
         p1ChipView.setImage(p1Chip);
         p1ChipView.setFitWidth(64);
         p1ChipView.setPreserveRatio(true);
@@ -574,8 +570,7 @@ public class MainController implements Initializable, ControlledScreen {
         p1ChipView.setCache(true);
 
         //init Player2 Chips
-        Chip c2 = new Chip(p2.getChip());
-        Image p2Chip = new Image(getClass().getClassLoader().getResourceAsStream((c2.getImg())));
+        Image p2Chip = new Image(getClass().getResourceAsStream(p2.getChipImgLocation()));
         p2ChipView.setImage(p2Chip);
         p2ChipView.setFitWidth(64);
         p2ChipView.setPreserveRatio(true);
@@ -588,13 +583,16 @@ public class MainController implements Initializable, ControlledScreen {
         Button btn = (Button) event.getSource();
 
         //spawn preview chip
-        Chip chip = new Chip(activePlayer.getChip());
-        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream((chip.getImg())));
+        Image chipImg = new Image(getClass().getResourceAsStream(activePlayer.getChipImgLocation()));
         previewImg = new ImageView(chipImg);
         previewImg.setId("previewChip");
         previewImg.setStyle("-fx-opacity: .5");
         previewImg.setTranslateY(-500);
         previewImg.setTranslateX(btn.getTranslateX());
+        //TODO check if the graphics quality is still acceptable
+        previewImg.setPreserveRatio(true);
+        previewImg.setFitWidth(140);
+        previewImg.setFitHeight(150);
         bg.getChildren().add(previewImg);
     }
 
@@ -626,9 +624,12 @@ public class MainController implements Initializable, ControlledScreen {
         double x = btn.getTranslateX();
 
         //spawn chip
-        Chip chip = new Chip(activePlayer.getChip());
-        Image chipImg = new Image(getClass().getClassLoader().getResourceAsStream((chip.getImg())));
+        Image chipImg = new Image(getClass().getResourceAsStream(activePlayer.getChipImgLocation()));
         ImageView imgView = new ImageView(chipImg);
+        // TODO check if the graphics quality is still acceptable
+        imgView.setPreserveRatio(true);
+        imgView.setFitWidth(140);
+        imgView.setFitHeight(150);
 
         //store chip img
         chipArray.add(imgView);
@@ -657,9 +658,6 @@ public class MainController implements Initializable, ControlledScreen {
         persistDrop(column);
 
         checkForWin();
-
-        //end round
-        switchPlayer();
 
         if(SessionVars.getSoloVsAI() && activePlayer != ourPlayer && !setDone) {
             // user is playing against AI, so his turn is followed by an AI turn
@@ -755,7 +753,11 @@ public class MainController implements Initializable, ControlledScreen {
         //chip drop transition/ animation
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(imgView);
-        trans.setDuration(new Duration(100));
+        if (SessionVars.timeoutThresholdInMillis >= 100) {
+            trans.setDuration(new Duration(100));
+        } else {
+            trans.setDuration(new Duration(SessionVars.timeoutThresholdInMillis));
+        }
 
         //move chip to clickLocation
         double startPos = -410f;
@@ -804,7 +806,7 @@ public class MainController implements Initializable, ControlledScreen {
 
                 SetModel setModel;
 
-                if (activePlayer == p1) {
+                if (activePlayer == ourPlayer) {
                     setModel = new SetModel(SessionVars.currentGameUUID, SessionVars.setNumber, SessionVars.weStartSet, true);
                     winAnim(p1ImgView);
                 } else {
@@ -818,6 +820,13 @@ public class MainController implements Initializable, ControlledScreen {
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
+                }
+            } else {
+                // trigger online win animation
+                if (activePlayer == p1) {
+                    winAnim(p1ImgView);
+                } else {
+                    winAnim(p2ImgView);
                 }
             }
 
@@ -863,11 +872,7 @@ public class MainController implements Initializable, ControlledScreen {
             });
             thread.start();
 
-            if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
-                endGame();
-            } else {
-                endSet();
-            }
+            endGameReplayOrSet();
 
             //endGame or endSet for offline games
 
@@ -892,19 +897,31 @@ public class MainController implements Initializable, ControlledScreen {
                     e.printStackTrace();
                 }
 
-                if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
-                    endGame();
-                } else {
-                    endSet();
-                }
+                endGameReplayOrSet();
 
                 // TODO do something nicer here
                 Logger.event("a draw");
             }
 
             Platform.runLater(this::cleanBoardImages);
+        } else {
+            // no win, continue playing
+            // online: startPlayer after win is decided by the server
+            // offline: startPlayer after win is the one who didn't start last time (= endSet methdd)
+            switchPlayer();
         }
 
+    }
+
+    private void endGameReplayOrSet() {
+        if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
+            endGame();
+        } else if (SessionVars.getReplayMode()) {
+            myController.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE); //to start the main music again
+            myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);
+        } else {
+            endSet();
+        }
     }
 
     // TODO maybe rename
@@ -934,6 +951,10 @@ public class MainController implements Initializable, ControlledScreen {
             }
             // needed to verify that new moves can be done by the player
             setDone = false;
+        }
+
+        if (gameDone) {
+            myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
         }
     }
 
@@ -979,7 +1000,15 @@ public class MainController implements Initializable, ControlledScreen {
             disableAllButtons(true);
 
             if(!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
-                SessionVars.initializeNewSet(!SessionVars.weStartSet); // in offline game we have to initialize a new set here
+                // Set end means: the next set is started by the player who didnt start the last set
+                // online: done in Communicator
+                if (SessionVars.weStartSet) {
+                    activePlayer = opponentPlayer;
+                } else {
+                    activePlayer = ourPlayer;
+                }
+                SessionVars.weStartSet = !SessionVars.weStartSet;
+                SessionVars.initializeNewSet(SessionVars.weStartSet); // in offline game we have to initialize a new set here
                 // online games do it in the playOnlineSet method, since there is decided who starts
             }
 
@@ -1020,16 +1049,31 @@ public class MainController implements Initializable, ControlledScreen {
         alert.initOwner(App.stage);
         alert.setTitle(I18N.getString("information.dialog"));
         alert.setHeaderText(null);
-        alert.setContentText(MessageFormat.format(I18N.getString("player.?.wins.the.game"), activePlayer.getName()));
+        // do not trust active player at this point, after the last drop, active player is already set to the next one online
+        if (p1.getScore() >= 2) {
+            alert.setContentText(MessageFormat.format(I18N.getString("player.?.wins.the.game"), p1.getName()));
+        } else if (p2.getScore() >= 2) {
+            alert.setContentText(MessageFormat.format(I18N.getString("player.?.wins.the.game"), p2.getName()));
+        }
 
         alert.show();
-
-        MenuController.themePlayer.stop();
-        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
     public void redrawScore() {
         player1Score.setText(String.valueOf(p1.getScore()));
         player2Score.setText(String.valueOf(p2.getScore()));
+    }
+
+    private void changePlayerFontSize(Text playerNameText) {
+        int length = playerNameText.getText().length();
+        if (length > 9 && length <= 10) {
+            playerNameText.setStyle("-fx-font-size: 44");
+        } else if (length > 10 && length <= 13) {
+            playerNameText.setStyle("-fx-font-size: 37");
+        } else if (length > 13 && length <= 15) {
+            playerNameText.setStyle("-fx-font-size: 30");
+        } else if (length > 15){
+            playerNameText.setStyle("-fx-font-size: 23");
+        }
     }
 }

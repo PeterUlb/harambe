@@ -3,31 +3,35 @@ package com.harambe;
 
 import com.harambe.communication.ServerCommunication;
 import com.harambe.database.DatabaseConnector;
-import com.harambe.gui.MainController;
 import com.harambe.gui.MasterController;
-import com.harambe.gui.MenuController;
+import com.harambe.gui.ThemePlayer;
 import com.harambe.tools.I18N;
+import com.harambe.tools.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCharacterCombination;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.sql.SQLException;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * TODO: insert documentation here
@@ -37,6 +41,7 @@ public class App extends Application {
     public static DatabaseConnector db;
     public static ServerCommunication sC;
     public static Stage stage; //used for alert ownership
+    public static ThemePlayer themePlayer; // static because of evil garbage collection
 
     public static final String MENU_SCREEN = "startScreen";
     public static final String MENU_SCREEN_FILE = "/scenes/menu.fxml";
@@ -64,9 +69,10 @@ public class App extends Application {
 
 
     public void start(Stage stage) throws Exception {
+        App.themePlayer = new ThemePlayer();
         App.stage = stage;
         stage.getIcons().add(
-                new Image(getClass().getClassLoader().getResourceAsStream("img/harambe.png")));
+                new Image(getClass().getResourceAsStream("/img/appicon.png")));
 
         MasterController mainContainer = new MasterController();
         mainContainer.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
@@ -92,20 +98,36 @@ public class App extends Application {
                 if (result.get() == ButtonType.YES){
                     Platform.exit();
                 } else if (result.get() == toMenuScreen) {
-                    MenuController.themePlayer.stop();
                     mainContainer.loadAndSetScreen(MENU_SCREEN, MENU_SCREEN_FILE, true);
                 }
-            } else if(t.getCode() == KeyCode.M) {
-                if(com.harambe.gui.Stage.player != null) {
-                    com.harambe.gui.Stage.player.setMute(!com.harambe.gui.Stage.player.isMute());
-                }
-                if(MenuController.themePlayer != null) {
-                    MenuController.themePlayer.setMute(!MenuController.themePlayer.isMute());
-                }
-            } else if (t.getCode() == KeyCode.F) {
-                stage.setFullScreen(!stage.isFullScreen());
+            } else if (t.getCode() == KeyCode.F12) {
+                Thread thread = new Thread(() -> {
+                    try {
+                        final FutureTask<WritableImage> query = new FutureTask<>(() -> scene.snapshot(null));
+                        Platform.runLater(query);
+                        WritableImage image = query.get();
+                        File file = new File("screenshots/" + new SimpleDateFormat("dd-MM-yyyy HH-mm-ss-SSS").format(new Date()) + ".png");
+                        file.getParentFile().mkdirs();
+                        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+                    } catch (IOException | InterruptedException | ExecutionException e) {
+                        Logger.error("Saving screenshot failed");
+                    }
+                });
+                thread.start();
             }
         });
+
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN),
+                () -> stage.setFullScreen(!stage.isFullScreen())
+        );
+
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN),
+                () -> {
+                    if(App.themePlayer != null) {
+                        App.themePlayer.setMute(!App.themePlayer.isMute());
+                    }
+                }
+        );
 
 
         stage.show();

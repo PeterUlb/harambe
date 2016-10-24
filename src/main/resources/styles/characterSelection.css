@@ -15,7 +15,6 @@
 
 .fg {
     -fx-background-image: url("/img/characterSelectionBg.png");
-    -fx-opacity: 0.8;
     -fx-background-repeat: stretch;
     -fx-background-size: 1920 1080;
     -fx-background-position: center center;
@@ -77,3 +76,49 @@
     -fx-stroke: black;
     -fx-stroke-width: 1;
 }
+
+.editText {
+    -fx-font-size: 20px;
+    -fx-font-family: impact;
+}
+
+.editImg {
+    -fx-image: url("/img/pencil.png");
+    -fx-cursor: hand;
+}
+.editImg:hover {
+    -fx-image: url("/img/pencil_hover.png");
+}
+
+.editImgCheck {
+    -fx-image: url("/img/check.png");
+    -fx-cursor: hand;
+}
+.editImgCheck:hover {
+    -fx-image: url("/img/check_hover.png");
+}
+
+.ai {
+    -fx-image: url("/img/ai.png");
+    -fx-cursor: hand;
+}
+.ai:hover {
+    -fx-image: url("/img/ai_hover.png");
+}
+
+.human {
+    -fx-image: url("/img/human.png");
+    -fx-cursor: hand;
+}
+.human:hover {
+    -fx-image: url("/img/human_hover.png");
+}
+
+.turnTimeLabel {
+    -fx-font-size: 20px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 0.5;
+}
+

@@ -15,10 +15,13 @@ public class I18N {
     }
 
     public static String getString(String key) {
+        String original = key;
+        key = key.replace(" ", ".").toLowerCase(); // translation format
         try {
             return instance.getString(key);
         } catch (MissingResourceException e) {
-            return "?<" + key + ">-" + currentLang;
+            Logger.warning("Missing translation for '" + key + "' {language: " + currentLang + '}');
+            return original;
         }
     }
 

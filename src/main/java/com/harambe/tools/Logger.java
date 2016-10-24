@@ -15,6 +15,12 @@ public class Logger {
         }
     }
 
+    public static void warning(Object o) {
+        if(Logger.isEnabled) {
+            System.out.println("[WARNING]: " + o.toString());
+        }
+    }
+
     public static void error(Object o) {
         if(Logger.isEnabled) {
             System.err.println("[ERROR]: " + o.toString());

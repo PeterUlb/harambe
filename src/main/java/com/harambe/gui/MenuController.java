@@ -38,16 +38,10 @@ public class MenuController implements Initializable, ControlledScreen {
     @FXML
     private ImageView btnImgGerman;
 
-    public static MediaPlayer themePlayer;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //set & play menuTheme
-        final URL resource = getClass().getResource("/audio/menuTheme.mp3");
-        final Media theme = new Media(resource.toString());
-        themePlayer = new MediaPlayer(theme);
-        themePlayer.setVolume(0.1);
-        themePlayer.play();
+        App.themePlayer.playTheme("/audio/menuTheme.mp3");
         if (I18N.currentLang.equals(I18N.ENGLISH)) {
             btnImgEnglish.setStyle("-fx-image: url('/img/uk.png')");
             btnImgEnglish.setDisable(true);
@@ -65,33 +59,7 @@ public class MenuController implements Initializable, ControlledScreen {
     //onClickEvent switch screen to local game
     @FXML
     private void playLocal(MouseEvent event)/*throws IOException*/ {
-        // TODO this isn't the final user interface
-        btnImgLocal.setDisable(true);
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initOwner(App.stage);
-        alert.setTitle(I18N.getString("selection"));
-        alert.setHeaderText(I18N.getString("offline.mode"));
-        alert.setContentText(I18N.getString("choose.your.option"));
-
-        ButtonType buttonTypeAI = new ButtonType(I18N.getString("human.vs.ai"));
-        ButtonType buttonTypeVersus = new ButtonType(I18N.getString("human.vs.human"));
-        ButtonType buttonTypeCancel = new ButtonType(I18N.getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        alert.getButtonTypes().setAll(buttonTypeAI, buttonTypeVersus, buttonTypeCancel);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        alert.close();
-
-        if (result.get() == buttonTypeAI) {
-            SessionVars.soloVsAI(true);
-        } else if (result.get() == buttonTypeVersus) {
-            // do not set any flags for Human vs Human for now
-            SessionVars.resetFlags();
-        } else {
-            btnImgLocal.setDisable(false);
-            return;
-        }
-        btnImgLocal.setDisable(false);
+        SessionVars.resetFlags();
         myController.loadAndSetScreen(App.CHARACTER_SELECTION_SCREEN, App.CHARACTER_SELECTION_SCREEN_FILE, true);
     }
 
@@ -146,6 +114,7 @@ public class MenuController implements Initializable, ControlledScreen {
             if (selectedDirectory != null) {
                 SessionVars.useFileInterface(true, selectedDirectory.getAbsolutePath());
             } else {
+                btnImgOnline.setDisable(false);
                 return;
             }
 
@@ -181,14 +150,12 @@ public class MenuController implements Initializable, ControlledScreen {
     @FXML
     private void changeToGerman() {
         I18N.setLocale("de");
-        themePlayer.setMute(true);
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
     @FXML
     private void changeToEnglish() {
         I18N.setLocale("en");
-        themePlayer.setMute(true);
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
