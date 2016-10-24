@@ -38,7 +38,10 @@
     -fx-image: url("/img/btnPlayC.png");
     -fx-cursor: hand;
 }
-
+.playBtnDisabled{
+    -fx-image: url("/img/btnPlayNoC.png");
+    -fx-opacity: 0.6;
+}
 .playBtn:hover{
     -fx-image: url("/img/btnPlayH.png");
 }
@@ -47,7 +50,10 @@
     -fx-image: url("/img/btnStartC.png");
     -fx-cursor: hand;
 }
-
+.startBtnDisabled{
+    -fx-image: url("/img/btnStartNoC.png");
+    -fx-opacity: 0.6;
+}
 .startBtn:hover{
     -fx-image: url("/img/btnStartH.png");
 }
