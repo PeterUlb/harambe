@@ -98,6 +98,7 @@ public class ReplayController implements Initializable, ControlledScreen {
         GameDate.setText(I18N.getString("date"));
         gameTableView.getItems().setAll(gameModels);
         gameTableView.getSortOrder().add(GameDate);
+        gameTableView.setEditable(true);
 
         setTableView.setPlaceholder(new Label(I18N.getString("select.game")));
 
@@ -145,7 +146,6 @@ public class ReplayController implements Initializable, ControlledScreen {
             setTableView.getSortOrder().add(SetNumber);
 
             Platform.runLater(() -> {
-                setTableView.requestFocus();
                 setTableView.getSelectionModel().select(0);
                 setTableView.getFocusModel().focus(0);
                 enableButton();
