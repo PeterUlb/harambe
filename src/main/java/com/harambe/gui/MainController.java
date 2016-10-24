@@ -228,8 +228,8 @@ public class MainController implements Initializable, ControlledScreen {
         // we play "online"
         if (SessionVars.ourSymbol == 'X') {
             // we are 'X', so right side on the UI
-            p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
-            p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+            p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
+            p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
             player2Name.getStyleClass().add("playerNameGreen");
             player1Name.getStyleClass().add("playerNameRed");
             ourPlayer = p2; // keep track who we are :)
@@ -244,8 +244,8 @@ public class MainController implements Initializable, ControlledScreen {
             SessionVars.initializeNewGame(p2.getName(), p1.getName());
         } else {
             // we are 'O', so left side on the UI
-            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
-            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
             player1Name.getStyleClass().add("playerNameGreen");
             player2Name.getStyleClass().add("playerNameRed");
             ourPlayer = p1; // keep track who we are :)
