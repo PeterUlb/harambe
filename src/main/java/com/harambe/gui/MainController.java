@@ -128,6 +128,7 @@ public class MainController implements Initializable, ControlledScreen {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        Logger.debug("Max: " + SessionVars.timeoutThresholdInMillis);
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
@@ -227,14 +228,14 @@ public class MainController implements Initializable, ControlledScreen {
         // we play "online"
         if (SessionVars.ourSymbol == 'X') {
             // we are 'X', so right side on the UI
-            p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
-            p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
-            player2Name.setStyle("-fx-fill: green");
-            player1Name.setStyle("-fx-fill: red");
+            p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
+            p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
+            player2Name.getStyleClass().add("playerNameGreen");
+            player1Name.getStyleClass().add("playerNameRed");
             ourPlayer = p2; // keep track who we are :)
             opponentPlayer = p1;
             miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + ourPlayer.getSymbol());
             if (SessionVars.getUseFileInterface()) {
                 App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), false, this);
             } else if (SessionVars.getUsePusherInterface()) {
@@ -243,14 +244,14 @@ public class MainController implements Initializable, ControlledScreen {
             SessionVars.initializeNewGame(p2.getName(), p1.getName());
         } else {
             // we are 'O', so left side on the UI
-            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
-            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
-            player1Name.setStyle("-fx-fill: green");
-            player2Name.setStyle("-fx-fill: red");
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+            player1Name.getStyleClass().add("playerNameGreen");
+            player2Name.getStyleClass().add("playerNameRed");
             ourPlayer = p1; // keep track who we are :)
             opponentPlayer = p2;
             miniMax = new MiniMax(ourPlayer.getSymbol(), SessionVars.timeoutThresholdInMillis);
-            Logger.debug("Minimax instantiate for " + ourPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + ourPlayer.getSymbol());
             if (SessionVars.getUseFileInterface()) {
                 App.sC = new FileCommunicator(SessionVars.getFileInterfacePath(), true, this);
             } else if (SessionVars.getUsePusherInterface()) {
@@ -295,7 +296,7 @@ public class MainController implements Initializable, ControlledScreen {
         if (activePlayer != ourPlayer) {
             // AI starts, so first turn is AI
             // initialize MiniMax in offline mode
-            Logger.debug("Minimax instantiate for " + opponentPlayer.getSymbol());
+            Logger.debug("Minimax instantiated for " + opponentPlayer.getSymbol());
             long start = System.nanoTime();
             fireButton(miniMax.getBestMove(board));
             Logger.debug("Took: " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");
@@ -556,6 +557,10 @@ public class MainController implements Initializable, ControlledScreen {
         player1Name.setText(p1.getName());
         player2Name.setText(p2.getName());
 
+        //adaptive font size
+        changePlayerFontSize(player1Name);
+        changePlayerFontSize(player2Name);
+
         //init Player1 Chips
         Image p1Chip = new Image(getClass().getResourceAsStream(p1.getChipImgLocation()));
         p1ChipView.setImage(p1Chip);
@@ -748,7 +753,11 @@ public class MainController implements Initializable, ControlledScreen {
         //chip drop transition/ animation
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(imgView);
-        trans.setDuration(new Duration(100));
+        if (SessionVars.timeoutThresholdInMillis >= 100) {
+            trans.setDuration(new Duration(100));
+        } else {
+            trans.setDuration(new Duration(SessionVars.timeoutThresholdInMillis));
+        }
 
         //move chip to clickLocation
         double startPos = -410f;
@@ -1053,5 +1062,18 @@ public class MainController implements Initializable, ControlledScreen {
     public void redrawScore() {
         player1Score.setText(String.valueOf(p1.getScore()));
         player2Score.setText(String.valueOf(p2.getScore()));
+    }
+
+    private void changePlayerFontSize(Text playerNameText) {
+        int length = playerNameText.getText().length();
+        if (length > 9 && length <= 10) {
+            playerNameText.setStyle("-fx-font-size: 44");
+        } else if (length > 10 && length <= 13) {
+            playerNameText.setStyle("-fx-font-size: 37");
+        } else if (length > 13 && length <= 15) {
+            playerNameText.setStyle("-fx-font-size: 30");
+        } else if (length > 15){
+            playerNameText.setStyle("-fx-font-size: 23");
+        }
     }
 }

@@ -8,14 +8,14 @@
 <?import javafx.scene.text.Text?>
 <StackPane styleClass="bg" stylesheets="/styles/characterSelection.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.CharacterSelectionController">
 
-    <StackPane fx:id="bg" styleClass="fg">
+    <StackPane styleClass="fg">
 
         <StackPane alignment="BOTTOM_CENTER">
             <Text fx:id="player1Text" styleClass="selectText" translateX="-400" translateY="-200" />
           <ImageView fx:id="player1" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="-400"/>
 
             <Text fx:id="player2Text" styleClass="selectText" translateX="400" translateY="-200" />
-          <ImageView fx:id="player2" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="400"/>
+          <ImageView fx:id="player2" fitHeight="500" fitWidth="300.0" preserveRatio="true" translateX="400" scaleX="-1"/>
         </StackPane>
 
         <GridPane fx:id="grid" alignment="center" hgap="3" translateY="-75" vgap="30"/>
@@ -28,13 +28,24 @@
         <ImageView fx:id="backBtn" onMouseClicked="#back" translateX="-850" translateY="-450" />
 
 
-        <Text fx:id="player1Name" styleClass="selectText" translateX="-400" translateY="490" />
-        <TextField fx:id="player1NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateX="-400" translateY="490" />
-        <ImageView fx:id="player1EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="-260" translateY="490"/>
 
-        <Text fx:id="player2Name" styleClass="selectText" translateX="400" translateY="490" />
-        <TextField fx:id="player2NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateX="400" translateY="490" />
-        <ImageView fx:id="player2EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="550" translateY="490"/>
+        <Text fx:id="turnTimeLabel" styleClass="turnTimeLabel" visible="false" translateX="340" translateY="520"/>
+        <Spinner fx:id="turnTime" visible="false" initialValue="2000" min="1" max="5000" editable="true" amountToStepBy="100" translateX="480" translateY="520" maxWidth="150"/>
+
+        <ImageView fx:id="aiHumanImg" visible="false" styleClass="human" onMouseClicked="#aiSwitch" translateX="230" translateY="500" fitWidth="50" preserveRatio="true"/>
+
+
+
+        <Text fx:id="player1Name" styleClass="selectText" translateX="-400" translateY="500"/>
+        <TextField fx:id="player1NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateY="500" translateX="-400" />
+        <ImageView fx:id="player1EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="-265" translateY="500"/>
+
+        <Text fx:id="player2Name" styleClass="selectText" translateY="500" translateX="400"/>
+        <TextField fx:id="player2NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateY="500" translateX="400"/>
+        <ImageView fx:id="player2EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="545" translateY="500"/>
+
+
+        <Text text="Select Your Character" styleClass="selectText" translateY="-450"/>
 
     </StackPane>
 

@@ -38,7 +38,10 @@
     -fx-image: url("/img/btnPlayC.png");
     -fx-cursor: hand;
 }
-
+.playBtnDisabled{
+    -fx-image: url("/img/btnPlayNoC.png");
+    -fx-opacity: 0.6;
+}
 .playBtn:hover{
     -fx-image: url("/img/btnPlayH.png");
 }
@@ -47,7 +50,10 @@
     -fx-image: url("/img/btnStartC.png");
     -fx-cursor: hand;
 }
-
+.startBtnDisabled{
+    -fx-image: url("/img/btnStartNoC.png");
+    -fx-opacity: 0.6;
+}
 .startBtn:hover{
     -fx-image: url("/img/btnStartH.png");
 }
@@ -80,7 +86,6 @@
 .editText {
     -fx-font-size: 20px;
     -fx-font-family: impact;
-    -fx-fill: #fefefe;
 }
 
 .editImg {
@@ -97,5 +102,29 @@
 }
 .editImgCheck:hover {
     -fx-image: url("/img/check_hover.png");
+}
+
+.ai {
+    -fx-image: url("/img/ai.png");
+    -fx-cursor: hand;
+}
+.ai:hover {
+    -fx-image: url("/img/ai_hover.png");
+}
+
+.human {
+    -fx-image: url("/img/human.png");
+    -fx-cursor: hand;
+}
+.human:hover {
+    -fx-image: url("/img/human_hover.png");
+}
+
+.turnTimeLabel {
+    -fx-font-size: 20px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 0.5;
 }
 
