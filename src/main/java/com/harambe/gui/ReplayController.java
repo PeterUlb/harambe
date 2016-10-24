@@ -100,6 +100,19 @@ public class ReplayController implements Initializable, ControlledScreen {
         gameTableView.getSortOrder().add(GameDate);
 
         setTableView.setPlaceholder(new Label(I18N.getString("select.game")));
+
+        if (gameTableView.getItems().size() > 0) {
+            Platform.runLater(() -> {
+                gameTableView.requestFocus();
+                gameTableView.getSelectionModel().select(0);
+                gameTableView.getFocusModel().focus(0);
+                displaySets();
+                setTableView.requestFocus();
+                setTableView.getSelectionModel().select(0);
+                setTableView.getFocusModel().focus(0);
+                enableButton();
+            });
+        }
     }
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
@@ -130,6 +143,13 @@ public class ReplayController implements Initializable, ControlledScreen {
             WeWon.setText(I18N.getString("we.won"));
             setTableView.getItems().setAll(setModels);
             setTableView.getSortOrder().add(SetNumber);
+
+            Platform.runLater(() -> {
+                setTableView.requestFocus();
+                setTableView.getSelectionModel().select(0);
+                setTableView.getFocusModel().focus(0);
+                enableButton();
+            });
         }
     }
 
