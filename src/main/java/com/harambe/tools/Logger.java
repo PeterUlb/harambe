@@ -14,4 +14,16 @@ public class Logger {
             System.out.println("[EVENT]: " + o.toString());
         }
     }
+
+    public static void warning(Object o) {
+        if(Logger.isEnabled) {
+            System.out.println("[WARNING]: " + o.toString());
+        }
+    }
+
+    public static void error(Object o) {
+        if(Logger.isEnabled) {
+            System.err.println("[ERROR]: " + o.toString());
+        }
+    }
 }

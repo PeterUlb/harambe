@@ -61,7 +61,6 @@ public class MiniMax {
                 this.globalMaxDepth = i; // set the depth we are currently using
                 alphabeta(board.getDeepCopy(), i, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
             } catch (OutOfTimeException e) {
-                Logger.event("Out of time");
                 break;
             }
             // only called after a complete run through

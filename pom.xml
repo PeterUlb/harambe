@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.harambe</groupId>
-  <artifactId>4GA</artifactId>
+  <artifactId>harambe-agent</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>4GA</name>
+  <name>harambe-agent</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -57,10 +57,28 @@
     </dependency>
 
     <dependency>
+      <groupId>com.pusher</groupId>
+      <artifactId>pusher-http-java</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.pusher</groupId>
+      <artifactId>pusher-java-client</artifactId>
+      <version>1.2.2</version>
+    </dependency>
+    <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>2.3.4</version>
     </dependency>
-
   </dependencies>
+
+
+  <repositories>
+    <repository>
+      <id>clojars.org</id>
+      <url>http://clojars.org/repo</url>
+    </repository>
+  </repositories>
 </project>

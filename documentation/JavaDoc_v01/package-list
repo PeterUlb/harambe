@@ -1,6 +1,9 @@
 com.harambe
 com.harambe.algorithm
+com.harambe.communication
+com.harambe.communication.communicator
 com.harambe.database
 com.harambe.database.model
 com.harambe.game
 com.harambe.gui
+com.harambe.tools

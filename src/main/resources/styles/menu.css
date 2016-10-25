@@ -4,22 +4,26 @@
     -fx-background-size: 1920 1080;
     -fx-background-position: center center;
 }
-
 .buttonL {
-    -fx-pref-width: 500px;
-    -fx-pref-height: 500px;
-    -fx-background-radius: 250 0 0 250;
-
+    -fx-image: url("/img/btnLocal.png");
     -fx-cursor: hand;
-
 }
+.buttonL:hover{
+    -fx-image: url("/img/btnLocalHover.png");
+    }
 .buttonR {
-    -fx-pref-width: 500px;
-    -fx-pref-height: 500px;
-    -fx-background-radius: 0 250 250 0;
-
+    -fx-image: url("/img/btnOnline.png");
     -fx-cursor: hand;
-
+}
+.buttonR:hover{
+    -fx-image: url("/img/btnOnlineHover.png");
+}
+.buttonReplay {
+    -fx-image: url("/img/btnReplay.png");
+    -fx-cursor: hand;
+}
+.buttonReplay:hover {
+    -fx-image: url("/img/btnReplayH.png");
 }
 .paneButton{
     -fx-background-color: aqua;
@@ -29,3 +33,20 @@
     -fx-overflow: hidden;
 }
 
+.buttonEnglish {
+    -fx-image: url("/img/uk_inactive.png");
+}
+
+.buttonEnglish:hover {
+    -fx-image: url("/img/uk_hover.png");
+    -fx-cursor: hand;
+}
+
+.buttonGerman {
+    -fx-image: url("/img/germany_inactive.png");
+}
+
+.buttonGerman:hover {
+    -fx-image: url("/img/germany_hover.png");
+    -fx-cursor: hand;
+}

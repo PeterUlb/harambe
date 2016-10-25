@@ -1,9 +1,9 @@
 package com.harambe.database.model;
 
 import com.harambe.database.DatabaseConnector;
+import com.harambe.tools.I18N;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -13,8 +13,8 @@ import java.util.ArrayList;
 public class SetModel implements Persistable {
     private String gameUUID;
     private int setNumber;
-    private boolean weStarted;
-    private boolean weWon;
+    private Boolean weStarted;
+    private Boolean weWon;
 
     /**
      *
@@ -23,7 +23,7 @@ public class SetModel implements Persistable {
      * @param weStarted
      * @param weWon
      */
-    public SetModel(String gameUUID, int setNumber, boolean weStarted, boolean weWon) {
+    public SetModel(String gameUUID, int setNumber, Boolean weStarted, Boolean weWon) {
         this.gameUUID = gameUUID;
         this.setNumber = setNumber;
         this.weStarted = weStarted;
@@ -36,13 +36,18 @@ public class SetModel implements Persistable {
 
         String gameUUID;
         int setNumber;
-        boolean weStarted, weWon;
+        Boolean weStarted, weWon;
 
         while (rs.next()) {
             gameUUID = rs.getString(1);
             setNumber = rs.getInt(2);
             weStarted = rs.getBoolean(3);
-            weWon = rs.getBoolean(4);
+            String tmpWeWon = rs.getString(4); //rs.getBoolean returns false for null value, which is not what we want...
+            if (tmpWeWon == null) {
+                weWon = null;
+            } else {
+                weWon = tmpWeWon.equals("TRUE");
+            }
             setModels.add(new SetModel(gameUUID, setNumber, weStarted, weWon));
         }
 
@@ -57,17 +62,25 @@ public class SetModel implements Persistable {
         return setNumber;
     }
 
+    public String getWeStarted() {
+        return I18N.getString(weStarted.toString());
+    }
+
     public boolean isWeStarted() {
         return weStarted;
     }
 
-    public boolean isWeWon() {
-        return weWon;
+    public String getWeWon() {
+        if (weWon == null) {
+            return I18N.getString("draw");
+        } else {
+            return I18N.getString(weWon.toString());
+        }
     }
 
     @Override
     public void persistInDatabase(DatabaseConnector db) throws SQLException {
         db.update(
-                "INSERT INTO " + DatabaseConnector.SETTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", '" + weStarted + "', '" + weWon + "')");
+                "INSERT INTO " + DatabaseConnector.SETTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + weStarted + ", " + weWon + ")");
     }
 }

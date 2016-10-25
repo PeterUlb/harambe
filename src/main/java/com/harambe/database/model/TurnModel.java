@@ -32,7 +32,7 @@ public class TurnModel implements Persistable {
         this.column = column;
     }
 
-    public static ArrayList<TurnModel> getSets(DatabaseConnector db, String dbGameUUID, int dbSetNumber) throws SQLException {
+    public static ArrayList<TurnModel> getTurns(DatabaseConnector db, String dbGameUUID, int dbSetNumber) throws SQLException {
         ArrayList<TurnModel> turnModels = new ArrayList<>();
         ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.TURNTABLE + " WHERE game_uuid = '" + dbGameUUID + "' AND set_number = " + dbSetNumber);
 
@@ -75,6 +75,6 @@ public class TurnModel implements Persistable {
 
     @Override
     public void persistInDatabase(DatabaseConnector db) throws SQLException {
-        db.update("INSERT INTO " + DatabaseConnector.TURNTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + turnNumber + ", '" + isOpponent + "', " + column +  ")");
+        db.update("INSERT INTO " + DatabaseConnector.TURNTABLE + " VALUES('" + gameUUID + "', " + setNumber + ", " + turnNumber + ", " + isOpponent + ", " + column +  ")");
     }
 }

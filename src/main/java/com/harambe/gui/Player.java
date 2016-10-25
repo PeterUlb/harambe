@@ -13,12 +13,14 @@ public class Player {
     private boolean ai;
     private String name;
     private String character;
-    private String chip;
+    private String chipImgLocation;
     private String imgLocation;
 
     private String dropSoundLocation;
     private String winSoundLocation;
     private String selectSoundLocation;
+
+    MediaPlayer player;
 
     private int score;
 
@@ -26,10 +28,11 @@ public class Player {
 
     /**
      * constructor for the player
-     * @param ai boolean value for human or artificial intelligence player
-     * @param name player name
+     *
+     * @param ai        boolean value for human or artificial intelligence player
+     * @param name      player name
      * @param character character the player chose to play with (e.g. Harambe)
-     * @param symbol internal representation of the player chip
+     * @param symbol    internal representation of the player chipImgLocation
      */
     public Player(boolean ai, String name, String character, char symbol) {
         this.ai = ai;
@@ -39,46 +42,43 @@ public class Player {
         this.score = 0;
 
         this.setImg(character);
-        this.setChip(character);
+        this.setChipImgLocation(character);
         this.setSounds(character);
     }
 
     /**
      * overloads constructor to make variable name optional
-     * @param ai boolean value for human or artificial intelligence player
+     *
+     * @param ai        boolean value for human or artificial intelligence player
      * @param character character the player chose to play with (e.g. Harambe)
-     * @param symbol internal representation of the player chip
+     * @param symbol    internal representation of the player chipImgLocation
      */
     public Player(boolean ai, String character, char symbol) {
         this(ai, character, character, symbol);
     }
 
 
-
     //methods for playerImg
     private void setImg(String character) {
-        this.imgLocation = "img/"+character+".png";
+        this.imgLocation = "/characters/" + character + "/avatar.png";
     }
 
-    public String  getImgLocation() {
+    public String getImgLocation() {
         return this.imgLocation;
     }
 
 
     /**
-     * sets chip depending on character
+     * sets chipImgLocation depending on character
+     *
      * @param character character the player chose to play with (e.g. Harambe)
      */
-    private void setChip(String character) {
-        switch(character) {
-            case "harambe":     this.chip = "banana";break;
-            case "poacher_1":   this.chip = "mango";break;
-            case "poacher_2":   this.chip = "bullets";break;
-        }
+    private void setChipImgLocation(String character) {
+        this.chipImgLocation = "/characters/" + character + "/chip.png";
     }
 
-    public String getChip() {
-        return this.chip;
+    public String getChipImgLocation() {
+        return this.chipImgLocation;
     }
 
 
@@ -101,37 +101,46 @@ public class Player {
 
     /**
      * sets the 3 sounds for the chosen character
+     *
      * @param character character the player chose to play with (e.g. Harambe)
      */
     private void setSounds(String character) {
-        this.dropSoundLocation = "/audio/"+character+"_drop.mp3";
-        this.winSoundLocation = "/audio/"+character+"_win.mp3";
-        this.selectSoundLocation = "/audio/"+character+"_select.mp3";
+        this.dropSoundLocation = "/characters/" + character + "/drop.mp3";
+        this.winSoundLocation = "/characters/" + character + "/win.mp3";
     }
 
     public void playDropSound() {
         final URL resource = getClass().getResource(dropSoundLocation);
         final Media drop = new Media(resource.toString());
-        MediaPlayer player = new MediaPlayer(drop);
+        if (player != null) {
+            player.stop();
+        }
+        player = new MediaPlayer(drop);
         player.play();
     }
 
     public void playWinSound() {
-            final URL resource = getClass().getResource(winSoundLocation);
-            final Media drop = new Media(resource.toString());
-            MediaPlayer player = new MediaPlayer(drop);
-            player.play();
+        final URL resource = getClass().getResource(winSoundLocation);
+        final Media play = new Media(resource.toString());
+        if (player != null) {
+            player.stop();
+        }
+        player = new MediaPlayer(play);
+        player.play();
     }
 
     public void playSelectSound() {
-            final URL resource = getClass().getResource(selectSoundLocation);
-            final Media drop = new Media(resource.toString());
-            MediaPlayer player = new MediaPlayer(drop);
-            player.play();
+        final URL resource = getClass().getResource(selectSoundLocation);
+        final Media select = new Media(resource.toString());
+        if (player != null) {
+            player.stop();
+        }
+        player = new MediaPlayer(select);
+        player.play();
     }
 
 
-    public String getwinSound() {
+    public String getWinSound() {
         return winSoundLocation;
     }
 
