@@ -53,6 +53,8 @@ public class App extends Application {
     public static final String REPLAY_SCREEN_FILE = "/scenes/replay.fxml";
     public static final String STATISTICS_SCREEN = "statistics";
     public static final String STATISTICS_SCREEN_FILE = "/scenes/statistics.fxml";
+    public static final String START_SCREEN = "startScreen";
+    public static final String START_SCREEN_FILE = "/scenes/startMenu.fxml";
 
 
 
@@ -75,7 +77,7 @@ public class App extends Application {
                 new Image(getClass().getResourceAsStream("/img/appicon.png")));
 
         MasterController mainContainer = new MasterController();
-        mainContainer.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
+        mainContainer.loadAndSetScreen(App.START_SCREEN, App.START_SCREEN_FILE, false);
 
 
         StackPane root = new StackPane();
