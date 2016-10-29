@@ -25,6 +25,7 @@ import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -79,6 +80,18 @@ public class MainController implements Initializable, ControlledScreen {
     private ImageView bgAnim;
 
     @FXML
+    private ToolBar replayToolbar;
+    @FXML
+    private Button replayTurnBack;
+    @FXML
+    private Button replayTurnForward;
+    @FXML
+    private Button replayStart;
+    @FXML
+    private Button replayStop;
+
+
+    @FXML
     private Button b0;
     @FXML
     private Button b1;
@@ -109,6 +122,9 @@ public class MainController implements Initializable, ControlledScreen {
     private int[][] winLocation;
     private MiniMax miniMax;
     private Stage stage;
+
+    //replay control stuff
+    private boolean replayRunning;
 
     public boolean setDone = false; // marks a set as done for the server-comm thread
     boolean gameDone = false; // marks a game as done for the server-comm thread
@@ -206,6 +222,7 @@ public class MainController implements Initializable, ControlledScreen {
 
     private void initReplayGame() {
         // should be a replay
+        replayToolbar.setVisible(true);
         Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
         Logger.debug("ReplaySet: " + SessionVars.setNumber);
         try {
@@ -222,6 +239,23 @@ public class MainController implements Initializable, ControlledScreen {
         } else {
             activePlayer = p2;
         }
+
+        replayStop.setOnAction(e -> {
+            replayRunning = false;
+            replayStart.setDisable(false);
+            replayStop.setDisable(true);
+        });
+        replayStart.setOnAction(e -> {
+            replayRunning = true;
+            replayStart.setDisable(true);
+            replayStop.setDisable(false);
+        });
+        replayRunning = true;
+        replayStart.setDisable(true);
+
+        // TODO implement or just remove them
+        replayTurnForward.setDisable(true);
+        replayTurnBack.setDisable(true);
     }
 
     private void initOnlineGame() {
@@ -274,12 +308,19 @@ public class MainController implements Initializable, ControlledScreen {
             ArrayList<TurnModel> turns = null;
             try {
                 turns = TurnModel.getTurns(App.db, SessionVars.currentGameUUID, SessionVars.setNumber);
-                for (TurnModel turn :
-                        turns) {
-                    Thread.sleep(1000);
-                    Platform.runLater(() -> fireDisabledButton(turn.getColumn()));
-                }
                 disableAllButtons(true);
+                Thread.sleep(1000);
+
+                for (int turnNumber = 0; turnNumber < turns.size(); ) {
+                    if (replayRunning) {
+                        final int col = turns.get(turnNumber).getColumn();
+                        Platform.runLater(() -> fireDisabledButton(col));
+                        turnNumber++;
+                        Thread.sleep(1000);
+                    } else {
+                        Thread.sleep(1000);
+                    }
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
