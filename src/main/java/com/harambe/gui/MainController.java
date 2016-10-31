@@ -958,8 +958,15 @@ public class MainController implements Initializable, ControlledScreen {
         if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
             endGame();
         } else if (SessionVars.getReplayMode()) {
-            myController.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE); //to start the main music again
-            myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);
+            Thread thread = new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ignored) {
+                }
+                myController.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE); //to start the main music again
+                myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);
+            });
+            thread.start();
         } else {
             endSet();
         }
