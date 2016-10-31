@@ -380,16 +380,16 @@ public class MainController implements Initializable, ControlledScreen {
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(bgAnim);
         trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(20)));
-        trans.setByX(4000);
+        trans.setByX(3500);
         trans.setByY(-500);
         trans.setOnFinished(event -> {
             bgAnim.setScaleX(bgAnim.getScaleX() * -1);
             bgAnim.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
             if (trans.getByX() > 0) {
                 // now to the left
-                trans.setByX(trans.getByX() * -1 - 1000);
+                trans.setByX(trans.getByX() * -1);
             } else {
-                trans.setByX(4000);
+                trans.setByX(trans.getByX() * -1);
             }
             trans.setByY(trans.getByY() * -1);
             trans.play();
