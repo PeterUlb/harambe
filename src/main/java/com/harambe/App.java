@@ -10,10 +10,12 @@ import com.harambe.tools.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
@@ -92,10 +94,11 @@ public class App extends Application {
                 }
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initOwner(stage);
+                alert.setDialogPane(new FixedOrderButtonDialog());
                 alert.setTitle(I18N.getString("confirmation.dialog"));
                 alert.setHeaderText(I18N.getString("alert.exit.question"));
-                ButtonType toMenuScreen = new ButtonType(I18N.getString("menu.screen"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                alert.getButtonTypes().setAll(ButtonType.YES, toMenuScreen ,ButtonType.CANCEL);
+                ButtonType toMenuScreen = new ButtonType(I18N.getString("menu.screen"));
+                alert.getButtonTypes().setAll(ButtonType.YES, toMenuScreen, ButtonType.CANCEL);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.YES){
                     Platform.exit();
@@ -148,6 +151,15 @@ public class App extends Application {
         super.stop();
         System.out.println("Application stopped");
         db.shutdown();
+    }
+
+    private static class FixedOrderButtonDialog extends DialogPane {
+        @Override
+        protected Node createButtonBar() {
+            ButtonBar node = (ButtonBar) super.createButtonBar();
+            node.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE);
+            return node;
+        }
     }
 
 
