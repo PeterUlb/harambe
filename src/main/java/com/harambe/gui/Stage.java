@@ -1,10 +1,5 @@
 package com.harambe.gui;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
-
-import java.net.URL;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -12,30 +7,38 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Stage {
     private String imgLocation;
+    private String audioLocation;
 
     public Stage() {
-        setRandomImg();
+        setRandomResources();
     }
 
-    private void setRandomImg() {
+    private void setRandomResources() {
         int rndm = ThreadLocalRandom.current().nextInt(0, 3);
         switch (rndm) {
             case 0:
-                this.imgLocation = "/img/stages/coast_1.jpg";
+                this.audioLocation = this.imgLocation = "/stages/coast_1/";
                 break;
             case 1:
-                this.imgLocation = "/img/stages/coast_2.jpg";
+                this.audioLocation = this.imgLocation = "/stages/coast_2/";
                 break;
             case 2:
-                this.imgLocation = "/img/stages/star_wars_1.jpg";
+                this.audioLocation = this.imgLocation = "/stages/star_wars_1/";
                 break;
             default:
-                this.imgLocation = "/img/stages/coast_1.jpg";
+                this.audioLocation = this.imgLocation = "/stages/coast_1/";
         }
+
+        this.imgLocation += "stage.jpg";
+        this.audioLocation += "theme.mp3";
     }
 
     public String getImg() {
         return this.imgLocation;
+    }
+
+    public String getAudioLocation() {
+        return audioLocation;
     }
 
     /**

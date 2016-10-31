@@ -152,7 +152,7 @@ public class MainController implements Initializable, ControlledScreen {
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
 
         //take static music player and play mainTheme
-        App.themePlayer.playTheme("/audio/mainTheme.mp3");
+        App.themePlayer.playTheme(stage.getAudioLocation());
 
         //init extra images
         Image asset1Img = new Image(stage.getRandomAssetImg());
