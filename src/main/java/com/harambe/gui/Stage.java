@@ -5,20 +5,33 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Stage class of the UI. Features the background image and theme of the stage.
  */
 public class Stage {
     private String imgLocation;
-    private URL themeLocation;
 
-    public Stage(String stageName) {
-        setImg(stageName);
+    public Stage() {
+        setRandomImg();
     }
 
-    private void setImg(String stageName) {
-        this.imgLocation = "/img/"+stageName+".jpg";
+    private void setRandomImg() {
+        int rndm = ThreadLocalRandom.current().nextInt(0, 3);
+        switch (rndm) {
+            case 0:
+                this.imgLocation = "/img/stages/coast_1.jpg";
+                break;
+            case 1:
+                this.imgLocation = "/img/stages/coast_2.jpg";
+                break;
+            case 2:
+                this.imgLocation = "/img/stages/star_wars_1.jpg";
+                break;
+            default:
+                this.imgLocation = "/img/stages/coast_1.jpg";
+        }
     }
 
     public String getImg() {
@@ -35,7 +48,7 @@ public class Stage {
             case 1: return "/img/monkey.png";
             case 2: return "/img/monkey_2.png";
         }
-        return "";
+        return "/img/monkey.png";
     }
 
     public String getBgAnimImg() {

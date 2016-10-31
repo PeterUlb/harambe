@@ -148,7 +148,7 @@ public class MainController implements Initializable, ControlledScreen {
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
-        stage = new Stage("coast_2");
+        stage = new Stage();
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
 
         //take static music player and play mainTheme
