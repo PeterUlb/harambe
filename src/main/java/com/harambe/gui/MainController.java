@@ -148,22 +148,39 @@ public class MainController implements Initializable, ControlledScreen {
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
+
         stage = new Stage();
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
 
-        //take static music player and play mainTheme
-        App.themePlayer.playTheme(stage.getAudioLocation());
+        //Performance settings
+        if (!SessionVars.performanceMode) {
+            //take static music player and play mainTheme
+            App.themePlayer.playTheme(stage.getAudioLocation());
 
-        //init extra images
-        Image asset1Img = new Image(stage.getRandomAssetImg());
-        asset1.setImage(asset1Img);
-        asset1.setScaleX(-1);
+            //init extra images
+            Image asset1Img = new Image(stage.getRandomAssetImg());
+            asset1.setImage(asset1Img);
+            asset1.setScaleX(-1);
 
-        Image asset2Img = new Image(stage.getRandomAssetImg());
-        asset2.setImage(asset2Img);
+            Image asset2Img = new Image(stage.getRandomAssetImg());
+            asset2.setImage(asset2Img);
 
-        playBgAnimation(stage);
-        timerStart();
+
+            playBgAnimation(stage);
+            timerStart();
+        } else {
+            //disable chip preview images
+            b0.setOnMouseEntered(null);
+            b1.setOnMouseEntered(null);
+            b2.setOnMouseEntered(null);
+            b3.setOnMouseEntered(null);
+            b4.setOnMouseEntered(null);
+            b5.setOnMouseEntered(null);
+            b6.setOnMouseEntered(null);
+
+            //disable timer (so it doesn't show 0:00 all the time)
+            time.setDisable(true);
+        }
 
         chipArray = new ArrayList<>();
         winLocation = null;
@@ -656,7 +673,6 @@ public class MainController implements Initializable, ControlledScreen {
 
         Button btn = (Button) event.getSource();
 
-        activePlayer.playDropSound();
 
         //get column
         int column = Integer.parseInt(btn.getId().substring(1));
@@ -675,7 +691,12 @@ public class MainController implements Initializable, ControlledScreen {
         //store chip img
         chipArray.add(imgView);
 
-        moveChip(imgView, column, x);
+        if(!SessionVars.performanceMode) {
+            moveChipAnim(imgView, column, x);
+            activePlayer.playDropSound();
+        } else {
+            moveChip(imgView, column, x);
+        }
 
         //drop chip in board array and disable row if full
         try {
@@ -696,7 +717,9 @@ public class MainController implements Initializable, ControlledScreen {
         field.getChildren().add(imgView);
         imgView.toBack();
 
-        persistDrop(column);
+        if (!SessionVars.performanceMode) {
+            persistDrop(column);
+        }
 
         checkForWin();
 
@@ -785,12 +808,12 @@ public class MainController implements Initializable, ControlledScreen {
     }
 
     /**
-     * moves chip image to the board with an animation/ transition.
+     * moves chip image to the board w/ an animation/ transition.
      * @param imgView image of the chip
      * @param column selected column to drop the chip
      * @param columnPos x position of the column
      */
-    private void moveChip(ImageView imgView, int column, double columnPos) {
+    private void moveChipAnim(ImageView imgView, int column, double columnPos) {
         //chip drop transition/ animation
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(imgView);
@@ -825,6 +848,39 @@ public class MainController implements Initializable, ControlledScreen {
         }
         imgView.setTranslateX(columnPos);
         trans.play();
+    }
+
+    /**
+     * moves chip image to the board w/o an animation/ transition.
+     * @param imgView image of the chip
+     * @param column selected column to drop the chip
+     * @param columnPos x position of the column
+     */
+    private void moveChip(ImageView imgView, int column, double columnPos) {
+        //move chip to clickLocation
+        int startPos = -410;
+        imgView.setTranslateY(startPos);
+        switch (freeSpace[column]) {
+            case 5:
+                imgView.setTranslateY(410);
+                break;
+            case 4:
+                imgView.setTranslateY(260);
+                break;
+            case 3:
+                imgView.setTranslateY(110);
+                break;
+            case 2:
+                imgView.setTranslateY(-40);
+                break;
+            case 1:
+                imgView.setTranslateY(-190);
+                break;
+            case 0:
+                imgView.setTranslateY(-340);
+                break;
+        }
+        imgView.setTranslateX(columnPos);
     }
 
     /**

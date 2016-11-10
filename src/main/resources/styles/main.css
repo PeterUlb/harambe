@@ -1,5 +1,5 @@
 .bg {
-    -fx-background-image: url("/img/coast_1.jpg");
+    //-fx-background-image: url("/img/coast_1.jpg");
     -fx-background-repeat: stretch;
     -fx-background-size: 1920 1080;
     -fx-background-position: center center;

@@ -27,6 +27,7 @@ public class SessionVars {
     public static Boolean weStartSet = null; // did we start the set
     public static Boolean weWonSet = null; // player who won the set
     public static int turnNumber = 0;
+    public static boolean performanceMode = false;
 
     public static void initializeNewGame(String ourPlayerName, String opponentPlayerName) {
         SessionVars.currentGameUUID = UUID.randomUUID().toString();
