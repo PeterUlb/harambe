@@ -9,10 +9,9 @@ public abstract class ThreadManager {
     /**
      * Stops all logic threads. ONLY call on screen changein MasterController
      */
+    @SuppressWarnings("deprecation")
     public static void reset() {
-        for (Thread thread :
-                threads) {
-            thread.stop();
-        }
+        threads.forEach(Thread::stop);
+        threads.clear();
     }
 }

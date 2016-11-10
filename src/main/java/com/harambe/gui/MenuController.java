@@ -37,6 +37,8 @@ public class MenuController implements Initializable, ControlledScreen {
     private ImageView btnImgEnglish;
     @FXML
     private ImageView btnImgGerman;
+    @FXML
+    private ImageView btnImgPerformance;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -157,6 +159,17 @@ public class MenuController implements Initializable, ControlledScreen {
     private void changeToEnglish() {
         I18N.setLocale("en");
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
+    }
+
+    @FXML
+    private void performanceMode() {
+        //switch performance mode on/ off
+        SessionVars.performanceMode = !SessionVars.performanceMode;
+        if (SessionVars.performanceMode) {
+            btnImgPerformance.getStyleClass().set(1, "buttonPerformance");
+        } else {
+            btnImgPerformance.getStyleClass().set(1, "buttonQuality");
+        }
     }
 
 

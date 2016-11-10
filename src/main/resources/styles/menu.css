@@ -35,18 +35,33 @@
 
 .buttonEnglish {
     -fx-image: url("/img/uk_inactive.png");
+    -fx-cursor: hand;
 }
 
 .buttonEnglish:hover {
     -fx-image: url("/img/uk_hover.png");
-    -fx-cursor: hand;
 }
 
 .buttonGerman {
     -fx-image: url("/img/germany_inactive.png");
+    -fx-cursor: hand;
 }
 
 .buttonGerman:hover {
     -fx-image: url("/img/germany_hover.png");
+}
+
+.buttonQuality {
+    -fx-image: url("/img/quality.png");
     -fx-cursor: hand;
+}
+.buttonQuality:hover {
+    -fx-image: url("/img/quality_hover.png");
+}
+.buttonPerformance {
+    -fx-image: url("/img/performance.png");
+    -fx-cursor: hand;
+}
+.buttonPerformance:hover {
+    -fx-image: url("/img/performance_hover.png");
 }
