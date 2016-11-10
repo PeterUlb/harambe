@@ -71,9 +71,7 @@ public class PusherConnector implements Runnable {
         String finalApp_id = app_id;
         String finalKey = key;
         String finalSecret = secret;
-        System.out.println(app_id);
-        System.out.println(key);
-        System.out.println(secret);
+
         /*
         options.setAuthorizer(new Authorizer() {
             @Override
@@ -88,11 +86,11 @@ public class PusherConnector implements Runnable {
         options.setAuthorizer((channel1, socketId) -> {
             com.pusher.rest.Pusher pusher = new com.pusher.rest.Pusher(finalApp_id, finalKey, finalSecret);
             String response = pusher.authenticate(socketId, channel1);
-            System.out.println(response);
+//            System.out.println(response);
             return response;
         });
 
-        System.out.println("BEHIND LAMDA!!");
+//        System.out.println("BEHIND LAMDA!!");
         Pusher pusher = new Pusher(finalKey, options);
 
         pusher.connect();
