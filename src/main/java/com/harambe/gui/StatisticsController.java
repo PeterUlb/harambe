@@ -15,6 +15,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -41,13 +42,17 @@ public class StatisticsController implements Initializable, ControlledScreen {
     @FXML
     private NumberAxis turnsPerSetChartyAxis;
     @FXML
-    private Button backBtn;
+    private ImageView backBtn;
 
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        backBtn.setText(I18N.getString("back"));
+        if (I18N.currentLang.equals(I18N.GERMAN)) {
+            backBtn.getStyleClass().add("zurueckBtn");
+        } else {
+            backBtn.getStyleClass().add("backBtn");
+        }
         int wonGames = 0;
         int lostGames = 0;
         int wonSets = 0;
