@@ -30,10 +30,6 @@
         </yAxis>
     </AreaChart>
 
-    <HBox spacing="10" alignment="BOTTOM_LEFT" GridPane.columnIndex="0"
-          GridPane.rowIndex="2">
-        <ImageView fx:id="backBtn" onMouseClicked="#backToReplayScreen" translateX="-440" translateY="-180" />
-    </HBox>
-
-
+        <ImageView fx:id="backBtn" onMouseClicked="#backToReplayScreen" translateX="-90" translateY="-250" />
+    
 </GridPane>
