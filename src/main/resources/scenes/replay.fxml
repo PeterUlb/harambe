@@ -33,7 +33,7 @@
         </columns>
     </TableView>
 
-    <ImageView fx:id="backBtn" onMouseClicked="#backToMainMenu" translateX="-370" translateY="-250" />
+    <ImageView fx:id="backBtn" onMouseClicked="#backToMainMenu" translateX="-440" translateY="-180" />
 
     <HBox spacing="-10" alignment="BOTTOM_RIGHT" GridPane.columnIndex="1"
           GridPane.rowIndex="2">
