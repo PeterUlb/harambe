@@ -14,4 +14,37 @@
     -fx-graphic: url("/img/statistics_icon_hover.png");
 }
 
+.playBtn {
+    -fx-image: url("/img/btnPlayC.png");
+    -fx-cursor: hand;
+}
 
+.playBtn:hover{
+    -fx-image: url("/img/btnPlayH.png");
+}
+
+.startBtn {
+    -fx-image: url("/img/btnStartC.png");
+    -fx-cursor: hand;
+}
+
+.startBtn:hover{
+    -fx-image: url("/img/btnStartH.png");
+}
+
+.backBtn {
+    -fx-image: url("/img/btnBack.png");
+    -fx-cursor: hand;
+}
+
+.backBtn:hover {
+    -fx-image: url("/img/btnBackH.png");
+}
+.zurueckBtn {
+    -fx-image: url("/img/btnZurueck.png");
+    -fx-cursor: hand;
+}
+
+.zurueckBtn:hover {
+    -fx-image: url("/img/btnZurueckH.png");
+}

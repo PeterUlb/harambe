@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -47,11 +48,11 @@ public class ReplayController implements Initializable, ControlledScreen {
     private TableColumn<SetModel, String> WeWon;
 
     @FXML
-    private Button startReplayBtn;
+    private ImageView startReplayBtn;
     @FXML
     private Button statisticsBtn;
     @FXML
-    private Button backBtn;
+    private ImageView backBtn;
     @FXML
     private Label pastGamesLabel;
 
@@ -61,9 +62,14 @@ public class ReplayController implements Initializable, ControlledScreen {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        if (I18N.currentLang.equals(I18N.GERMAN)) {
+            backBtn.getStyleClass().add("zurueckBtn");
+            startReplayBtn.getStyleClass().add("startBtn");
+        } else {
+            backBtn.getStyleClass().add("backBtn");
+            startReplayBtn.getStyleClass().add("playBtn");
+        }
         pastGamesLabel.setText(I18N.getString("past.games"));
-        backBtn.setText(I18N.getString("back"));
-        startReplayBtn.setText(I18N.getString("start.replay"));
         tooltip = new Tooltip(I18N.getString("click.here.for.statistics"));
         statisticsBtn.setTooltip(tooltip);
         Thread thread = new Thread(() -> {

@@ -33,15 +33,12 @@
         </columns>
     </TableView>
 
-    <HBox spacing="10" alignment="BOTTOM_LEFT" GridPane.columnIndex="0"
-          GridPane.rowIndex="2">
-        <Button fx:id="backBtn" onAction="#backToMainMenu"/>
-    </HBox>
+    <ImageView fx:id="backBtn" onMouseClicked="#backToMainMenu" translateX="-370" translateY="-250" />
 
-   <HBox spacing="-10" alignment="BOTTOM_RIGHT" GridPane.columnIndex="1"
-         GridPane.rowIndex="2">
-      <Button fx:id="startReplayBtn" onAction="#startReplay" disable="true"/>
-   </HBox>
+    <HBox spacing="-10" alignment="BOTTOM_RIGHT" GridPane.columnIndex="1"
+          GridPane.rowIndex="2">
+    <ImageView fx:id="startReplayBtn" onMouseClicked="#startReplay" translateX="0" translateY="50" />
+    </HBox>
 
     <HBox spacing="-10" alignment="TOP_RIGHT" GridPane.columnIndex="1"
           GridPane.rowIndex="0">
