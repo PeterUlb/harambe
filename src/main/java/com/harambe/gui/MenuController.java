@@ -32,8 +32,6 @@ public class MenuController implements Initializable, ControlledScreen {
     @FXML
     private ImageView btnImgOnline;
     @FXML
-    private Label harambeLabel;
-    @FXML
     private ImageView btnImgEnglish;
     @FXML
     private ImageView btnImgGerman;
@@ -47,11 +45,12 @@ public class MenuController implements Initializable, ControlledScreen {
         if (I18N.currentLang.equals(I18N.ENGLISH)) {
             btnImgEnglish.setStyle("-fx-image: url('/img/uk.png')");
             btnImgEnglish.setDisable(true);
+            btnImgLocal.getStyleClass().add("buttonL");
         } else if (I18N.currentLang.equals(I18N.GERMAN)) {
             btnImgGerman.setStyle("-fx-image: url('/img/germany.png')");
             btnImgGerman.setDisable(true);
+            btnImgLocal.getStyleClass().add("buttonLGER");
         }
-        harambeLabel.setText(I18N.getString("harambes.connect.4"));
     }
 
     public void setScreenParent(MasterController screenParent) {

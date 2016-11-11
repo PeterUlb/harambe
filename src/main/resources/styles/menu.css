@@ -11,6 +11,15 @@
 .buttonL:hover{
     -fx-image: url("/img/btnLocalHover.png");
     }
+
+.buttonLGER {
+    -fx-image: url("/img/btnLokal.png");
+    -fx-cursor: hand;
+}
+.buttonLGER:hover{
+    -fx-image: url("/img/btnLokalHover.png");
+}
+
 .buttonR {
     -fx-image: url("/img/btnOnline.png");
     -fx-cursor: hand;
@@ -64,4 +73,8 @@
 }
 .buttonPerformance:hover {
     -fx-image: url("/img/performance_hover.png");
+}
+
+.logo {
+    -fx-image: url("/img/logoSmall.png");
 }
