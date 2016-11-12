@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
- * TODO: insert documentation here
+ * This class represents a finished game as a database entry
  */
 public class GameModel implements Persistable {
     private String gameUUID;
@@ -58,6 +58,12 @@ public class GameModel implements Persistable {
         this.timestamp = timestamp;
     }
 
+    /**
+     * Returns a list of all games from the database
+     * @param db The database handler
+     * @return ArrayList of all Games in the database
+     * @throws SQLException Generic Database Exception
+     */
     public static ArrayList<GameModel> getGames(DatabaseConnector db) throws SQLException {
         ArrayList<GameModel> gameModels = new ArrayList<>();
         ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.GAMETABLE);

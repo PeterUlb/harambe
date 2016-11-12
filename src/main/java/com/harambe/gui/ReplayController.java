@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 
 /**
- * TODO: insert documentation here
+ * The Controller for the Replay Selection Scene
  */
 public class ReplayController implements Initializable, ControlledScreen {
 
@@ -74,7 +74,7 @@ public class ReplayController implements Initializable, ControlledScreen {
         statisticsBtn.setTooltip(tooltip);
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(800); //TODO change based on final screen change time
+                Thread.sleep(800);
                 Platform.runLater(() -> {
                     Bounds bounds = statisticsBtn.localToScene(statisticsBtn.getBoundsInLocal());
                     tooltip.show(statisticsBtn, bounds.getMaxX(), bounds.getMinY() + bounds.getHeight() / 2);
@@ -121,16 +121,24 @@ public class ReplayController implements Initializable, ControlledScreen {
             });
         }
     }
+
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
     }
 
+    /**
+     * Switches back to the main menu
+     */
     @FXML
     private void backToMainMenu() {
         tooltip.hide();
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, false);
     }
 
+    /**
+     * Populates the set table with all sets corresponding to the selected game.
+     * The selection is based on the selected game-uuid
+     */
     @FXML
     private void displaySets() {
         startReplayBtn.setDisable(true);
@@ -159,6 +167,9 @@ public class ReplayController implements Initializable, ControlledScreen {
         }
     }
 
+    /**
+     * Starts the replay. This means population the SessionVars and changing the screen to the Main Game Screen
+     */
     @FXML
     private void startReplay() {
         tooltip.hide();
@@ -171,6 +182,13 @@ public class ReplayController implements Initializable, ControlledScreen {
         }
     }
 
+    /**
+     * Enables the button under the conditions:
+     * <ul>
+     *     <li>A game is selected</li>
+     *     <li>A set is selected</li>
+     * </ul>
+     */
     @FXML
     private void enableButton() {
         GameModel g = gameTableView.getSelectionModel().getSelectedItem();
@@ -180,6 +198,9 @@ public class ReplayController implements Initializable, ControlledScreen {
         }
     }
 
+    /**
+     * Changes the screen to the statistics screen
+     */
     @FXML
     private void openStatistics() {
         tooltip.hide();

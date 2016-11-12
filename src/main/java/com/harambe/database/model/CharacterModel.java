@@ -1,14 +1,13 @@
 package com.harambe.database.model;
 
 import com.harambe.database.DatabaseConnector;
-import com.harambe.tools.I18N;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 /**
- * TODO: insert documentation here
+ * This class represents the character game relationship in the database.
+ * It is used to display the correct characters in replays
  */
 public class CharacterModel implements Persistable {
     private String gameUUID;
@@ -17,7 +16,7 @@ public class CharacterModel implements Persistable {
 
     /**
      *
-     * @param gameUUID
+     * @param gameUUID The game-uuid of the game to be saved
      * @param ourCharacter one value of Character enum
      * @param opponentCharacter one value of Character enum
      */
@@ -27,6 +26,13 @@ public class CharacterModel implements Persistable {
         this.opponentCharacter = opponentCharacter;
     }
 
+    /**
+     * Returns the Character Database Entry connection a gameid with the characters selected by player1 and player2
+     * @param db The database handler
+     * @param dbGameUUID The game-uuid of the game in question
+     * @return CharacterModel with <b>gameuuid, character name 1, character name 2</b>
+     * @throws SQLException generic Database Error
+     */
     public static CharacterModel getCharacter(DatabaseConnector db, String dbGameUUID) throws SQLException {
         CharacterModel characterModel;
         ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.CHARACTERTABLE + " WHERE game_uuid = '" + dbGameUUID + "'");
@@ -54,16 +60,8 @@ public class CharacterModel implements Persistable {
         return ourCharacter;
     }
 
-    public void setOurCharacter(String ourCharacter) {
-        this.ourCharacter = ourCharacter;
-    }
-
     public String getOpponentCharacter() {
         return opponentCharacter;
-    }
-
-    public void setOpponentCharacter(String opponentCharacter) {
-        this.opponentCharacter = opponentCharacter;
     }
 
     @Override

@@ -331,7 +331,6 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             player1Name.setText(Character.getLocalizedCharacterName(colIndex+rowIndex*columns));
             changeSelectionFontSize(player1Name);
 
-            // TODO remove this if statement when UI is optimized for online games 
             if (SessionVars.getUseFileInterface() || SessionVars.getUsePusherInterface()) {
                 turnTime.setVisible(true);
                 turnTime.setTranslateX(60);
@@ -367,7 +366,6 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
 
                 //enable ai switch
-                // TODO remove this if statement when UI is optimized for online games
                 if (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface()) {
                     aiHumanImg.setVisible(true);
                 }
@@ -420,7 +418,6 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             //"unblack" player
             p2ImgTemp.setEffect(null);
 
-            // TODO remove this if statement when UI is optimized for online games
             if (!SessionVars.getUsePusherInterface() && !SessionVars.getUseFileInterface()) {
                 //move label/ edit/ editImg back to its place
                 if (aiHumanImg.getStyleClass().get(1).equals("ai")) {

@@ -384,7 +384,7 @@ public class MainController implements Initializable, ControlledScreen {
     }
 
     /**
-     * plays bg animation
+     * Plays the repeating background animation from left to right and right to left
      * @param stage
      */
     private void playBgAnimation(Stage stage) {
@@ -598,8 +598,8 @@ public class MainController implements Initializable, ControlledScreen {
 
     /**
      * initializes player visuals (e.g.images, chips, etc)
-     * @param p1
-     * @param p2
+     * @param p1 Left side Player
+     * @param p2 right side Player
      */
     private void initPlayerVisuals(Player p1, Player p2) {
 
@@ -647,7 +647,6 @@ public class MainController implements Initializable, ControlledScreen {
         previewImg.setStyle("-fx-opacity: .5");
         previewImg.setTranslateY(-500);
         previewImg.setTranslateX(btn.getTranslateX());
-        //TODO check if the graphics quality is still acceptable
         previewImg.setPreserveRatio(true);
         previewImg.setFitWidth(140);
         previewImg.setFitHeight(150);
@@ -683,7 +682,6 @@ public class MainController implements Initializable, ControlledScreen {
         //spawn chip
         Image chipImg = new Image(getClass().getResourceAsStream(activePlayer.getChipImgLocation()));
         ImageView imgView = new ImageView(chipImg);
-        // TODO check if the graphics quality is still acceptable
         imgView.setPreserveRatio(true);
         imgView.setFitWidth(140);
         imgView.setFitHeight(150);
@@ -787,7 +785,7 @@ public class MainController implements Initializable, ControlledScreen {
 
     /**
      * persists drop in database
-     * @param column
+     * @param column Column in which the chip was dropped
      */
     private void persistDrop(int column) {
         TurnModel turnModel = null;
@@ -996,7 +994,6 @@ public class MainController implements Initializable, ControlledScreen {
 
                 endGameReplayOrSet();
 
-                // TODO do something nicer here
                 Logger.event("a draw");
             }
 
@@ -1028,7 +1025,6 @@ public class MainController implements Initializable, ControlledScreen {
         }
     }
 
-    // TODO maybe rename
     private void cleanBoardImages() {
         for (ImageView chip: chipArray) {
             field.getChildren().remove(chip);
@@ -1065,7 +1061,7 @@ public class MainController implements Initializable, ControlledScreen {
 
     /**
      * transition to let the playerImage jump up and down
-     * @param imgView
+     * @param imgView The imageview of the winning player (on which the animation is performed)
      */
     private void winAnim(ImageView imgView) {
         activePlayer.playWinSound();

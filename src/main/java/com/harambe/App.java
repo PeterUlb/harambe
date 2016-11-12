@@ -26,8 +26,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,7 +34,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 /**
- * TODO: insert documentation here
+ * Entry class for the Harambe Agent.
+ * This Class holds resource information about all screens being used in the app, as well as a globally shared database
+ * connecter and server communication interface and theme player.
  */
 public class App extends Application {
 
@@ -59,7 +59,10 @@ public class App extends Application {
     public static final String START_SCREEN_FILE = "/scenes/startMenu.fxml";
 
 
-
+    /**
+     * Starting point of the app. Initializes the database and starts javafx
+     * @param args cmd arguments
+     */
     public static void main(String[] args) {
         try {
             db = new DatabaseConnector();
@@ -71,7 +74,12 @@ public class App extends Application {
         launch(args);
     }
 
-
+    /**
+     * Sets the initial screen, entry point for javaFX
+     * Also sets keybindings
+     * @param stage First stage being displayed
+     * @throws Exception general exception
+     */
     public void start(Stage stage) throws Exception {
         App.themePlayer = new ThemePlayer();
         App.stage = stage;
@@ -146,13 +154,20 @@ public class App extends Application {
         }
     }
 
+    /**
+     * Stops the application on user exit. Makes sure that all changes are persisted in the database
+     * @throws Exception General Exception
+     */
     @Override
     public void stop() throws Exception {
         super.stop();
-        System.out.println("Application stopped");
+        Logger.event("Application stopped");
         db.shutdown();
     }
 
+    /**
+     * Helper method to allow button order changes in the Esc Menu
+     */
     private static class FixedOrderButtonDialog extends DialogPane {
         @Override
         protected Node createButtonBar() {

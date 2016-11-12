@@ -1,13 +1,10 @@
 package com.harambe.gui;
 
 import com.harambe.game.ThreadManager;
-import com.harambe.tools.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -17,7 +14,7 @@ import javafx.util.Duration;
 import java.util.HashMap;
 
 /**
- * TODO: insert documentation here
+ * This class manages the adding, loading and changing of scenes.
  */
 public class MasterController extends StackPane {
 
@@ -29,12 +26,15 @@ public class MasterController extends StackPane {
         super();
     }
 
-    //Add the screen to the collection
-    public void addScreen(String name, Node screen) {
+    /**
+     * Adds the screen to the collection
+     * @param name name of the scene
+     * @param screen the specified Node representing the screen to be added
+     */
+    private void addScreen(String name, Node screen) {
         screens.put(name, screen);
     }
 
-    //Returns the Node with the appropriate name
     public Node getScreen(String name) {
         return screens.get(name);
     }
@@ -67,7 +67,7 @@ public class MasterController extends StackPane {
      * Loads the fxml file, add the screen to the screens collection and finally injects the screenPane to the controller.
      * @param name Name of the scene defined in App
      * @param resource Resource File of the scene defined in App
-     * @return
+     * @return boolean indicating success or failure
      */
     public boolean loadScreen(String name, String resource) {
         try {

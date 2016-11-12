@@ -8,7 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * TODO: insert documentation here
+ * This class represents a finished set in the database, storing the linked gameID, the set number, the winner and
+ * who started.
  */
 public class SetModel implements Persistable {
     private String gameUUID;
@@ -18,10 +19,10 @@ public class SetModel implements Persistable {
 
     /**
      *
-     * @param gameUUID
+     * @param gameUUID the gameid of the game beloning to the set
      * @param setNumber starting at 0
-     * @param weStarted
-     * @param weWon
+     * @param weStarted flag indicating who started
+     * @param weWon flag indicating who won
      */
     public SetModel(String gameUUID, int setNumber, Boolean weStarted, Boolean weWon) {
         this.gameUUID = gameUUID;

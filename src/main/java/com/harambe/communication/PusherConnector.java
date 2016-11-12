@@ -1,8 +1,5 @@
 package com.harambe.communication;
 
-import com.harambe.game.SessionVars;
-import com.pusher.client.AuthorizationFailureException;
-import com.pusher.client.Authorizer;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.PrivateChannel;
@@ -15,7 +12,8 @@ import java.util.Properties;
 
 
 /**
- * TODO Insert documentation here.
+ * Setup class for the Pusher communication. Authenticates and binds the local client and allows communication with
+ * the server
  */
 public class PusherConnector implements Runnable {
 
@@ -120,6 +118,10 @@ public class PusherConnector implements Runnable {
         });
     }
 
+    /**
+     * Sens turn to the server
+     * @param col Column in which the chip was dropped
+     */
     public void sendTurn(int col) {
         channel.trigger("client-event", "{\"move\": \"" + col + "\"}");
     }

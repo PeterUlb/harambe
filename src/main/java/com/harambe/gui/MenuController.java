@@ -8,11 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -22,7 +19,7 @@ import java.util.ResourceBundle;
 
 
 /**
- * TODO: insert documentation here
+ * Controller for the Menu Scene
  */
 public class MenuController implements Initializable, ControlledScreen {
 
@@ -57,21 +54,30 @@ public class MenuController implements Initializable, ControlledScreen {
         myController = screenParent;
     }
 
-    //onClickEvent switch screen to local game
+    /**
+     * Button event which switches the scene to the local character selection
+     * @param event MouseEvent of the button click
+     */
     @FXML
     private void playLocal(MouseEvent event)/*throws IOException*/ {
         SessionVars.resetFlags();
         myController.loadAndSetScreen(App.CHARACTER_SELECTION_SCREEN, App.CHARACTER_SELECTION_SCREEN_FILE, true);
     }
 
+    /**
+     * Button event which switches the scene to the replay selection screen
+     * @param event MouseEvent of the button click
+     */
     @FXML
     private void openReplay(MouseEvent event) {
         myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, true);
     }
 
+    /**
+     * Button event which switches the scene to the online character selection
+     */
     @FXML
     void playOnline() {
-        // TODO this isn't the final user interface
         btnImgOnline.setDisable(true);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initOwner(App.stage);
@@ -148,18 +154,27 @@ public class MenuController implements Initializable, ControlledScreen {
         myController.loadAndSetScreen(App.CHARACTER_SELECTION_SCREEN, App.CHARACTER_SELECTION_SCREEN_FILE, true);
     }
 
+    /**
+     * Changes to language to German
+     */
     @FXML
     private void changeToGerman() {
         I18N.setLocale("de");
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
+    /**
+     * Changes the language to English
+     */
     @FXML
     private void changeToEnglish() {
         I18N.setLocale("en");
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
     }
 
+    /**
+     * Activates the performance mode, disabling animations and other fancy stuff to improve speed
+     */
     @FXML
     private void performanceMode() {
         //switch performance mode on/ off

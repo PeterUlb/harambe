@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implementation for the MiniMax algorithm. Requires use of the Board class
+ * Implementation for the MiniMax algorithm with alpha beta pruning and
+ * iterative deepening.
+ * Requires use of the Board class
  */
 public class MiniMax {
     private int tempSavedMove = -1;
@@ -90,13 +92,13 @@ public class MiniMax {
      * @param alpha              initial call: -infinity; value that max-player (we) will receive as a minimum
      * @param beta               initial call: +infinity; value that min-player (enemy) will receive at max
      * @param isMaximizingPlayer MiniMax player type (initial call = true)
-     * @return
+     * @return score of the move, only used within the recursion the evaluate moves
      */
     private int alphabeta(Board board, int depth, int alpha, int beta, boolean isMaximizingPlayer) throws OutOfTimeException {
         if (!timeLeft()) {
             throw new OutOfTimeException();
         }
-        // TODO: evt. die ersten male immer in die Mitte
+
         if (depth == 0 || board.isTerminalState()) {
             return evalValue(board, depth);
         }
