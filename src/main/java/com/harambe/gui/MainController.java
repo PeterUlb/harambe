@@ -78,6 +78,8 @@ public class MainController implements Initializable, ControlledScreen {
     private ImageView asset2;
     @FXML
     private ImageView bgAnim;
+    @FXML
+    private ImageView backBtn;
 
     @FXML
     private ToolBar replayToolbar;
@@ -144,6 +146,11 @@ public class MainController implements Initializable, ControlledScreen {
      */
     @Override //
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        if (I18N.currentLang.equals(I18N.GERMAN)) {
+            backBtn.getStyleClass().add("zurueckBtn");
+        } else {
+            backBtn.getStyleClass().add("backBtn");
+        }
         Logger.debug("Max: " + SessionVars.timeoutThresholdInMillis);
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
@@ -1176,4 +1183,12 @@ public class MainController implements Initializable, ControlledScreen {
             playerNameText.setStyle("-fx-font-size: 23");
         }
     }
+    /**
+     * Switches back to the main menu
+     */
+    @FXML
+    private void back() {
+        myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
+    }
+
 }

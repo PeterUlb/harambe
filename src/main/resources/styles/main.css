@@ -111,3 +111,20 @@
             rgb(55, 57, 58),
             linear-gradient(to top, -light-black 2%, -dark-black 98%);
 }
+
+.backBtn {
+    -fx-image: url("/img/btnBack.png");
+    -fx-cursor: hand;
+}
+
+.backBtn:hover {
+    -fx-image: url("/img/btnBackH.png");
+}
+.zurueckBtn {
+    -fx-image: url("/img/btnZurueck.png");
+    -fx-cursor: hand;
+}
+
+.zurueckBtn:hover {
+    -fx-image: url("/img/btnZurueckH.png");
+}
