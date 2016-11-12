@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.text.Text?>
-<?import javafx.scene.Group?>
 <StackPane styleClass="bg" stylesheets="/styles/characterSelection.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.CharacterSelectionController">
 
     <StackPane styleClass="fg">
@@ -45,6 +44,8 @@
         <TextField fx:id="player2NameEdit" visible="false" styleClass="editText" maxWidth="230" promptText="enter your name here" translateY="500" translateX="400"/>
         <ImageView fx:id="player2EditImg" visible="false" preserveRatio="true" fitWidth="30" styleClass="editImg" onMouseClicked="#editName" translateX="545" translateY="500"/>
 
+
+        <Text text="Select Your Character" styleClass="selectText" translateY="-450"/>
 
     </StackPane>
 

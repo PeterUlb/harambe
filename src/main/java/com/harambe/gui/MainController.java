@@ -25,6 +25,7 @@ import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -79,6 +80,18 @@ public class MainController implements Initializable, ControlledScreen {
     private ImageView bgAnim;
 
     @FXML
+    private ToolBar replayToolbar;
+    @FXML
+    private Button replayTurnBack;
+    @FXML
+    private Button replayTurnForward;
+    @FXML
+    private Button replayStart;
+    @FXML
+    private Button replayStop;
+
+
+    @FXML
     private Button b0;
     @FXML
     private Button b1;
@@ -110,6 +123,9 @@ public class MainController implements Initializable, ControlledScreen {
     private MiniMax miniMax;
     private Stage stage;
 
+    //replay control stuff
+    private boolean replayRunning;
+
     public boolean setDone = false; // marks a set as done for the server-comm thread
     boolean gameDone = false; // marks a game as done for the server-comm thread
 
@@ -132,22 +148,39 @@ public class MainController implements Initializable, ControlledScreen {
         setDone = false; // reset the setDone flag when the screen is loaded a second time
         gameDone = false; // same here
         board = new Board();
-        stage = new Stage("coast_2");
+
+        stage = new Stage();
         bg.setStyle("-fx-background-image: url('" + stage.getImg() + "'); ");
 
-        //take static music player and play mainTheme
-        App.themePlayer.playTheme("/audio/mainTheme.mp3");
+        //Performance settings
+        if (!SessionVars.performanceMode) {
+            //take static music player and play mainTheme
+            App.themePlayer.playTheme(stage.getAudioLocation());
 
-        //init extra images
-        Image asset1Img = new Image(stage.getRandomAssetImg());
-        asset1.setImage(asset1Img);
-        asset1.setScaleX(-1);
+            //init extra images
+            Image asset1Img = new Image(stage.getRandomAssetImg());
+            asset1.setImage(asset1Img);
+            asset1.setScaleX(-1);
 
-        Image asset2Img = new Image(stage.getRandomAssetImg());
-        asset2.setImage(asset2Img);
+            Image asset2Img = new Image(stage.getRandomAssetImg());
+            asset2.setImage(asset2Img);
 
-        playBgAnimation(stage);
-        timerStart();
+
+            playBgAnimation(stage);
+            timerStart();
+        } else {
+            //disable chip preview images
+            b0.setOnMouseEntered(null);
+            b1.setOnMouseEntered(null);
+            b2.setOnMouseEntered(null);
+            b3.setOnMouseEntered(null);
+            b4.setOnMouseEntered(null);
+            b5.setOnMouseEntered(null);
+            b6.setOnMouseEntered(null);
+
+            //disable timer (so it doesn't show 0:00 all the time)
+            time.setDisable(true);
+        }
 
         chipArray = new ArrayList<>();
         winLocation = null;
@@ -206,6 +239,7 @@ public class MainController implements Initializable, ControlledScreen {
 
     private void initReplayGame() {
         // should be a replay
+        replayToolbar.setVisible(true);
         Logger.debug("ReplayID: " + SessionVars.currentGameUUID);
         Logger.debug("ReplaySet: " + SessionVars.setNumber);
         try {
@@ -222,14 +256,31 @@ public class MainController implements Initializable, ControlledScreen {
         } else {
             activePlayer = p2;
         }
+
+        replayStop.setOnAction(e -> {
+            replayRunning = false;
+            replayStart.setDisable(false);
+            replayStop.setDisable(true);
+        });
+        replayStart.setOnAction(e -> {
+            replayRunning = true;
+            replayStart.setDisable(true);
+            replayStop.setDisable(false);
+        });
+        replayRunning = true;
+        replayStart.setDisable(true);
+
+        // TODO implement or just remove them
+        replayTurnForward.setDisable(true);
+        replayTurnBack.setDisable(true);
     }
 
     private void initOnlineGame() {
         // we play "online"
         if (SessionVars.ourSymbol == 'X') {
             // we are 'X', so right side on the UI
-            p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
-            p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
+            p2 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
+            p1 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
             player2Name.getStyleClass().add("playerNameGreen");
             player1Name.getStyleClass().add("playerNameRed");
             ourPlayer = p2; // keep track who we are :)
@@ -244,8 +295,8 @@ public class MainController implements Initializable, ControlledScreen {
             SessionVars.initializeNewGame(p2.getName(), p1.getName());
         } else {
             // we are 'O', so left side on the UI
-            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER2);
-            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER1);
+            p1 = new Player(false, SessionVars.ourPlayerName, p1Character, Board.PLAYER1);
+            p2 = new Player(false, SessionVars.opponentPlayerName, p2Character, Board.PLAYER2);
             player1Name.getStyleClass().add("playerNameGreen");
             player2Name.getStyleClass().add("playerNameRed");
             ourPlayer = p1; // keep track who we are :)
@@ -274,12 +325,19 @@ public class MainController implements Initializable, ControlledScreen {
             ArrayList<TurnModel> turns = null;
             try {
                 turns = TurnModel.getTurns(App.db, SessionVars.currentGameUUID, SessionVars.setNumber);
-                for (TurnModel turn :
-                        turns) {
-                    Thread.sleep(1000);
-                    Platform.runLater(() -> fireDisabledButton(turn.getColumn()));
-                }
                 disableAllButtons(true);
+                Thread.sleep(1000);
+
+                for (int turnNumber = 0; turnNumber < turns.size(); ) {
+                    if (replayRunning) {
+                        final int col = turns.get(turnNumber).getColumn();
+                        Platform.runLater(() -> fireDisabledButton(col));
+                        turnNumber++;
+                        Thread.sleep(1000);
+                    } else {
+                        Thread.sleep(1000);
+                    }
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -339,16 +397,16 @@ public class MainController implements Initializable, ControlledScreen {
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(bgAnim);
         trans.setDuration(new Duration(TimeUnit.SECONDS.toMillis(20)));
-        trans.setByX(4000);
+        trans.setByX(3500);
         trans.setByY(-500);
         trans.setOnFinished(event -> {
             bgAnim.setScaleX(bgAnim.getScaleX() * -1);
             bgAnim.setFitHeight(ThreadLocalRandom.current().nextDouble(10, 300));
             if (trans.getByX() > 0) {
                 // now to the left
-                trans.setByX(trans.getByX() * -1 - 1000);
+                trans.setByX(trans.getByX() * -1);
             } else {
-                trans.setByX(4000);
+                trans.setByX(trans.getByX() * -1);
             }
             trans.setByY(trans.getByY() * -1);
             trans.play();
@@ -615,7 +673,6 @@ public class MainController implements Initializable, ControlledScreen {
 
         Button btn = (Button) event.getSource();
 
-        activePlayer.playDropSound();
 
         //get column
         int column = Integer.parseInt(btn.getId().substring(1));
@@ -634,7 +691,12 @@ public class MainController implements Initializable, ControlledScreen {
         //store chip img
         chipArray.add(imgView);
 
-        moveChip(imgView, column, x);
+        if(!SessionVars.performanceMode) {
+            moveChipAnim(imgView, column, x);
+            activePlayer.playDropSound();
+        } else {
+            moveChip(imgView, column, x);
+        }
 
         //drop chip in board array and disable row if full
         try {
@@ -655,7 +717,9 @@ public class MainController implements Initializable, ControlledScreen {
         field.getChildren().add(imgView);
         imgView.toBack();
 
-        persistDrop(column);
+        if (!SessionVars.performanceMode) {
+            persistDrop(column);
+        }
 
         checkForWin();
 
@@ -744,12 +808,12 @@ public class MainController implements Initializable, ControlledScreen {
     }
 
     /**
-     * moves chip image to the board with an animation/ transition.
+     * moves chip image to the board w/ an animation/ transition.
      * @param imgView image of the chip
      * @param column selected column to drop the chip
      * @param columnPos x position of the column
      */
-    private void moveChip(ImageView imgView, int column, double columnPos) {
+    private void moveChipAnim(ImageView imgView, int column, double columnPos) {
         //chip drop transition/ animation
         TranslateTransition trans = new TranslateTransition();
         trans.setNode(imgView);
@@ -784,6 +848,39 @@ public class MainController implements Initializable, ControlledScreen {
         }
         imgView.setTranslateX(columnPos);
         trans.play();
+    }
+
+    /**
+     * moves chip image to the board w/o an animation/ transition.
+     * @param imgView image of the chip
+     * @param column selected column to drop the chip
+     * @param columnPos x position of the column
+     */
+    private void moveChip(ImageView imgView, int column, double columnPos) {
+        //move chip to clickLocation
+        int startPos = -410;
+        imgView.setTranslateY(startPos);
+        switch (freeSpace[column]) {
+            case 5:
+                imgView.setTranslateY(410);
+                break;
+            case 4:
+                imgView.setTranslateY(260);
+                break;
+            case 3:
+                imgView.setTranslateY(110);
+                break;
+            case 2:
+                imgView.setTranslateY(-40);
+                break;
+            case 1:
+                imgView.setTranslateY(-190);
+                break;
+            case 0:
+                imgView.setTranslateY(-340);
+                break;
+        }
+        imgView.setTranslateX(columnPos);
     }
 
     /**
@@ -917,8 +1014,15 @@ public class MainController implements Initializable, ControlledScreen {
         if (p1.getScore() >= 2 || p2.getScore() >= 2 && (!SessionVars.getUseFileInterface() && !SessionVars.getUsePusherInterface())) {
             endGame();
         } else if (SessionVars.getReplayMode()) {
-            myController.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE); //to start the main music again
-            myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);
+            Thread thread = new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ignored) {
+                }
+                myController.loadScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE); //to start the main music again
+                myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);
+            });
+            thread.start();
         } else {
             endSet();
         }

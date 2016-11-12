@@ -10,6 +10,7 @@ public class Board {
     public static final int ROWS = 6, COLUMNS = 7;
     public static final char UNMARKED = '-', PLAYER1 = 'O', PLAYER2 = 'X';
 
+
     //char[ROWS][COLUMNS]
     private char[][] grid;
     //holds the first available row

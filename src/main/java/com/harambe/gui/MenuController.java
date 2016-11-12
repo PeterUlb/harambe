@@ -32,11 +32,11 @@ public class MenuController implements Initializable, ControlledScreen {
     @FXML
     private ImageView btnImgOnline;
     @FXML
-    private Label harambeLabel;
-    @FXML
     private ImageView btnImgEnglish;
     @FXML
     private ImageView btnImgGerman;
+    @FXML
+    private ImageView btnImgPerformance;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,11 +45,12 @@ public class MenuController implements Initializable, ControlledScreen {
         if (I18N.currentLang.equals(I18N.ENGLISH)) {
             btnImgEnglish.setStyle("-fx-image: url('/img/uk.png')");
             btnImgEnglish.setDisable(true);
+            btnImgLocal.getStyleClass().add("buttonL");
         } else if (I18N.currentLang.equals(I18N.GERMAN)) {
             btnImgGerman.setStyle("-fx-image: url('/img/germany.png')");
             btnImgGerman.setDisable(true);
+            btnImgLocal.getStyleClass().add("buttonLGER");
         }
-        harambeLabel.setText(I18N.getString("harambes.connect.4"));
     }
 
     public void setScreenParent(MasterController screenParent) {
@@ -157,6 +158,17 @@ public class MenuController implements Initializable, ControlledScreen {
     private void changeToEnglish() {
         I18N.setLocale("en");
         myController.loadAndSetScreen(App.MENU_SCREEN, App.MENU_SCREEN_FILE, true);
+    }
+
+    @FXML
+    private void performanceMode() {
+        //switch performance mode on/ off
+        SessionVars.performanceMode = !SessionVars.performanceMode;
+        if (SessionVars.performanceMode) {
+            btnImgPerformance.getStyleClass().set(1, "buttonPerformance");
+        } else {
+            btnImgPerformance.getStyleClass().set(1, "buttonQuality");
+        }
     }
 
 

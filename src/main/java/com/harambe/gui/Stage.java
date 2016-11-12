@@ -1,28 +1,44 @@
 package com.harambe.gui;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
-
-import java.net.URL;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Stage class of the UI. Features the background image and theme of the stage.
  */
 public class Stage {
     private String imgLocation;
-    private URL themeLocation;
+    private String audioLocation;
 
-    public Stage(String stageName) {
-        setImg(stageName);
+    public Stage() {
+        setRandomResources();
     }
 
-    private void setImg(String stageName) {
-        this.imgLocation = "/img/"+stageName+".jpg";
+    private void setRandomResources() {
+        int rndm = ThreadLocalRandom.current().nextInt(0, 3);
+        switch (rndm) {
+            case 0:
+                this.audioLocation = this.imgLocation = "/stages/coast_1/";
+                break;
+            case 1:
+                this.audioLocation = this.imgLocation = "/stages/coast_2/";
+                break;
+            case 2:
+                this.audioLocation = this.imgLocation = "/stages/star_wars_1/";
+                break;
+            default:
+                this.audioLocation = this.imgLocation = "/stages/coast_1/";
+        }
+
+        this.imgLocation += "stage.jpg";
+        this.audioLocation += "theme.mp3";
     }
 
     public String getImg() {
         return this.imgLocation;
+    }
+
+    public String getAudioLocation() {
+        return audioLocation;
     }
 
     /**
@@ -35,7 +51,7 @@ public class Stage {
             case 1: return "/img/monkey.png";
             case 2: return "/img/monkey_2.png";
         }
-        return "";
+        return "/img/monkey.png";
     }
 
     public String getBgAnimImg() {

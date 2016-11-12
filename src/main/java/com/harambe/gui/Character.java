@@ -8,6 +8,7 @@ import sun.misc.Launcher;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -30,7 +31,7 @@ public class Character {
         try {
             ArrayList<String> strings = new ArrayList<>();
             final String path = "characters";
-            final File jarFile = new File(Character.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            final File jarFile = new File(Paths.get(Character.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toFile().toString());
 
             if (jarFile.isFile()) {  // JAR code
                 final JarFile jar = new JarFile(jarFile);

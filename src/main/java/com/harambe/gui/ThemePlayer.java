@@ -19,7 +19,7 @@ public class ThemePlayer {
         }
         final URL resource = getClass().getResource(resourceLocation);
         themePlayer = new MediaPlayer(new Media(resource.toString()));
-        themePlayer.setVolume(0.05);
+        themePlayer.setVolume(0.15);
         themePlayer.setOnEndOfMedia(() -> themePlayer.seek(Duration.ZERO));
         themePlayer.play();
     }

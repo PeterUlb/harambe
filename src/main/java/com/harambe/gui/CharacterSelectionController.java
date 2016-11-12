@@ -3,18 +3,17 @@ package com.harambe.gui;
 import com.harambe.App;
 import com.harambe.game.SessionVars;
 import com.harambe.tools.I18N;
-import com.harambe.tools.Logger;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -107,10 +106,10 @@ public class CharacterSelectionController implements Initializable, ControlledSc
 
         if (I18N.currentLang.equals(I18N.GERMAN)) {
             backBtn.getStyleClass().add("zurueckBtn");
-            playBtn.getStyleClass().add("startBtn");
+            playBtn.getStyleClass().add("startBtnDisabled");
         } else {
             backBtn.getStyleClass().add("backBtn");
-            playBtn.getStyleClass().add("playBtn");
+            playBtn.getStyleClass().add("playBtnDisabled");
         }
 
         //setup images (image size & number of playercolumns)
@@ -492,8 +491,20 @@ public class CharacterSelectionController implements Initializable, ControlledSc
     private void checkDisablePlayBtn() {
         if (player1Character!=null && player2Character!=null) {
             playBtn.setDisable(false);
+            if (I18N.currentLang.equals(I18N.GERMAN)) {
+                playBtn.getStyleClass().set(1, "startBtn");
+            }
+            else {
+                playBtn.getStyleClass().set(1, "playBtn");
+            }
         } else {
             playBtn.setDisable(true);
+            if (I18N.currentLang.equals(I18N.GERMAN)) {
+                playBtn.getStyleClass().set(1, "startBtnDisabled");
+            }
+            else {
+                playBtn.getStyleClass().set(1, "playBtnDisabled");
+            }
         }
     }
 
