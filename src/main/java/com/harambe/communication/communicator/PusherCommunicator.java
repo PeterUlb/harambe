@@ -1,16 +1,19 @@
 package com.harambe.communication.communicator;
 
 import com.harambe.App;
+import com.harambe.communication.PusherConnector;
 import com.harambe.communication.ServerCommunication;
 import com.harambe.database.model.SetModel;
 import com.harambe.game.SessionVars;
 import com.harambe.game.ThreadManager;
 import com.harambe.gui.MainController;
-import com.harambe.communication.PusherConnector;
 import javafx.application.Platform;
 
 import java.sql.SQLException;
 
+/**
+ * Class for communication via websockets with the server (read opponent turn from websocket, write our turn)
+ */
 public class PusherCommunicator implements ServerCommunication {
 
     private PusherConnector pusher;

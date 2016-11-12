@@ -14,7 +14,6 @@ import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
 import java.net.URL;
@@ -25,7 +24,8 @@ import java.util.ResourceBundle;
 
 
 /**
- * TODO: insert documentation here
+ * Controller for the statistics screen.
+ * The statistics screen features an overview of Win/Loss Ratiom average sets played etc.
  */
 public class StatisticsController implements Initializable, ControlledScreen {
 
@@ -145,10 +145,14 @@ public class StatisticsController implements Initializable, ControlledScreen {
         }
         turnsPerSetChart.getData().add(turnSeries);
     }
+
     public void setScreenParent(MasterController screenParent){
         myController = screenParent;
     }
 
+    /**
+     * Navugating back to the replay screen
+     */
     @FXML
     private void backToReplayScreen() {
         myController.loadAndSetScreen(App.REPLAY_SCREEN, App.REPLAY_SCREEN_FILE, false);

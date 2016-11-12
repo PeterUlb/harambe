@@ -9,7 +9,7 @@ public interface ServerCommunication {
     /**
      * Writes the calculated turn to the Server (number in file or via pusher)
      * @param column [0-6]
-     * @throws Exception
+     * @throws Exception General Exception
      */
     public void passTurnToServer(int column) throws Exception;
 
@@ -17,7 +17,7 @@ public interface ServerCommunication {
      * Gets the opponent's turn from the server
      * This method is also required to increment the player score!!!!!!!!!...
      * @return column [0-6], -2 if set ended or -1 if we start!!!
-     * @throws Exception
+     * @throws Exception General Exception
      */
     public int getTurnFromServer() throws Exception;
 }

@@ -2,8 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <GridPane styleClass="field" stylesheets="/styles/replay.css" alignment="center" hgap="10.0" vgap="10.0" fx:controller="com.harambe.gui.ReplayController"
           xmlns:fx="http://javafx.com/fxml">
    <padding>

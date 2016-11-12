@@ -7,7 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * TODO: insert documentation here
+ * This class represents a turn in the database, storing the linked gameID, linked set number, the incremental
+ * turn number, which player played the stored turn and in which column the chip was dropped.
  */
 public class TurnModel implements Persistable {
     private String gameUUID;
@@ -18,11 +19,11 @@ public class TurnModel implements Persistable {
 
     /**
      *
-     * @param gameUUID
+     * @param gameUUID gameID of the game the turn belongs to
      * @param setNumber starting at 0
      * @param turnNumber starting at 0
-     * @param isOpponent
-     * @param column
+     * @param isOpponent flag indicating who played the turn
+     * @param column column in which the chip was dropped
      */
     public TurnModel(String gameUUID, int setNumber, int turnNumber, boolean isOpponent, int column) {
         this.gameUUID = gameUUID;
@@ -32,6 +33,14 @@ public class TurnModel implements Persistable {
         this.column = column;
     }
 
+    /**
+     * Returns a list of all games from the database
+     * @param db The database handler
+     * @param dbGameUUID gameid of the corresponding game
+     * @param dbSetNumber set number of the corresponding set
+     * @return ArrayList of all Games in the database
+     * @throws SQLException Generic Database Exception
+     */
     public static ArrayList<TurnModel> getTurns(DatabaseConnector db, String dbGameUUID, int dbSetNumber) throws SQLException {
         ArrayList<TurnModel> turnModels = new ArrayList<>();
         ResultSet rs = db.query("SELECT * FROM " + DatabaseConnector.TURNTABLE + " WHERE game_uuid = '" + dbGameUUID + "' AND set_number = " + dbSetNumber);

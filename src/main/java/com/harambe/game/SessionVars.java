@@ -3,14 +3,12 @@ package com.harambe.game;
 import java.util.UUID;
 
 /**
- * TODO: insert documentation here
+ * This class represents a single user session, starting on program start and ending on program exit.
+ * During this time, in hold all the needed user and game information which has to be shared between different controllers.
+ * Information from this class is also used in the database saving process
  */
 public class SessionVars {
-    //TODO ALL of them must be UI configurable
-    // access via corrosponding method (makes sure that other flags are resetted)
-    public static String app_id = "249870";
-    public static String key = "082f8d2ee2e06acd7c98";
-    public static String secret = "fc29424e4ab1e692a42b";
+    // access via corresponding method (makes sure that other flags are resetted)
     private static boolean useFileInterface = false;
     private static String fileInterfacePath = null;
     private static boolean usePusherInterface = false;
@@ -29,6 +27,11 @@ public class SessionVars {
     public static int turnNumber = 0;
     public static boolean performanceMode = false;
 
+    /**
+     * Initializes a new game, setting the flags accordingly
+     * @param ourPlayerName The name of our player (e.g. Max Mustermann)
+     * @param opponentPlayerName The name of our opponent (e.g. AI X)
+     */
     public static void initializeNewGame(String ourPlayerName, String opponentPlayerName) {
         SessionVars.currentGameUUID = UUID.randomUUID().toString();
         SessionVars.ourPlayerName = ourPlayerName;
@@ -39,12 +42,19 @@ public class SessionVars {
         SessionVars.weWonSet = null;
     }
 
+    /**
+     * Initializes a new set, setting the flags accordingly
+     * @param weStartSet boolean flag indicating whether we started or not
+     */
     public static void initializeNewSet(boolean weStartSet) {
         SessionVars.setNumber++;
         SessionVars.weStartSet = weStartSet;
         SessionVars.turnNumber = 0;
     }
 
+    /**
+     * Resets all flags. Normally done within the SessionVars methods
+     */
     public static void resetFlags() {
         SessionVars.useFileInterface = false;
         SessionVars.usePusherInterface = false;
@@ -52,6 +62,14 @@ public class SessionVars {
         SessionVars.replayMode = false;
     }
 
+    /**
+     * Starting a replay
+     * @param gameUUID the replay id (equals the game id of the game which was played)
+     * @param setNumber the set number being displayed
+     * @param weStartSet flag indicating the player who started
+     * @param ourPlayerName the name of us at the time of the game being played
+     * @param opponentPlayerName the name of the enemy at the time of the game being played
+     */
     public static void setupReplay(String gameUUID, int setNumber, boolean weStartSet, String ourPlayerName, String opponentPlayerName) {
         // reset all flags
         SessionVars.resetFlags();
@@ -68,6 +86,11 @@ public class SessionVars {
         return useFileInterface;
     }
 
+    /**
+     * Setup method for an online game over the file interface
+     * @param useFileInterface flag that file interface is being used
+     * @param fileInterfacePath path to the server communication path
+     */
     public static void useFileInterface(boolean useFileInterface, String fileInterfacePath) {
         SessionVars.resetFlags();
         SessionVars.useFileInterface = useFileInterface;
@@ -78,6 +101,10 @@ public class SessionVars {
         return usePusherInterface;
     }
 
+    /**
+     * Setup method for an online game over the puhser websocket interface
+     * @param usePusherInterface flag that pusher interface is being used
+     */
     public static void usePusherInterface(boolean usePusherInterface) {
         SessionVars.resetFlags();
         SessionVars.usePusherInterface = usePusherInterface;
@@ -87,6 +114,10 @@ public class SessionVars {
         return soloVsAI;
     }
 
+    /**
+     * Setup method for human vs AI mode
+     * @param soloVsAI flag
+     */
     public static void soloVsAI(boolean soloVsAI) {
         SessionVars.resetFlags();
         SessionVars.soloVsAI = soloVsAI;
@@ -96,6 +127,10 @@ public class SessionVars {
         return replayMode;
     }
 
+    /**
+     * Setup method for replay mode.
+     * @param replayMode flag
+     */
     private static void replayMode(boolean replayMode) {
         SessionVars.resetFlags();
         SessionVars.replayMode = replayMode;

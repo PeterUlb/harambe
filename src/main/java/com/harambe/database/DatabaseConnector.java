@@ -72,7 +72,7 @@ public class DatabaseConnector {
 
     /**
      * Clean shutdown of database, otherwise data might be lost (when closing the program)
-     * @throws SQLException
+     * @throws SQLException General Database Exception
      */
     public void shutdown() throws SQLException {
         Statement st = conn.createStatement();
