@@ -14,7 +14,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * Character Class for all character & chip images
+ * Character Class for all character and chip images
  */
 public class Character {
     static {

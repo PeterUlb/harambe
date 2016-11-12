@@ -5,7 +5,7 @@ We are moving to the [**Wiki**](https://github.com/PeterUlb/harambe/wiki/1-High-
 Everything can be found there.
 
 
-This folder contains documents that might be linked from the wiki (like word or PDF files).
+This folder contains documents that are linked from the wiki (like word or PDF files).
 
 ### Java Documentation Quick Access
 

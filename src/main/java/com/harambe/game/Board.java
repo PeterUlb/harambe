@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Internal representation of the connect 4 grid as a 2d char array & logic
+ * Internal representation of the connect 4 grid as a 2d char array and logic
  */
 public class Board {
     public static final int ROWS = 6, COLUMNS = 7;
