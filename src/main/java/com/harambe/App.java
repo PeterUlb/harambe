@@ -152,6 +152,7 @@ public class App extends Application {
         if (screenSize.getHeight() == 1080 && screenSize.getWidth() == 1920) {
             stage.setFullScreen(true);
         }
+
     }
 
     /**
