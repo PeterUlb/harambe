@@ -50,7 +50,11 @@ public class MiniMax {
                     {3, 4, 5, 7, 5, 4, 3}};
 
 
-    //switches each Player tile to the other player
+    /**
+     * switches each Player tile on the Board to the other player
+     * @param key String representation of the Board that works as a key for the database
+     * @return String representation of the player-swapped board that works as a key for the database
+     */
     private String switchPlayerInKey(String key){
         String result = "";
         for (int i = 0; i < key.length(); i++){
@@ -63,7 +67,13 @@ public class MiniMax {
         }
         return result;
     }
-    //flips the board along the central column
+
+    /**
+     * Flips the board along the central column.
+     * @param key String representation of the Board that works as a key for the database
+     * @return String representation of the mirrored board that works as a key for the database
+     */
+    //
     private String mirrorKey(String key){
         String result = "";
         //get a mirrored board key
@@ -74,8 +84,13 @@ public class MiniMax {
         }
         return result;
     }
+
+    /**
+     * turns board grid into database key format
+     * @param grid  2d array grid char[Board.ROWS][Board.COLUMNS]
+     * @return String representation of the current Board that works as a key for the database
+     */
     private String convertGridToKey(char[][] grid){
-        //turn board grid into database key format
         String result = "";
         for (int i = 0; i < grid.length; i++) {
             result += String.valueOf(grid[i]);
