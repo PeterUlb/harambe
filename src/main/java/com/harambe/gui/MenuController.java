@@ -48,6 +48,13 @@ public class MenuController implements Initializable, ControlledScreen {
             btnImgGerman.setDisable(true);
             btnImgLocal.getStyleClass().add("buttonLGER");
         }
+
+        // check if performance mode is enabled
+        if (SessionVars.performanceMode) {
+            btnImgPerformance.getStyleClass().set(1, "buttonPerformance");
+        } else {
+            btnImgPerformance.getStyleClass().set(1, "buttonQuality");
+        }
     }
 
     public void setScreenParent(MasterController screenParent) {

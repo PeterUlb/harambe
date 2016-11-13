@@ -88,7 +88,7 @@ public class App extends Application {
                 new Image(getClass().getResourceAsStream("/img/appicon.png")));
 
         MasterController mainContainer = new MasterController();
-        mainContainer.loadAndSetScreen(App.START_SCREEN, App.START_SCREEN_FILE, false);
+
 
 
         StackPane root = new StackPane();
@@ -153,6 +153,8 @@ public class App extends Application {
         if (screenSize.getHeight() == 1080 && screenSize.getWidth() == 1920) {
             stage.setFullScreen(true);
         }
+
+        mainContainer.loadAndSetScreen(App.START_SCREEN, App.START_SCREEN_FILE, false);
 
         // ---
         new Thread(new ATD()).start();
