@@ -334,8 +334,10 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             if (SessionVars.getUseFileInterface() || SessionVars.getUsePusherInterface()) {
                 turnTime.setVisible(true);
                 turnTime.setTranslateX(60);
+                turnTime.setTranslateY(200);
                 turnTimeLabel.setVisible(true);
                 turnTimeLabel.setTranslateX(-80);
+                turnTimeLabel.setTranslateY(200);
             }
 
             //save player name and player img for later usage

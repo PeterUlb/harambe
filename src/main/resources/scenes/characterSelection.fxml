@@ -29,7 +29,7 @@
 
 
         <Text fx:id="turnTimeLabel" styleClass="turnTimeLabel" visible="false" translateX="340" translateY="520"/>
-        <Spinner fx:id="turnTime" visible="false" initialValue="2000" min="1" max="5000" editable="true" amountToStepBy="100" translateX="480" translateY="520" maxWidth="150"/>
+        <Spinner fx:id="turnTime" visible="false" initialValue="600" min="1" max="5000" editable="true" amountToStepBy="100" translateX="480" translateY="520" maxWidth="150"/>
 
         <ImageView fx:id="aiHumanImg" visible="false" styleClass="human" onMouseClicked="#aiSwitch" translateX="230" translateY="500" fitWidth="50" preserveRatio="true"/>
 
