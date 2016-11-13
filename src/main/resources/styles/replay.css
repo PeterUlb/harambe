@@ -1,0 +1,61 @@
+.field{
+    -fx-background-image: url("/img/ocean_1.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.buttonStatistics {
+    -fx-graphic: url("/img/statistics_icon.png");
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+.buttonStatistics:hover{
+    -fx-graphic: url("/img/statistics_icon_hover.png");
+}
+
+.playBtn {
+    -fx-image: url("/img/btnPlayC.png");
+    -fx-cursor: hand;
+}
+
+.playBtn:hover{
+    -fx-image: url("/img/btnPlayH.png");
+}
+
+.startBtn {
+    -fx-image: url("/img/btnStartC.png");
+    -fx-cursor: hand;
+}
+
+.startBtn:hover{
+    -fx-image: url("/img/btnStartH.png");
+}
+
+.backBtn {
+    -fx-image: url("/img/btnBack.png");
+    -fx-cursor: hand;
+}
+
+.backBtn:hover {
+    -fx-image: url("/img/btnBackH.png");
+}
+.zurueckBtn {
+    -fx-image: url("/img/btnZurueck.png");
+    -fx-cursor: hand;
+}
+
+.zurueckBtn:hover {
+    -fx-image: url("/img/btnZurueckH.png");
+}
+
+.table-view {
+    -fx-base: #fafafa;
+    -fx-font-size: 10pt;
+    -fx-background-color:
+            white;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: .3em 0.2em .3em 0.2em;
+    -fx-effect: dropshadow(two-pass-box,black,5,.2,0,0);
+    -fx-opacity: 0.8;
+}

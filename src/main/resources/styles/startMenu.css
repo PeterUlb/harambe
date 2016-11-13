@@ -1,0 +1,18 @@
+.field{
+    -fx-background-image: url("/img/coast_1.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.logo{
+    -fx-image: url("/img/logo.png");
+}
+
+.text{
+    -fx-font-size: 50px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}

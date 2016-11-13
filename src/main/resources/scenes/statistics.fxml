@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<GridPane styleClass="field" stylesheets="/styles/statistics.css" alignment="center" hgap="10.0" vgap="10.0" fx:controller="com.harambe.gui.StatisticsController"
+          xmlns:fx="http://javafx.com/fxml">
+   <padding>
+      <Insets bottom="10.0" left="10.0" right ="10.0" top="10.0"/>
+   </padding>
+
+
+    <PieChart id="gamesPieChart" fx:id="gamesPieChart" GridPane.columnIndex="1"
+              GridPane.rowIndex="1" />
+
+    <PieChart fx:id="setsPieChart" GridPane.columnIndex="2"
+              GridPane.rowIndex="1" />
+
+    <AreaChart fx:id="turnsPerSetChart" GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="turnsPerSetChart">
+        <xAxis>
+            <NumberAxis fx:id="turnsPerSetChartxAxis" />
+        </xAxis>
+        <yAxis>
+            <NumberAxis fx:id="turnsPerSetChartyAxis" />
+        </yAxis>
+    </AreaChart>
+
+        <ImageView fx:id="backBtn" onMouseClicked="#backToReplayScreen" translateX="-90" translateY="-250" />
+    
+</GridPane>

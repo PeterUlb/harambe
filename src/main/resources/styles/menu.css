@@ -1,0 +1,80 @@
+.field{
+    -fx-background-image: url("/img/coast_1.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+.buttonL {
+    -fx-image: url("/img/btnLocal.png");
+    -fx-cursor: hand;
+}
+.buttonL:hover{
+    -fx-image: url("/img/btnLocalHover.png");
+    }
+
+.buttonLGER {
+    -fx-image: url("/img/btnLokal.png");
+    -fx-cursor: hand;
+}
+.buttonLGER:hover{
+    -fx-image: url("/img/btnLokalHover.png");
+}
+
+.buttonR {
+    -fx-image: url("/img/btnOnline.png");
+    -fx-cursor: hand;
+}
+.buttonR:hover{
+    -fx-image: url("/img/btnOnlineHover.png");
+}
+.buttonReplay {
+    -fx-image: url("/img/btnReplay.png");
+    -fx-cursor: hand;
+}
+.buttonReplay:hover {
+    -fx-image: url("/img/btnReplayH.png");
+}
+.paneButton{
+    -fx-background-color: aqua;
+    -fx-max-width: 500px;
+    -fx-max-height: 500px;
+    -fx-shape: "M 0 0 h 500 l -300 100 H 0 Z";
+    -fx-overflow: hidden;
+}
+
+.buttonEnglish {
+    -fx-image: url("/img/uk_inactive.png");
+    -fx-cursor: hand;
+}
+
+.buttonEnglish:hover {
+    -fx-image: url("/img/uk_hover.png");
+}
+
+.buttonGerman {
+    -fx-image: url("/img/germany_inactive.png");
+    -fx-cursor: hand;
+}
+
+.buttonGerman:hover {
+    -fx-image: url("/img/germany_hover.png");
+}
+
+.buttonQuality {
+    -fx-image: url("/img/quality.png");
+    -fx-cursor: hand;
+}
+.buttonQuality:hover {
+    -fx-image: url("/img/quality_hover.png");
+}
+.buttonPerformance {
+    -fx-image: url("/img/performance.png");
+    -fx-cursor: hand;
+}
+.buttonPerformance:hover {
+    -fx-image: url("/img/performance_hover.png");
+}
+
+.logo {
+    -fx-image: url("/img/logoSmall.png");
+}

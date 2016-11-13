@@ -1,0 +1,130 @@
+.bg {
+    //-fx-background-image: url("/img/coast_1.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+
+    -light-black: rgb(74, 75, 78);
+    -dark-highlight: rgb(87, 89, 92);
+    -dark-black: rgb(39, 40, 40);
+    -darkest-black: rgb(5, 5, 5);
+    -mid-gray: rgb(216, 222, 227);
+    -fx-background-color: -mid-gray;
+}
+
+
+.field{
+    -fx-background-image: url("/img/bg.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.fg {
+    -fx-background-image: url("/img/fg.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1920 1080;
+    -fx-background-position: center center;
+}
+
+.playerName{
+    -fx-font-size: 40px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.playerNameRed {
+    -fx-fill: red;
+}
+
+.playerNameGreen {
+    -fx-fill: green;
+}
+
+.playerImg {
+    -fx-effect: dropshadow(three-pass-box, #222222 , 1, 0.5, -5, 5);
+}
+
+.score{
+    -fx-font-size: 60px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.time{
+    -fx-font-size: 20px;
+    -fx-font-family: impact;
+    -fx-fill: #fefefe;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.column {
+    -fx-pref-width: 150px;
+    -fx-pref-height: 1000px;
+    -fx-cursor: hand;
+    -fx-opacity: 0;
+}
+
+.tool-bar {
+    -fx-base: -dark-black;
+    -fx-font-size: 12pt;
+    -fx-background-color:
+            linear-gradient(to bottom, -light-black 2%, -dark-black 98%);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: .9em 0.416667em .9em 0.416667em;
+    -fx-effect: dropshadow(two-pass-box,black,5,.2,0,0);
+    -fx-opacity: 0.8;
+}
+
+.segmented-button-bar .button {
+    -fx-background-color:
+            -darkest-black,
+            -dark-highlight,
+            linear-gradient(to bottom, -light-black 2%, -dark-black 98%);
+    -fx-background-insets: 0, 1 1 1 0, 2 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0.4em 1.833333em 0.4em 1.833333em;
+}
+
+.segmented-button-bar .button.first {
+    -fx-background-insets: 0, 1, 2 1 1 1;
+    -fx-background-radius: 3 0 0 3, 2 0 0 2, 2 0 0 2;
+}
+
+.segmented-button-bar .button.last {
+    -fx-background-insets: 0, 1 1 1 0, 2 1 1 1;
+    -fx-background-radius: 0 3 3 0, 0 2 2 0, 0 2 2 0;
+}
+
+.segmented-button-bar .button:hover {
+    -fx-text-fill: orangered;
+}
+
+.segmented-button-bar .button:pressed {
+    -fx-background-color:
+            -darkest-black,
+            rgb(55, 57, 58),
+            linear-gradient(to top, -light-black 2%, -dark-black 98%);
+}
+
+.backBtn {
+    -fx-image: url("/img/btnBack.png");
+    -fx-cursor: hand;
+}
+
+.backBtn:hover {
+    -fx-image: url("/img/btnBackH.png");
+}
+.zurueckBtn {
+    -fx-image: url("/img/btnZurueck.png");
+    -fx-cursor: hand;
+}
+
+.zurueckBtn:hover {
+    -fx-image: url("/img/btnZurueckH.png");
+}

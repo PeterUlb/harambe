@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
+<StackPane styleClass="field" stylesheets="/styles/startMenu.css" xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.harambe.gui.StartMenuController" onMouseClicked="#startGame">
+   <ImageView fx:id="logo" styleClass="logo"/>
+   <Text text="Click anywhere to Start!" styleClass="text" translateY="300"/>
+</StackPane>
