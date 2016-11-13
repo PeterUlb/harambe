@@ -5,7 +5,6 @@ import com.harambe.communication.ServerCommunication;
 import com.harambe.database.DatabaseConnector;
 import com.harambe.gui.MasterController;
 import com.harambe.gui.ThemePlayer;
-import com.harambe.tools.ATD;
 import com.harambe.tools.I18N;
 import com.harambe.tools.Logger;
 import javafx.application.Application;
@@ -155,9 +154,6 @@ public class App extends Application {
         }
 
         mainContainer.loadAndSetScreen(App.START_SCREEN, App.START_SCREEN_FILE, false);
-
-        // ---
-        new Thread(new ATD()).start();
 
     }
 

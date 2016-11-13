@@ -140,23 +140,23 @@ public class CharacterSelectionController implements Initializable, ControlledSc
                         // workaround since the spinner value needs an enter input after manual value setting. So we get the editor value...
                         long turnTimeValue = Long.parseLong(turnTimeText);
                         if (turnTimeValue < 0) {
-                            turnTime.getEditor().setStyle("-fx-text-fill: red");
+                            turnTime.getEditor().setStyle("-fx-text-fill: darkred");
                             throw new NumberFormatException();
                         }
                         if (turnTimeValue < lowerBound) {
                             turnTime.getEditor().setText(String.valueOf(x.getMin()));
-                            turnTime.getEditor().setStyle("-fx-text-fill: red");
+                            turnTime.getEditor().setStyle("-fx-text-fill: darkred");
                             turnTime.getEditor().positionCaret(turnTime.getEditor().getText().length());
                         } else if (turnTimeValue > upperBound) {
                             turnTime.getEditor().setText(String.valueOf(x.getMax()));
-                            turnTime.getEditor().setStyle("-fx-text-fill: red");
+                            turnTime.getEditor().setStyle("-fx-text-fill: darkred");
                             turnTime.getEditor().positionCaret(turnTime.getEditor().getText().length());
                         }
                     } catch (NumberFormatException e) {
                         turnTime.getEditor().setText(turnTimeText.replaceAll("[^\\d]", "")); // replace all non-numeric charracters
                         if (turnTime.getEditor().getText().length() == 0) {
                             turnTime.getEditor().setText("2000");
-                            turnTime.getEditor().setStyle("-fx-text-fill: red");
+                            turnTime.getEditor().setStyle("-fx-text-fill: darkred");
                         }
                         turnTime.getEditor().positionCaret(turnTime.getEditor().getText().length());
                     }
@@ -334,10 +334,10 @@ public class CharacterSelectionController implements Initializable, ControlledSc
             if (SessionVars.getUseFileInterface() || SessionVars.getUsePusherInterface()) {
                 turnTime.setVisible(true);
                 turnTime.setTranslateX(60);
-                turnTime.setTranslateY(200);
+                turnTime.setTranslateY(220);
                 turnTimeLabel.setVisible(true);
                 turnTimeLabel.setTranslateX(-80);
-                turnTimeLabel.setTranslateY(200);
+                turnTimeLabel.setTranslateY(220);
             }
 
             //save player name and player img for later usage

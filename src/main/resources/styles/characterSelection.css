@@ -128,4 +128,15 @@
     -fx-stroke-width: 0.5;
 }
 
+.spinner {
+    -fx-base: #fafafa;
+    -fx-font-size: 10pt;
+    -fx-background-color:
+            white;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: .3em 0.2em .3em 0.2em;
+    -fx-effect: dropshadow(two-pass-box,black,5,.2,0,0);
+    -fx-opacity: 0.8;
+}
+
 

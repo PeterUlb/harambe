@@ -79,7 +79,7 @@ public class ReplayController implements Initializable, ControlledScreen {
                     Bounds bounds = statisticsBtn.localToScene(statisticsBtn.getBoundsInLocal());
                     tooltip.show(statisticsBtn, bounds.getMaxX(), bounds.getMinY() + bounds.getHeight() / 2);
                 });
-                Thread.sleep(10000);
+                Thread.sleep(4000);
                 Platform.runLater(tooltip::hide);
             } catch (InterruptedException e) {
                 e.printStackTrace();
