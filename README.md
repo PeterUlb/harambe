@@ -15,7 +15,6 @@ The project uses the Maven build tool for easy deployment.
 
 Pusher API: https://github.com/pusher/pusher-websocket-java#api-overview
 
-`To be continued...`
 
 ## Contributors
 * Michael Schlechtinger
