@@ -722,9 +722,7 @@ public class MainController implements Initializable, ControlledScreen {
         field.getChildren().add(imgView);
         imgView.toBack();
 
-        if (!SessionVars.performanceMode) {
-            persistDrop(column);
-        }
+        persistDrop(column);
 
         checkForWin();
 
