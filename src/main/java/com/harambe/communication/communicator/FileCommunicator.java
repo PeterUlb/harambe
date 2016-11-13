@@ -26,7 +26,7 @@ public class FileCommunicator implements ServerCommunication {
     private String filePath;
     private String agentFile;
     private String serverFile;
-    private long repeatTime = 100; // interval in ms to check for new files
+    private long repeatTime = 10; // interval in ms to check for new files
     private MainController game;
 
     /**

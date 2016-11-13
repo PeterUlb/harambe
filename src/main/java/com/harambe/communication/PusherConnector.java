@@ -1,5 +1,6 @@
 package com.harambe.communication;
 
+import com.harambe.communication.communicator.PusherCommunicator;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.PrivateChannel;
@@ -19,6 +20,11 @@ public class PusherConnector implements Runnable {
 
     private String message;
     private PrivateChannel channel;
+    private PusherCommunicator communicator;
+
+    public PusherConnector(PusherCommunicator communicator) {
+        this.communicator = communicator;
+    }
 
 
     /**
@@ -114,6 +120,7 @@ public class PusherConnector implements Runnable {
             public void onEvent(String channelName, String eventName, final String data) {
 //                  System.out.println(data);
                 message = data;
+                communicator.newMessageArrived();
             }
         });
     }

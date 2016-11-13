@@ -17,12 +17,11 @@ import java.sql.SQLException;
 public class PusherCommunicator implements ServerCommunication {
 
     private PusherConnector pusher;
-    private long repeatTime = 100;
     private MainController game;
 
     public PusherCommunicator(MainController game) {
         this.game = game;
-        pusher = new PusherConnector();
+        pusher = new PusherConnector(this);
         Thread thread = new Thread(pusher);
         thread.setDaemon(true);
         ThreadManager.threads.add(thread);
@@ -35,7 +34,7 @@ public class PusherCommunicator implements ServerCommunication {
     }
 
     @Override
-    public int getTurnFromServer() throws Exception {
+    public synchronized int getTurnFromServer() throws Exception {
         /*
         Done:
             - normally: return enemy column number
@@ -57,10 +56,10 @@ public class PusherCommunicator implements ServerCommunication {
          */
         String message = pusher.getMessage();
         while (message == null) {
+            this.wait();
             message = pusher.getMessage();
-            Thread.sleep(repeatTime);
         }
-        //System.out.println("Message found!" + message);
+//        System.out.println("Message found!" + message);
 
         String[] splitMessage = message.split(" # ");
 
@@ -110,6 +109,10 @@ public class PusherCommunicator implements ServerCommunication {
 
         //System.out.println("Get Turn return: " + splitMessage[2]);
         return Integer.valueOf(splitMessage[2]);
+    }
+
+    public synchronized void newMessageArrived() {
+        this.notifyAll();
     }
 }
 
